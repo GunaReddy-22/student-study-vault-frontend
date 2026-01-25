@@ -1,0 +1,1385 @@
+/* ===============================
+   PAGE
+================================ */
+.public-notes-page {
+  padding: 32px;
+  min-height: 100vh;
+  color: #ffffff;
+
+  background:
+    radial-gradient(circle at 20% 10%, rgba(80,140,255,0.18), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(120,160,255,0.12), transparent 45%),
+    linear-gradient(135deg, #050b1e, #020617);
+
+  animation: pageFade 0.6s ease forwards;
+}
+
+@keyframes pageFade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.subtitle {
+  color: #9aa4b2;
+  margin-bottom: 24px;
+}
+
+/* ===============================
+   CONTROLS
+================================ */
+.public-controls {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 30px;
+}
+
+.public-controls input,
+.public-controls select {
+  padding: 12px 14px;
+  border-radius: 10px;
+
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+
+  border: 1px solid rgba(255,255,255,0.12);
+  outline: none;
+
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.public-controls input:focus,
+.public-controls select:focus {
+  border-color: #6f7bff;
+  box-shadow: 0 0 0 2px rgba(111,123,255,0.35);
+}
+
+.public-controls select option {
+  background: #020617;
+}
+
+/* ===============================
+   GRID (COMPACT + BALANCED)
+================================ */
+.public-notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 280px));
+  gap: 26px;
+}
+
+/* ===============================
+   CARD (PREMIUM-LEVEL)
+================================ */
+.public-note-card {
+  position: relative;
+  padding: 20px;
+  border-radius: 18px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  background: linear-gradient(
+    180deg,
+    rgba(18, 30, 60, 0.95),
+    rgba(10, 20, 40, 0.95)
+  );
+
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(14px);
+
+  box-shadow:
+    0 18px 45px rgba(0,0,0,0.6),
+    inset 0 0 0 1px rgba(255,255,255,0.04);
+
+  cursor: pointer;
+
+  transition:
+    transform 0.35s cubic-bezier(.22,.61,.36,1),
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+}
+
+/* Lift + glow */
+.public-note-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: rgba(99,102,241,0.55);
+
+  box-shadow:
+    0 35px 80px rgba(0,0,0,0.85),
+    0 0 0 1px rgba(99,102,241,0.25);
+}
+
+/* Glow sweep */
+.public-note-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+
+  background:
+    radial-gradient(
+      circle at top,
+      rgba(99,102,241,0.22),
+      transparent 70%
+    );
+
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.public-note-card:hover::after {
+  opacity: 1;
+}
+
+/* ===============================
+   BODY
+================================ */
+.public-note-card .card-body h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #eaf1ff;
+}
+
+.public-note-card .subject {
+  font-size: 12px;
+  color: #a5b4fc;
+}
+
+.public-note-card .author {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #9aa4b2;
+}
+
+/* ===============================
+   FOOTER
+================================ */
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}
+
+/* Badge */
+.public-badge {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+
+  background: rgba(79,172,254,0.18);
+  color: #8fd3ff;
+
+  border: 1px solid rgba(79,172,254,0.35);
+}
+
+/* View hint micro-interaction */
+.view-hint {
+  font-size: 11px;
+  color: rgba(200,210,230,0.7);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: all 0.25s ease;
+}
+
+.public-note-card:hover .view-hint {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ===============================
+   EMPTY STATE
+================================ */
+.no-results {
+  color: #9aa4b2;
+  font-size: 14px;
+}
+
+/* ===============================
+   MODAL OVERLAY
+================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.75);
+  backdrop-filter: blur(6px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 999;
+}
+
+/* ===============================
+   MODAL
+================================ */
+.modal {
+  width: 100%;
+  max-width: 520px;
+  max-height: 85vh;
+  overflow-y: auto;
+
+  padding: 24px;
+  border-radius: 18px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(18, 30, 60, 0.96),
+    rgba(10, 20, 40, 0.96)
+  );
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  box-shadow:
+    0 40px 120px rgba(0,0,0,0.9),
+    inset 0 0 0 1px rgba(255,255,255,0.04);
+
+  animation: modalIn 0.35s ease;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ===============================
+   MODAL CONTENT
+================================ */
+.modal h3 {
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.modal-subject {
+  text-align: center;
+  font-size: 13px;
+  color: #aab6ff;
+  margin-bottom: 14px;
+}
+
+.public-note-content {
+  white-space: pre-wrap;
+  line-height: 1.6;
+  font-size: 14px;
+  color: #e6e9ff;
+}
+
+.public-note-image {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+/* ===============================
+   MODAL BUTTON
+================================ */
+.modal .cancel {
+  margin-top: 18px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+
+  border: none;
+  background: rgba(255,255,255,0.1);
+  color: white;
+
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.modal .cancel:hover {
+  background: rgba(255,255,255,0.18);
+}
+/* ======================================================
+   PREMIUM MICRO INTERACTIONS – ADD ON ONLY
+   (Paste at END of PublicNotes.css)
+====================================================== */
+
+/* ---------- CARD ENTRY ---------- */
+.public-note-card {
+  animation: publicCardIn 0.55s cubic-bezier(.22,.61,.36,1) both;
+  will-change: transform, box-shadow;
+}
+
+@keyframes publicCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ---------- HOVER DEPTH + LIGHT ---------- */
+.public-note-card:hover {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(22, 35, 80, 0.96),
+      rgba(10, 20, 45, 0.96)
+    );
+}
+
+/* ---------- TITLE PREMIUM FEEL ---------- */
+.public-note-card h3 {
+  transition:
+    color 0.25s ease,
+    letter-spacing 0.25s ease;
+}
+
+.public-note-card:hover h3 {
+  color: #ffffff;
+  letter-spacing: 0.3px;
+}
+
+/* ---------- AUTHOR MICRO MOVE ---------- */
+.public-note-card .author {
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.public-note-card:hover .author {
+  transform: translateX(3px);
+  opacity: 0.95;
+}
+
+/* ---------- BADGE GLOW ---------- */
+.public-note-card:hover .public-badge {
+  box-shadow:
+    0 0 0 1px rgba(79,172,254,0.45),
+    0 0 20px rgba(79,172,254,0.35);
+}
+
+/* ---------- VIEW HINT SLIDE ---------- */
+.view-hint {
+  transform: translateX(-6px);
+}
+
+.public-note-card:hover .view-hint {
+  transform: translateX(0);
+}
+
+/* ---------- CLICK FEEDBACK ---------- */
+.public-note-card:active {
+  transform: scale(0.985);
+  transition-duration: 0.1s;
+}
+
+/* ---------- CONTROLS HOVER ---------- */
+.public-controls input,
+.public-controls select {
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.public-controls input:hover,
+.public-controls select:hover {
+  border-color: rgba(111,123,255,0.45);
+}
+
+/* ---------- MODAL PERFORMANCE ---------- */
+.modal {
+  will-change: transform, opacity;
+}
+
+/* ---------- MODAL SCROLLBAR ---------- */
+.modal::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal::-webkit-scrollbar-thumb {
+  background: rgba(120,140,255,0.45);
+  border-radius: 6px;
+}
+
+.modal::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ---------- MODAL BUTTON FEEDBACK ---------- */
+.modal .cancel {
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.modal .cancel:hover {
+  transform: translateY(-1px);
+  background: rgba(255,255,255,0.16);
+}
+/* ======================================================
+   FINAL PREMIUM UI ENHANCEMENTS (ADD-ON ONLY)
+   Paste at END of PublicNotes.css
+====================================================== */
+
+/* ===============================
+   SKELETON LOADER (CARDS)
+================================ */
+.public-note-skeleton {
+  height: 170px;
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      100deg,
+      rgba(255,255,255,0.05) 25%,
+      rgba(255,255,255,0.12) 37%,
+      rgba(255,255,255,0.05) 63%
+    );
+
+  background-size: 400% 100%;
+  animation: skeletonShimmer 1.4s ease infinite;
+}
+
+@keyframes skeletonShimmer {
+  to {
+    background-position: -400% 0;
+  }
+}
+
+/* ===============================
+   CARD ENTRY ANIMATION
+================================ */
+.public-note-card {
+  animation: publicCardEnter 0.55s cubic-bezier(.22,.61,.36,1) both;
+  will-change: transform, box-shadow;
+}
+
+@keyframes publicCardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ===============================
+   PREMIUM DEPTH + GLOW
+================================ */
+.public-note-card:hover {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(24, 40, 85, 0.96),
+      rgba(12, 22, 48, 0.96)
+    );
+}
+
+/* ===============================
+   TITLE MICRO HIGHLIGHT
+================================ */
+.public-note-card h3 {
+  transition:
+    color 0.25s ease,
+    letter-spacing 0.25s ease;
+}
+
+.public-note-card:hover h3 {
+  color: #ffffff;
+  letter-spacing: 0.35px;
+}
+
+/* ===============================
+   AUTHOR SLIDE
+================================ */
+.public-note-card .author {
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.public-note-card:hover .author {
+  transform: translateX(4px);
+  opacity: 0.95;
+}
+
+/* ===============================
+   BADGE GLOW EFFECT
+================================ */
+.public-note-card:hover .public-badge {
+  box-shadow:
+    0 0 0 1px rgba(79,172,254,0.45),
+    0 0 22px rgba(79,172,254,0.35);
+}
+
+/* ===============================
+   VIEW HINT SLIDE
+================================ */
+.view-hint {
+  transform: translateX(-6px);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+.public-note-card:hover .view-hint {
+  transform: translateX(0);
+}
+
+/* ===============================
+   CLICK FEEDBACK
+================================ */
+.public-note-card:active {
+  transform: scale(0.985);
+  transition-duration: 0.1s;
+}
+
+/* ===============================
+   TEASER BLUR PREVIEW
+================================ */
+.public-note-card::after {
+  content: "Preview";
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+
+  color: rgba(230,240,255,0.85);
+  background:
+    radial-gradient(
+      circle,
+      rgba(15,25,60,0.55),
+      rgba(5,10,30,0.85)
+    );
+
+  opacity: 0;
+  backdrop-filter: blur(6px);
+  border-radius: inherit;
+
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.public-note-card:hover::after {
+  opacity: 0.08;
+}
+
+/* ===============================
+   CONTROLS HOVER POLISH
+================================ */
+.public-controls input,
+.public-controls select {
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.public-controls input:hover,
+.public-controls select:hover {
+  border-color: rgba(111,123,255,0.45);
+}
+
+/* ===============================
+   MODAL PERFORMANCE
+================================ */
+.modal {
+  will-change: transform, opacity;
+}
+
+/* ===============================
+   MODAL SCROLLBAR
+================================ */
+.modal::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal::-webkit-scrollbar-thumb {
+  background: rgba(120,140,255,0.45);
+  border-radius: 6px;
+}
+
+.modal::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ===============================
+   MODAL BUTTON FEEDBACK
+================================ */
+.modal .cancel {
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.modal .cancel:hover {
+  transform: translateY(-1px);
+  background: rgba(255,255,255,0.16);
+}
+/* ======================================
+   PREMIUM MODAL ENHANCEMENTS (ADD-ON)
+====================================== */
+
+/* --- Overlay depth & vignette --- */
+.modal-overlay {
+  background:
+    radial-gradient(circle at 50% 30%, rgba(99,102,241,0.18), transparent 45%),
+    radial-gradient(circle at 50% 80%, rgba(56,189,248,0.12), transparent 55%),
+    rgba(2, 6, 23, 0.82);
+  backdrop-filter: blur(10px);
+}
+
+/* --- Modal container depth --- */
+.modal {
+  position: relative;
+  animation: modalFloatIn 0.45s cubic-bezier(.22,.61,.36,1);
+  box-shadow:
+    0 50px 140px rgba(0,0,0,0.95),
+    0 0 0 1px rgba(99,102,241,0.18),
+    inset 0 0 0 1px rgba(255,255,255,0.06);
+}
+
+/* --- Soft glow border --- */
+.modal::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    120deg,
+    rgba(99,102,241,0.35),
+    rgba(56,189,248,0.15),
+    transparent 60%
+  );
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* --- Title emphasis --- */
+.modal h3 {
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-shadow: 0 2px 14px rgba(99,102,241,0.35);
+}
+
+/* --- Subject glow --- */
+.modal-subject {
+  text-shadow: 0 0 10px rgba(99,102,241,0.35);
+}
+
+/* --- Text content polish --- */
+.public-note-content {
+  background: rgba(255,255,255,0.03);
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+}
+
+/* --- Smooth scroll inside modal --- */
+.modal {
+  scroll-behavior: smooth;
+}
+
+.modal::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal::-webkit-scrollbar-thumb {
+  background: rgba(99,102,241,0.35);
+  border-radius: 999px;
+}
+
+/* --- Image (handwritten) premium frame --- */
+.public-note-image {
+  box-shadow:
+    0 25px 60px rgba(0,0,0,0.75),
+    0 0 0 1px rgba(255,255,255,0.12);
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.06),
+    rgba(255,255,255,0.02)
+  );
+}
+
+/* --- Close button premium hover --- */
+.modal .cancel {
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.modal .cancel:hover {
+  transform: translateY(-1px);
+  background: rgba(255,255,255,0.16);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+}
+
+/* --- Subtle floating animation --- */
+@keyframes modalFloatIn {
+  from {
+    opacity: 0;
+    transform: translateY(22px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+/* =====================================================
+   ULTRA-PREMIUM MODAL ADD-ON
+   (Glass • Glow • Motion • Focus • Depth)
+===================================================== */
+
+/* ---------- Cinematic overlay ---------- */
+.modal-overlay {
+  background:
+    radial-gradient(circle at 50% 25%, rgba(99,102,241,0.22), transparent 45%),
+    radial-gradient(circle at 50% 85%, rgba(56,189,248,0.16), transparent 55%),
+    linear-gradient(180deg, rgba(2,6,23,0.75), rgba(2,6,23,0.9));
+  backdrop-filter: blur(14px) saturate(120%);
+}
+
+/* ---------- Modal elevation ---------- */
+.modal {
+  position: relative;
+  isolation: isolate;
+  animation: ultraModalIn 0.5s cubic-bezier(.22,.61,.36,1);
+  box-shadow:
+    0 60px 160px rgba(0,0,0,0.95),
+    0 0 0 1px rgba(99,102,241,0.25),
+    inset 0 0 0 1px rgba(255,255,255,0.06);
+}
+
+/* ---------- Gradient aura ring ---------- */
+.modal::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    140deg,
+    rgba(99,102,241,0.45),
+    rgba(56,189,248,0.25),
+    transparent 60%
+  );
+  opacity: 0.35;
+  filter: blur(8px);
+  z-index: -1;
+}
+
+/* ---------- Header glow ---------- */
+.modal h3 {
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-shadow:
+    0 2px 18px rgba(99,102,241,0.45),
+    0 0 30px rgba(56,189,248,0.25);
+}
+
+/* ---------- Subject chip feel ---------- */
+.modal-subject {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(99,102,241,0.12);
+  border: 1px solid rgba(99,102,241,0.25);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+}
+
+/* ---------- Content glass card ---------- */
+.public-note-content {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.06),
+      rgba(255,255,255,0.02)
+    );
+  border-radius: 14px;
+  padding: 18px;
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.04),
+    0 14px 40px rgba(0,0,0,0.55);
+}
+
+/* ---------- Premium typography ---------- */
+.public-note-content {
+  line-height: 1.75;
+  font-size: 14.5px;
+  letter-spacing: 0.2px;
+}
+
+/* ---------- Handwriting image frame ---------- */
+.public-note-image {
+  padding: 10px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.06),
+      rgba(255,255,255,0.02)
+    );
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.16);
+  box-shadow:
+    0 30px 80px rgba(0,0,0,0.85),
+    inset 0 0 0 1px rgba(255,255,255,0.06);
+}
+
+/* ---------- Scrollbar elegance ---------- */
+.modal::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(99,102,241,0.6),
+    rgba(56,189,248,0.4)
+  );
+  border-radius: 999px;
+}
+
+/* ---------- Close button luxury ---------- */
+.modal .cancel {
+  margin-top: 22px;
+  font-weight: 600;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+
+.modal .cancel:hover {
+  transform: translateY(-2px);
+  background: rgba(255,255,255,0.18);
+  box-shadow:
+    0 14px 45px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(99,102,241,0.35);
+}
+
+/* ---------- Focus breathing ---------- */
+.modal:focus-within {
+  box-shadow:
+    0 70px 180px rgba(0,0,0,0.95),
+    0 0 0 2px rgba(99,102,241,0.35),
+    inset 0 0 0 1px rgba(255,255,255,0.08);
+}
+
+/* ---------- Entry animation ---------- */
+@keyframes ultraModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.94);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+/* ===============================
+   REMOVE FLOATING / BLUR GHOST
+   (PUBLIC NOTES ONLY)
+================================ */
+
+/* Kill glow layers */
+.public-note-card::before,
+.public-note-card::after {
+  content: none !important;
+}
+
+/* Prevent blur / ghost rendering */
+.public-note-card {
+  overflow: hidden;          /* keeps everything inside */
+  filter: none !important;
+}
+
+/* Clean hover — keep premium feel, no ghost */
+.public-note-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 22px 55px rgba(0,0,0,0.75),
+    0 0 0 1px rgba(99,102,241,0.22);
+}
+.interaction-bar {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin: 14px 0 18px;
+}
+
+.icon-btn {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  font-size: 18px;
+  cursor: pointer;
+  color: #e5e7eb;
+}
+
+.icon-btn:hover {
+  background: rgba(255,255,255,0.14);
+}
+.icon-btn {
+  position: relative;
+}
+
+/* liked state */
+.icon-btn.liked {
+  background: rgba(239,68,68,0.18);
+  border-color: rgba(239,68,68,0.4);
+}
+
+/* count */
+.like-count {
+  position: absolute;
+  bottom: -6px;
+  right: -6px;
+  background: #ef4444;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 999px;
+}
+.comment-box {
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.comment-box h4 {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.comment-list {
+  max-height: 160px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.comment-item {
+  padding: 6px 0;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.comment-item b {
+  color: #93c5fd;
+  font-size: 12px;
+}
+
+.comment-item p {
+  margin: 2px 0 0;
+  color: #e5e7eb;
+}
+
+.comment-input {
+  display: flex;
+  gap: 8px;
+}
+
+.comment-input input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  color: white;
+}
+
+.comment-input button {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(90deg,#4facfe,#6f7bff);
+  color: white;
+}
+.share-toast {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 14px;
+  font-size: 12px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.75);
+  color: white;
+  animation: fadeUp 0.3s ease;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translate(-50%, 6px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+.note-actions {
+  display: flex;
+  gap: 16px;
+  margin: 14px 0;
+  align-items: center;
+}
+
+.icon {
+  cursor: pointer;
+  font-size: 18px;
+  color: #9aa4b2;
+  transition: 0.2s;
+}
+
+.icon:hover {
+  color: #f87171;
+  transform: scale(1.1);
+}
+
+.comments {
+  margin-top: 12px;
+}
+
+.comment {
+  font-size: 13px;
+  margin-bottom: 6px;
+  color: #e5e7eb;
+}
+
+.comments input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: white;
+}
+/* ===============================
+   COMMENT SCROLL FIX (IMPORTANT)
+================================ */
+
+/* Ensure modal scrolls properly */
+.modal {
+  scroll-behavior: smooth;
+}
+
+/* Comment section anchor */
+.comment-box {
+  scroll-margin-top: 80px; /* space from top after scroll */
+}
+
+/* Prevent interaction bar overlap */
+.interaction-bar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: linear-gradient(
+    180deg,
+    rgba(18,30,60,0.95),
+    rgba(18,30,60,0.85)
+  );
+  padding-top: 8px;
+}
+
+/* Comment list scroll stability */
+.comment-list {
+  overscroll-behavior: contain;
+}
+/* =====================================================
+   📱 MOBILE STABILITY FIX – PUBLIC NOTES (FINAL)
+   Paste this ENTIRE block at the END of PublicNotes.css
+===================================================== */
+
+@media (max-width: 767px) {
+
+  /* ---------- PAGE PADDING ---------- */
+  .public-notes-page {
+    padding: 20px 16px;
+    min-height: 100vh;
+  }
+
+  /* ---------- CONTROLS STACK ---------- */
+  .public-controls {
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+
+  .public-controls input,
+  .public-controls select {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+  }
+
+  /* ---------- GRID SINGLE COLUMN ---------- */
+  .public-notes-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  /* ---------- CARD FIX (NO FLOAT / NO GHOST) ---------- */
+  .public-note-card {
+    transform: none !important;
+    box-shadow:
+      0 14px 36px rgba(0,0,0,0.65);
+    overflow: hidden;
+  }
+
+  /* Kill ALL glow / blur layers */
+  .public-note-card::before,
+  .public-note-card::after {
+    display: none !important;
+  }
+
+  /* Disable hover motion on mobile */
+  .public-note-card:hover,
+  .public-note-card:active {
+    transform: none !important;
+    box-shadow:
+      0 16px 40px rgba(0,0,0,0.7);
+  }
+
+  /* Hide hover-only hint */
+  .view-hint {
+    display: none !important;
+  }
+
+  /* ---------- INTERACTION BAR ---------- */
+  .interaction-bar {
+    justify-content: space-around;
+    gap: 10px;
+    margin: 16px 0 18px;
+  }
+
+  .icon-btn {
+    width: 46px;
+    height: 46px;
+    font-size: 20px;
+  }
+
+  /* ---------- MODAL OVERLAY ---------- */
+  .modal-overlay {
+    align-items: flex-end;
+    padding: 10px;
+  }
+
+  /* ---------- MODAL (BOTTOM SHEET STYLE) ---------- */
+  .modal {
+    width: 100%;
+    max-width: 100%;
+    max-height: 92vh;
+
+    padding: 20px 16px 24px;
+    border-radius: 18px 18px 0 0;
+
+    animation: publicModalSlideUp 0.32s ease;
+  }
+
+  /* Modal content readability */
+  .public-note-content {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* Handwritten image fit */
+  .public-note-image {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Close button touch-friendly */
+  .modal .cancel {
+    height: 50px;
+    font-size: 16px;
+    margin-top: 20px;
+  }
+}
+
+/* ---------- MOBILE MODAL ANIMATION ---------- */
+@keyframes publicModalSlideUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+/* =====================================================
+   🔽 PUBLIC NOTES FILTER DROPDOWN – MOBILE FIX
+   Paste at END of PublicNotes.css
+===================================================== */
+
+/* ---------- FILTER CONTAINER SEPARATION ---------- */
+.public-controls {
+  position: relative;
+  z-index: 20;              /* stay above cards */
+  margin-bottom: 32px;     /* prevents collision */
+}
+
+/* ---------- SELECT WRAPPER FEEL ---------- */
+.public-controls select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(20, 35, 80, 0.95),
+      rgba(10, 20, 45, 0.95)
+    );
+
+  border: 1px solid rgba(99,102,241,0.45);
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.45),
+    inset 0 0 0 1px rgba(255,255,255,0.05);
+
+  color: #eaf1ff;
+  font-weight: 600;
+
+  padding-right: 42px; /* space for arrow */
+  cursor: pointer;
+}
+
+/* ---------- CUSTOM ARROW ---------- */
+.public-controls {
+  position: relative;
+}
+
+.public-controls select::after {
+  content: "";
+}
+
+/* Arrow using background image trick */
+.public-controls select {
+  background-image:
+    linear-gradient(
+      45deg,
+      transparent 50%,
+      #a5b4fc 50%
+    ),
+    linear-gradient(
+      135deg,
+      #a5b4fc 50%,
+      transparent 50%
+    ),
+    linear-gradient(
+      to right,
+      rgba(99,102,241,0.35),
+      rgba(99,102,241,0.35)
+    );
+  background-position:
+    calc(100% - 22px) calc(50% - 3px),
+    calc(100% - 16px) calc(50% - 3px),
+    calc(100% - 40px) 50%;
+  background-size:
+    6px 6px,
+    6px 6px,
+    1px 20px;
+  background-repeat: no-repeat;
+}
+
+/* ---------- OPTIONS (BEST POSSIBLE STYLING) ---------- */
+.public-controls select option {
+  background-color: #020617;
+  color: #e5e7eb;
+  padding: 10px;
+  font-size: 14px;
+}
+
+/* ---------- MOBILE ONLY REFINEMENT ---------- */
+@media (max-width: 767px) {
+
+  /* Stack already handled, just reinforce spacing */
+  .public-controls {
+    margin-bottom: 36px;
+  }
+
+  /* Bigger tap area */
+  .public-controls select {
+    height: 52px;
+    font-size: 16px;
+  }
+}
+/* =========================================
+   🔧 FIX: HAMBURGER COLLISION (PUBLIC NOTES)
+========================================= */
+
+@media (max-width: 767px) {
+
+  /* Push ONLY Public Notes header down */
+  .public-notes-page > h2,
+  .public-notes-page > .subtitle {
+    padding-top: 56px;
+  }
+
+
+}
+/* =========================================
+   🔧 FIX: TITLE–SUBTITLE GAP (PUBLIC NOTES)
+========================================= */
+
+.public-notes-page h2 {
+  margin-bottom: 6px;   /* reduce big gap */
+}
+
+.public-notes-page .subtitle {
+  margin-top: 0;        /* remove stacked margin */
+}
+@media (max-width: 767px) {
+  .public-notes-page h2 {
+    margin-bottom: 4px;
+  }
+
+  .public-notes-page .subtitle {
+    font-size: 13px;
+    opacity: 0.85;
+  }
+}
+/* =========================================
+   FIX: FULL PAGE BACKGROUND (PUBLIC NOTES)
+========================================= */
+
+.public-notes-page {
+  min-height: calc(100vh - 64px); /* fills screen under top spacing */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Content stack stays natural */
+.public-notes-grid {
+  flex-grow: 0;
+}
+
+/* Allow empty space but keep background */
+.public-notes-page::after {
+  content: "";
+  flex-grow: 1;
+}
+
+
+
+

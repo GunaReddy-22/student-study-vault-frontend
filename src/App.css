@@ -1,0 +1,107 @@
+/* ===============================
+   GLOBAL RESET
+================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+/* ===============================
+   APP LAYOUT
+================================ */
+
+.app {
+  display: flex;
+  min-height: 100vh;
+  background: radial-gradient(
+    circle at top left,
+    #0b1c3d,
+    #020617
+  );
+}
+
+/* ===============================
+   MAIN CONTENT
+================================ */
+
+.content {
+  flex: 1;
+  min-width: 0;
+  padding: 32px;
+  overflow-x: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===============================
+   MOBILE CONTENT
+================================ */
+
+@media (max-width: 767px) {
+  .content {
+    padding: 20px 16px;
+  }
+}
+
+/* ===============================
+   HAMBURGER BUTTON (MOBILE ONLY)
+================================ */
+
+.hamburger {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+
+  width: 44px;
+  height: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 22px;
+  font-weight: bold;
+
+  background: rgba(10, 15, 40, 0.95);
+  color: #ffffff;
+
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+
+  z-index: 3000;
+
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+
+  backdrop-filter: blur(6px);
+}
+
+/* Hide hamburger on desktop */
+@media (min-width: 768px) {
+  .hamburger {
+    display: none;
+  }
+}
+
+/* ===============================
+   SIDEBAR OVERLAY
+================================ */
+
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1500;
+}
+
+

@@ -1,0 +1,358 @@
+/* ===============================
+   DASHBOARD CONTAINER (FIXED)
+================================ */
+
+.dashboard {
+  padding: 32px;
+  color: #ffffff;
+
+  /* ❌ REMOVE min-height: 100vh (CAUSE OF GAP) */
+
+  background:
+    radial-gradient(circle at 20% 10%, rgba(80,140,255,0.18), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(120,160,255,0.12), transparent 45%),
+    linear-gradient(135deg, #050b1e, #020617);
+
+  animation: dashboardFade 0.8s ease forwards;
+}
+
+@keyframes dashboardFade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===============================
+   HEADER
+================================ */
+
+.dashboard h1 {
+  font-size: 34px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.dashboard p {
+  color: #9aa4b2;
+  font-size: 15px;
+  margin-bottom: 28px;
+}
+
+/* ===============================
+   STATS GRID
+================================ */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-top: 18px;
+}
+
+/* ===============================
+   DASHBOARD CARDS
+================================ */
+
+.card {
+  position: relative;
+  overflow: hidden;
+
+  height: 150px;
+  padding: 22px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  border-radius: 18px;
+  cursor: pointer;
+
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.06),
+    rgba(255,255,255,0.02)
+  );
+
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(14px);
+
+  box-shadow:
+    0 18px 45px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px) scale(1.03);
+  border-color: rgba(99,102,241,0.6);
+  box-shadow:
+    0 30px 70px rgba(0,0,0,0.8),
+    0 0 0 1px rgba(99,102,241,0.25);
+}
+
+/* ===============================
+   CARD CONTENT
+================================ */
+
+.card-icon {
+  font-size: 34px;
+  margin-bottom: 4px;
+  filter: drop-shadow(0 6px 12px rgba(99,102,241,0.45));
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #e5e7eb;
+  text-align: center;
+}
+
+.card-count {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1;
+  color: #a5b4fc;
+  margin-top: 4px;
+}
+
+/* ===============================
+   RECENT ACTIVITY
+================================ */
+
+.recent-section {
+  margin-top: 32px;
+  padding: 22px;
+  border-radius: 18px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(18, 30, 60, 0.85),
+    rgba(10, 20, 40, 0.85)
+  );
+
+  box-shadow:
+    0 18px 45px rgba(0,0,0,0.6),
+    inset 0 0 0 1px rgba(255,255,255,0.05);
+}
+
+.recent-section h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #eaf1ff;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ===============================
+   ACTIVITY LIST
+================================ */
+
+.activity-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 10px 14px;
+  border-radius: 10px;
+
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    transform 0.2s ease;
+}
+
+.activity-item:not(:last-child) {
+  margin-bottom: 6px;
+}
+
+.activity-item:hover {
+  background: rgba(255,255,255,0.06);
+  transform: translateY(-1px);
+}
+
+/* ===============================
+   ACTIVITY CONTENT
+================================ */
+
+.activity-icon {
+  font-size: 18px;
+  width: 26px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.activity-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.activity-text strong {
+  font-size: 14px;
+  font-weight: 600;
+  color: #eaf1ff;
+}
+
+.activity-meta {
+  font-size: 12px;
+  color: #b6c3ff;
+}
+
+.activity-date {
+  font-size: 11px;
+  color: rgba(200, 210, 230, 0.6);
+}
+
+.activity-action {
+  font-size: 12px;
+  color: #8fd3ff;
+  opacity: 0.8;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.activity-item:hover .activity-action {
+  opacity: 1;
+  transform: translateX(2px);
+}
+
+/* ===============================
+   EMPTY STATE
+================================ */
+
+.empty-activity {
+  text-align: center;
+  font-size: 13px;
+  color: rgba(200, 210, 230, 0.6);
+  padding: 14px 0;
+}
+
+/* ===============================
+   MOBILE TUNING
+================================ */
+
+@media (max-width: 767px) {
+  .dashboard {
+    padding: 20px 16px;
+  }
+}
+/* =====================================
+   MOBILE: PREVENT HAMBURGER OVERLAP
+===================================== */
+
+@media (max-width: 767px) {
+  .dashboard {
+    padding-top: 76px; /* space for hamburger */
+  }
+}
+/* ===============================
+   RECENT ACTIVITY – LOADING FIX
+   (Prevents Jumping)
+================================ */
+
+/* Skeleton container */
+.activity-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+/* Skeleton line */
+.skeleton-line {
+  height: 18px;
+  border-radius: 8px;
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.08),
+    rgba(255,255,255,0.18),
+    rgba(255,255,255,0.08)
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.4s ease infinite;
+}
+
+/* Shimmer animation */
+@keyframes skeletonShimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ===============================
+   RECENT ACTIVITY – FADE IN
+================================ */
+
+.fade-in {
+  animation: fadeInList 0.45s ease forwards;
+}
+
+@keyframes fadeInList {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===============================
+   PREVENT HEIGHT COLLAPSE
+================================ */
+
+.recent-section {
+  min-height: 220px; /* keeps layout stable while loading */
+}
+
+/* ===============================
+   ACTIVITY ITEM TRANSITION
+================================ */
+
+.activity-item {
+  transition:
+    background 0.25s ease,
+    transform 0.25s ease,
+    opacity 0.25s ease;
+}
+
+/* ===============================
+   EMPTY STATE SMOOTHNESS
+================================ */
+
+.empty-activity {
+  animation: fadeInEmpty 0.3s ease forwards;
+}
+
+@keyframes fadeInEmpty {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.7;
+  }
+}
+

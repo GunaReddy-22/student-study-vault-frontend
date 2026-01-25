@@ -1,0 +1,56 @@
+/* ===============================
+   GLOBAL RESET
+================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===============================
+   HTML & BODY FIXES (CRITICAL)
+================================ */
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+
+  /* 🔑 Prevent horizontal scroll */
+  overflow-x: hidden;
+
+  /* 🔑 Remove mobile tap delay / glitches */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ===============================
+   BODY BASE
+================================ */
+
+body {
+  background-color: #0f172a;
+  color: #e5e7eb;
+  font-family: "Segoe UI", system-ui, sans-serif;
+
+  /* 🔑 Important for mobile sidebar */
+  position: relative;
+}
+
+/* ===============================
+   ROOT FIX
+================================ */
+
+#root {
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* ===============================
+   LINKS
+================================ */
+
+a {
+  text-decoration: none;
+  color: inherit;
+}

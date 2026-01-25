@@ -1,0 +1,164 @@
+/* ===============================
+   NOTES PAGE – CLEAN & RESPONSIVE
+================================ */
+
+.notes-page {
+  width: 100%;
+  min-height: 100%;
+  padding: 32px;
+
+  color: #ffffff;
+
+  background:
+    radial-gradient(circle at 15% 10%, rgba(80,140,255,0.18), transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(120,160,255,0.12), transparent 45%),
+    linear-gradient(135deg, #050b1e, #020617);
+
+  animation: fadeInNotes 0.6s ease forwards;
+}
+
+@keyframes fadeInNotes {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===============================
+   HEADER
+================================ */
+
+.dashboard-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+/* ===============================
+   NOTES GRID
+================================ */
+
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+/* ===============================
+   ADD NEW NOTE CARD
+================================ */
+
+.create-note {
+  min-height: 180px;
+
+  border-radius: 18px;
+  border: 2px dashed rgba(255, 255, 255, 0.25);
+
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.06),
+    rgba(255,255,255,0.02)
+  );
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  color: rgba(255,255,255,0.85);
+  cursor: pointer;
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.create-note:hover {
+  transform: translateY(-6px) scale(1.02);
+  border-color: rgba(99,102,241,0.7);
+
+  box-shadow:
+    0 22px 55px rgba(0,0,0,0.65),
+    0 0 0 1px rgba(99,102,241,0.35);
+}
+
+.create-plus {
+  font-size: 36px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: #a5b4fc;
+}
+
+.create-note div:last-child {
+  font-size: 15px;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+/* ===============================
+   MOBILE FIX
+================================ */
+
+@media (max-width: 767px) {
+  .notes-page {
+    padding: 20px 16px;
+  }
+
+  .notes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-header h2 {
+    font-size: 24px;
+  }
+}
+/* ===============================
+   MOBILE – HAMBURGER SAFE OFFSET
+================================ */
+
+@media (max-width: 767px) {
+  .dashboard-header {
+    padding-left: 56px; /* space for ☰ button */
+  }
+}
+/* =====================================================
+   CARD ENTRY ANIMATION (FIX JUMPING ISSUE)
+   Applies when switching pages
+===================================================== */
+
+/* Base state */
+.notes-grid > * {
+  opacity: 0;
+  transform: translateY(16px) scale(0.96);
+  animation: noteCardEnter 0.5s cubic-bezier(.22,.61,.36,1) forwards;
+  will-change: transform, opacity;
+}
+
+/* Stagger effect */
+.notes-grid > *:nth-child(1) { animation-delay: 0.05s; }
+.notes-grid > *:nth-child(2) { animation-delay: 0.10s; }
+.notes-grid > *:nth-child(3) { animation-delay: 0.15s; }
+.notes-grid > *:nth-child(4) { animation-delay: 0.20s; }
+.notes-grid > *:nth-child(5) { animation-delay: 0.25s; }
+.notes-grid > *:nth-child(6) { animation-delay: 0.30s; }
+
+@keyframes noteCardEnter {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =====================================================
+   PERFORMANCE & STABILITY
+===================================================== */
+
+/* Prevent layout shift during animation */
+.notes-grid {
+  contain: layout paint;
+}

@@ -1,0 +1,952 @@
+/* ===============================
+   PAGE
+================================ */
+/* ===============================
+   PAGE (MATCH PUBLIC NOTES)
+================================ */
+.premium-page {
+  padding: 32px;
+  min-height: 100vh;
+  color: #ffffff;
+
+  background:
+    radial-gradient(circle at 20% 10%, rgba(80,140,255,0.18), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(120,160,255,0.12), transparent 45%),
+    linear-gradient(135deg, #050b1e, #020617);
+}
+
+/* ===============================
+   GRID
+================================ */
+.premium-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 26px;
+  margin-top: 26px;
+}
+
+/* ===============================
+   CARD
+================================ */
+.premium-card {
+  position: relative;
+  padding: 22px;
+  border-radius: 18px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(18, 30, 60, 0.95),
+    rgba(10, 20, 40, 0.95)
+  );
+
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(14px);
+
+  box-shadow:
+    0 18px 45px rgba(0,0,0,0.6),
+    inset 0 0 0 1px rgba(255,255,255,0.04);
+
+  cursor: pointer;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.premium-card:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 30px 70px rgba(0,0,0,0.8),
+    0 0 0 1px rgba(99,102,241,0.25);
+}
+
+/* ===============================
+   LOCK ICON
+================================ */
+.lock {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  font-size: 18px;
+  color: #facc15;
+}
+
+/* ===============================
+   TEXT
+================================ */
+.premium-card h3 {
+  font-size: 17px;
+  font-weight: 600;
+  color: #eaf1ff;
+  margin-bottom: 6px;
+}
+
+.subject {
+  font-size: 13px;
+  color: #b6c3ff;
+}
+
+.author {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #9aa4b2;
+}
+
+.price {
+  margin-top: 14px;
+  font-size: 20px;
+  font-weight: 800;
+  color: #8fd3ff;
+}
+
+/* ===============================
+   LOCKED PREVIEW (MODAL)
+================================ */
+.locked-box {
+  padding: 24px;
+  margin: 20px 0;
+
+  text-align: center;
+  border-radius: 14px;
+
+  background: rgba(255,255,255,0.06);
+  border: 1px dashed rgba(255,255,255,0.18);
+
+  font-size: 14px;
+  color: #e5e7eb;
+}
+
+/* ===============================
+   UNLOCK BUTTON
+================================ */
+.unlock-btn {
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.unlock-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(34,197,94,0.45);
+}
+/* =====================================================
+   ULTRA PREMIUM NOTES – VALUE DRIVEN UI
+   (Depth • Glow • Hierarchy • Desire)
+===================================================== */
+
+/* ---------- Page background harmonized ---------- */
+.premium-page {
+  background:
+    radial-gradient(circle at 20% 15%, rgba(80,140,255,0.18), transparent 40%),
+    radial-gradient(circle at 80% 75%, rgba(120,160,255,0.12), transparent 45%),
+    linear-gradient(135deg, #050b1e, #020617);
+}
+
+/* ---------- Grid tightening ---------- */
+.premium-grid {
+  gap: 28px;
+}
+
+/* ---------- Card base enhancement ---------- */
+.premium-card {
+  position: relative;
+  isolation: isolate;
+  transition:
+    transform 0.35s cubic-bezier(.22,.61,.36,1),
+    box-shadow 0.35s cubic-bezier(.22,.61,.36,1);
+}
+
+/* ---------- Soft glow border ---------- */
+.premium-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    140deg,
+    rgba(99,102,241,0.45),
+    rgba(56,189,248,0.25),
+    transparent 60%
+  );
+  opacity: 0;
+  filter: blur(10px);
+  transition: opacity 0.35s ease;
+  z-index: -1;
+}
+
+.premium-card:hover::before {
+  opacity: 0.45;
+}
+
+/* ---------- Hover elevation ---------- */
+.premium-card:hover {
+  transform: translateY(-10px) scale(1.015);
+  box-shadow:
+    0 45px 120px rgba(0,0,0,0.9),
+    0 0 0 1px rgba(99,102,241,0.35);
+}
+
+/* ---------- Lock icon prestige ---------- */
+.lock {
+  background: linear-gradient(135deg, #facc15, #fde68a);
+  color: #020617;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow:
+    0 6px 20px rgba(250,204,21,0.5);
+}
+
+/* ---------- Typography hierarchy ---------- */
+.premium-card h3 {
+  font-size: 16.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-shadow:
+    0 0 20px rgba(99,102,241,0.35);
+}
+
+.premium-card .subject {
+  font-size: 13px;
+  color: #a5b4fc;
+}
+
+.premium-card .author {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  margin-top: 10px;
+
+  font-size: 11.5px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+/* ---------- Price = Value anchor ---------- */
+.price {
+  margin-top: 16px;
+  font-size: 22px;
+  font-weight: 900;
+  color: #8fd3ff;
+  letter-spacing: 0.6px;
+  text-shadow:
+    0 0 18px rgba(56,189,248,0.45);
+}
+
+/* ---------- Locked preview upgrade ---------- */
+.locked-box {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.06),
+      rgba(255,255,255,0.02)
+    );
+  border-radius: 16px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.06),
+    0 18px 60px rgba(0,0,0,0.7);
+}
+
+/* ---------- Unlock button desire ---------- */
+.unlock-btn {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+
+  box-shadow:
+    0 14px 45px rgba(34,197,94,0.55);
+}
+
+.unlock-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow:
+    0 22px 70px rgba(34,197,94,0.75);
+}
+
+/* ---------- Modal harmony ---------- */
+.modal {
+  animation: premiumModalIn 0.45s cubic-bezier(.22,.61,.36,1);
+}
+
+@keyframes premiumModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(22px) scale(0.95);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+/* =====================================================
+   MICRO POLISH LAYER
+   Feel > Looks
+===================================================== */
+
+/* ---------- Smooth everything ---------- */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- Card hover intent (subtle tilt) ---------- */
+.public-note-card,
+.premium-card {
+  transform-style: preserve-3d;
+}
+
+.public-note-card:hover,
+.premium-card:hover {
+  transition-delay: 0s;
+}
+
+/* ---------- Card glow follow (luxury effect) ---------- */
+.public-note-card::after,
+.premium-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(
+      600px circle at var(--x, 50%) var(--y, 50%),
+      rgba(99,102,241,0.12),
+      transparent 40%
+    );
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.public-note-card:hover::after,
+.premium-card:hover::after {
+  opacity: 1;
+}
+
+/* ---------- Soft entry animation for cards ---------- */
+.public-note-card,
+.premium-card {
+  animation: cardFloatIn 0.6s cubic-bezier(.22,.61,.36,1) both;
+}
+
+@keyframes cardFloatIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ---------- Badge pulse (alive but subtle) ---------- */
+.public-badge {
+  position: relative;
+  overflow: hidden;
+}
+
+.public-badge::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.25),
+    transparent
+  );
+  transform: translateX(-120%);
+}
+
+.public-note-card:hover .public-badge::after {
+  animation: badgeShine 1.2s ease;
+}
+
+@keyframes badgeShine {
+  to {
+    transform: translateX(120%);
+  }
+}
+
+/* ---------- Text sharpening on hover ---------- */
+.public-note-card:hover h3,
+.premium-card:hover h3 {
+  letter-spacing: 0.4px;
+}
+
+/* ---------- Button press realism ---------- */
+button:active {
+  transform: scale(0.97);
+}
+
+/* ---------- Inputs focus luxury ---------- */
+input:focus,
+textarea:focus,
+select:focus {
+  box-shadow:
+    0 0 0 2px rgba(99,102,241,0.35),
+    0 8px 30px rgba(0,0,0,0.4);
+}
+
+/* ---------- Modal depth illusion ---------- */
+.modal {
+  box-shadow:
+    0 50px 140px rgba(0,0,0,0.95),
+    inset 0 0 0 1px rgba(255,255,255,0.06);
+}
+
+/* ---------- Modal content breathing ---------- */
+.public-note-content,
+.public-note-image {
+  animation: contentFadeIn 0.45s ease both;
+}
+
+@keyframes contentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Scrollbar premium ---------- */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.04);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(99,102,241,0.6),
+    rgba(56,189,248,0.5)
+  );
+  border-radius: 999px;
+}
+
+/* ---------- Hover hint refinement ---------- */
+.view-hint {
+  transform: translateX(-4px);
+}
+
+.public-note-card:hover .view-hint {
+  transform: translateX(0);
+}
+
+/* ---------- Accessibility polish ---------- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+/* ===============================
+   PREMIUM MODAL ALIGNMENT FIX
+================================ */
+
+/* MODAL CONTAINER */
+.premium-modal {
+  max-width: 520px;
+  width: 100%;
+  max-height: 80vh;
+
+  display: flex;
+  flex-direction: column;
+
+  border-radius: 18px;
+  overflow: hidden; /* 🔑 FIX: hide scrollbar edges */
+
+  background: linear-gradient(
+    180deg,
+    rgba(18, 30, 60, 0.96),
+    rgba(8, 16, 36, 0.96)
+  );
+
+  box-shadow:
+    0 40px 120px rgba(0,0,0,0.9),
+    inset 0 0 0 1px rgba(255,255,255,0.06);
+}
+
+/* CONTENT SCROLL AREA */
+.premium-modal-content {
+  padding: 22px;
+  overflow-y: auto;
+  flex: 1;
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(99,102,241,0.5) transparent;
+}
+
+/* WEBKIT SCROLLBAR */
+.premium-modal-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.premium-modal-content::-webkit-scrollbar-thumb {
+  background: rgba(99,102,241,0.45);
+  border-radius: 10px;
+}
+
+/* LOCKED INFO BOX */
+.locked-box {
+  margin: 18px 0;
+  padding: 18px;
+  border-radius: 14px;
+
+  background: rgba(255,255,255,0.06);
+  border: 1px dashed rgba(255,255,255,0.2);
+
+  text-align: center;
+}
+
+/* FOOTER */
+.premium-modal-footer {
+  padding: 18px;
+  display: flex;
+  gap: 14px;
+
+  border-top: 1px solid rgba(255,255,255,0.08);
+  background: rgba(2,6,23,0.85);
+}
+
+/* FOOTER BUTTONS */
+.premium-modal-footer button {
+  flex: 1;
+  height: 46px;
+  border-radius: 12px;
+  font-weight: 700;
+  border: none;
+}
+
+/* UNLOCK */
+.unlock-btn {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  box-shadow: 0 10px 28px rgba(34,197,94,0.45);
+}
+
+.unlock-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 38px rgba(34,197,94,0.6);
+}
+
+/* CLOSE */
+.close-btn {
+  background: rgba(255,255,255,0.12);
+  color: #e5e7eb;
+}
+/* ===============================
+   PREMIUM NOTE CONTENT – TEXT BUBBLE
+   (Match Public Notes Feel)
+================================ */
+
+/* When premium content is TEXT */
+.premium-content {
+  margin-top: 12px;
+  padding: 18px 20px;
+
+  border-radius: 18px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.08),
+    rgba(255,255,255,0.03)
+  );
+
+  border: 1px solid rgba(255,255,255,0.12);
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.04),
+    0 18px 45px rgba(0,0,0,0.55);
+
+  color: #eaf1ff;
+  font-size: 14px;
+  line-height: 1.65;
+
+  white-space: pre-wrap;
+}
+
+/* Small breathing animation (premium feel) */
+.premium-content {
+  animation: premiumTextFade 0.4s ease both;
+}
+
+@keyframes premiumTextFade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.interaction-bar {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin: 14px 0 18px;
+}
+
+.icon-btn {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  font-size: 18px;
+  cursor: pointer;
+  color: #e5e7eb;
+}
+
+.icon-btn:hover {
+  background: rgba(255,255,255,0.14);
+}
+.icon-btn {
+  position: relative;
+}
+
+/* liked state */
+.icon-btn.liked {
+  background: rgba(239,68,68,0.18);
+  border-color: rgba(239,68,68,0.4);
+}
+
+/* count */
+.like-count {
+  position: absolute;
+  bottom: -6px;
+  right: -6px;
+  background: #ef4444;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 999px;
+}
+.comment-box {
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.comment-box h4 {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.comment-list {
+  max-height: 160px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.comment-item {
+  padding: 6px 0;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.comment-item b {
+  color: #93c5fd;
+  font-size: 12px;
+}
+
+.comment-item p {
+  margin: 2px 0 0;
+  color: #e5e7eb;
+}
+
+.comment-input {
+  display: flex;
+  gap: 8px;
+}
+
+.comment-input input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  color: white;
+}
+
+.comment-input button {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(90deg,#4facfe,#6f7bff);
+  color: white;
+}
+.share-toast {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 14px;
+  font-size: 12px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.75);
+  color: white;
+  animation: fadeUp 0.3s ease;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translate(-50%, 6px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+.note-actions {
+  display: flex;
+  gap: 16px;
+  margin: 14px 0;
+  align-items: center;
+}
+
+.icon {
+  cursor: pointer;
+  font-size: 18px;
+  color: #9aa4b2;
+  transition: 0.2s;
+}
+
+.icon:hover {
+  color: #f87171;
+  transform: scale(1.1);
+}
+
+.comments {
+  margin-top: 12px;
+}
+
+.comment {
+  font-size: 13px;
+  margin-bottom: 6px;
+  color: #e5e7eb;
+}
+
+.comments input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: white;
+}
+/* ===============================
+   PREMIUM NOTE MODAL ALIGN FIX
+   =============================== */
+
+.modal {
+  width: 520px;
+  max-height: 85vh;
+  padding: 24px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+/* Smooth scrollbar – no content cut */
+.modal::-webkit-scrollbar {
+  width: 6px;
+}
+.modal::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+}
+
+/* ===== INTERACTION BAR (LIKE / COMMENT / SHARE) ===== */
+.interaction-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  margin: 10px 0;
+}
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.08);
+}
+
+.icon-btn span {
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+/* ===== NOTE CONTENT BOX ===== */
+.premium-content {
+  background: rgba(255, 255, 255, 0.06);
+  padding: 16px;
+  border-radius: 14px;
+  line-height: 1.6;
+  font-size: 14.5px;
+  text-align: left;
+}
+
+/* ===== COMMENTS SECTION ===== */
+.comment-box {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.comment-item {
+  margin-bottom: 10px;
+}
+
+.comment-input {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.comment-input input {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+}
+
+.comment-input button {
+  padding: 10px 14px;
+  border-radius: 10px;
+}
+
+/* ===== BOTTOM ACTIONS (CLOSE / UNLOCK) ===== */
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.modal-actions button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+}
+/* =========================================
+   FIX: FULL PAGE BACKGROUND (PREMIUM NOTES)
+========================================= */
+
+.premium-notes-page {
+  min-height: calc(100vh - 64px); /* fill viewport under header */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Keep cards top-aligned */
+.premium-notes-grid {
+  flex-grow: 0;
+}
+
+/* Invisible filler to extend background */
+.premium-notes-page::after {
+  content: "";
+  flex-grow: 1;
+}
+/* ===============================
+   PREMIUM PAGE – HEIGHT FIX
+================================ */
+
+.premium-page {
+  min-height: calc(100vh - 64px); /* fills visible area */
+  display: flex;
+  flex-direction: column;
+}
+/* ===============================
+   PREMIUM PAGE TRANSITION
+================================ */
+
+.premium-page {
+  animation: premiumFade 0.6s ease forwards;
+}
+
+@keyframes premiumFade {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* ===============================
+   EMPTY STATE – PREMIUM NOTES
+================================ */
+
+.empty-state {
+  margin-top: 80px;
+  text-align: center;
+  color: #c7d2fe;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+
+  animation: emptyFade 0.5s ease forwards;
+}
+
+.empty-icon {
+  font-size: 48px;
+  opacity: 0.9;
+}
+
+.empty-state h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #eaf1ff;
+}
+
+.empty-state p {
+  font-size: 14px;
+  color: #9aa4b2;
+  line-height: 1.6;
+  max-width: 320px;
+}
+
+@keyframes emptyFade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

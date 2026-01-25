@@ -1,0 +1,212 @@
+/* ================================
+   ROOT WRAPPER
+================================ */
+.handwriting-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  height: 70vh;
+  overflow: hidden; /* 🔥 IMPORTANT */
+}
+
+/* ================================
+   TOOLBAR (NO SCROLL, NO CLIP)
+================================ */
+.handwriting-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 100; /* 🔥 ABOVE EVERYTHING */
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  padding: 12px 14px;
+  border-radius: 16px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.08),
+    rgba(255,255,255,0.02)
+  );
+
+  border: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(14px);
+
+  overflow: visible; /* 🔥 KEY FIX */
+}
+
+/* ================================
+   COLOR PICKER
+================================ */
+.colors {
+  display: flex;
+  gap: 10px;
+}
+
+.color-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+
+  border: 2px solid rgba(255,255,255,0.6);
+  box-shadow:
+    inset 0 0 0 2px rgba(0,0,0,0.45),
+    0 2px 6px rgba(0,0,0,0.4);
+
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.color-dot:hover {
+  transform: scale(1.25);
+  box-shadow:
+    0 0 12px rgba(255,255,255,0.6),
+    inset 0 0 0 2px rgba(0,0,0,0.45);
+}
+
+/* ================================
+   PEN / ERASER BUTTONS
+================================ */
+.handwriting-toolbar button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 8px 16px;
+  border-radius: 12px;
+  border: none;
+
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+
+  background: rgba(255,255,255,0.1);
+  color: white;
+
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.handwriting-toolbar button:hover {
+  background: rgba(255,255,255,0.2);
+  transform: translateY(-1px);
+}
+
+/* ACTIVE TOOL */
+.handwriting-toolbar button[style*="linear-gradient"] {
+  box-shadow:
+    0 8px 22px rgba(0,0,0,0.45),
+    inset 0 0 0 1px rgba(255,255,255,0.35);
+}
+
+/* ================================
+   THICKNESS DROPDOWN (FIXED)
+================================ */
+.handwriting-toolbar select {
+  appearance: none;
+  position: relative;
+  z-index: 200; /* 🔥 ABOVE TOOLBAR */
+
+  padding: 8px 38px 8px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.25);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.12),
+      rgba(255,255,255,0.04)
+    ),
+    url("data:image/svg+xml,%3Csvg width='14' height='14' viewBox='0 0 24 24' fill='white' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5'/%3E%3C/svg%3E")
+    no-repeat right 12px center;
+
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.handwriting-toolbar select:focus {
+  outline: none;
+  border-color: #4dabf7;
+  box-shadow: 0 0 0 3px rgba(77,171,247,0.35);
+}
+
+/* DROPDOWN OPTIONS */
+.handwriting-toolbar option {
+  background: #0b1226;
+  color: white;
+  font-weight: 600;
+}
+
+/* ================================
+   SCROLLABLE CANVAS AREA
+================================ */
+.handwriting-canvas {
+  flex: 1;
+  width: 100%;
+  height: 900px;
+
+  background: #0b1226;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.1);
+  cursor: crosshair;
+}
+
+/* ================================
+   CANVAS SCROLL ONLY
+================================ */
+.handwriting-wrapper canvas {
+  display: block;
+}
+
+/* ================================
+   BOTTOM ACTION BAR
+================================ */
+.handwriting-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+
+  display: flex;
+  gap: 12px;
+
+  padding: 12px 0;
+  background: linear-gradient(
+    180deg,
+    rgba(11,18,38,0.85),
+    rgba(11,18,38,1)
+  );
+}
+
+.handwriting-actions button {
+  flex: 1;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: none;
+
+  font-weight: 700;
+  cursor: pointer;
+
+  background: rgba(255,255,255,0.12);
+  color: white;
+
+  transition: all 0.2s ease;
+}
+
+.handwriting-actions button:hover {
+  background: rgba(255,255,255,0.22);
+  transform: translateY(-1px);
+}
+
+/* DONE BUTTON */
+.handwriting-actions .save {
+  background: linear-gradient(135deg, #4dabf7, #748ffc);
+}
+
+.handwriting-actions .save:hover {
+  background: linear-gradient(135deg, #5cb3ff, #8598ff);
+}
+
