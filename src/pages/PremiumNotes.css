@@ -996,3 +996,46 @@ select:focus {
     opacity: 0.85;
   }
 }
+/* =====================================
+   MOBILE ALIGNMENT FIX – PREMIUM NOTES
+   (REAL CLASSES)
+===================================== */
+@media (max-width: 768px) {
+
+  /* Page padding tighter */
+  .premium-page {
+    padding: 16px 14px;
+  }
+
+  /* Force single centered column */
+  .premium-grid {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  /* Card centered & full width */
+  .premium-card {
+    width: 100%;
+    max-width: 92vw;
+    margin: 0 auto;
+  }
+
+  /* Prevent internal overflow */
+  .premium-card * {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Text balance */
+  .premium-card h3 {
+    font-size: 16px;
+  }
+
+  .price {
+    font-size: 22px;
+  }
+
+  .author {
+    font-size: 12px;
+  }
+}
