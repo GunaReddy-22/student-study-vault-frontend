@@ -149,3 +149,22 @@
     display: none;
   }
 }
+/* ===== MOBILE FIX : LOGOUT VISIBILITY ===== */
+@media (max-width: 768px) {
+  .sidebar {
+    height: 100dvh !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .sidebar-menu {
+    flex: 1 1 auto !important;
+    overflow-y: auto !important;
+  }
+
+  .sidebar-logout {
+    margin-top: auto !important;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+  }
+}

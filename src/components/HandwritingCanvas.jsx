@@ -10,17 +10,26 @@ export default function HandwritingCanvas({ onSave, onClose, initialImage }) {
   const [lineWidth, setLineWidth] = useState(3);
   const [mode, setMode] = useState("pen"); // pen | eraser
 
-  /* INIT CANVAS */
+  /* INIT CANVAS (🔥 MOBILE SAFE) */
   useEffect(() => {
     const canvas = canvasRef.current;
-    canvas.width = 700;
-    canvas.height = 1200;
-
     const ctx = canvas.getContext("2d");
-    ctx.lineCap = "round";
-    ctx.strokeStyle = color;
-    ctx.lineWidth = lineWidth;
-    ctx.globalCompositeOperation = "source-over";
+
+    const resizeCanvas = () => {
+      const ratio = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+
+      canvas.width = rect.width * ratio;
+      canvas.height = rect.height * ratio;
+
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      ctx.lineCap = "round";
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lineWidth;
+      ctx.globalCompositeOperation = "source-over";
+    };
+
+    resizeCanvas();
     ctxRef.current = ctx;
 
     if (initialImage) {
@@ -30,6 +39,9 @@ export default function HandwritingCanvas({ onSave, onClose, initialImage }) {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       };
     }
+
+    window.addEventListener("resize", resizeCanvas);
+    return () => window.removeEventListener("resize", resizeCanvas);
   }, [initialImage]);
 
   /* UPDATE PEN SETTINGS */
@@ -37,46 +49,66 @@ export default function HandwritingCanvas({ onSave, onClose, initialImage }) {
     if (!ctxRef.current) return;
     ctxRef.current.strokeStyle = color;
     ctxRef.current.lineWidth = lineWidth;
-    ctxRef.current.globalCompositeOperation = "source-over";
   }, [color, lineWidth]);
+
+  /* 🔥 GET POSITION (MOUSE + TOUCH) */
+  const getPos = (e) => {
+    const rect = canvasRef.current.getBoundingClientRect();
+
+    if (e.touches) {
+      return {
+        x: e.touches[0].clientX - rect.left,
+        y: e.touches[0].clientY - rect.top,
+      };
+    }
+
+    return {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    };
+  };
 
   /* DRAWING */
   const startDrawing = (e) => {
-  setDrawing(true);
-  const ctx = ctxRef.current;
+    e.preventDefault();
+    setDrawing(true);
 
-  ctx.beginPath();
-  ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+    const ctx = ctxRef.current;
+    const { x, y } = getPos(e);
 
-  if (mode === "eraser") {
-    ctx.globalCompositeOperation = "destination-out";
-    ctx.lineWidth = lineWidth * 4; // 🔥 STRONG eraser
-  } else {
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+
+    if (mode === "eraser") {
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.lineWidth = lineWidth * 4;
+    } else {
+      ctx.globalCompositeOperation = "source-over";
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lineWidth;
+    }
+  };
+
+  const draw = (e) => {
+    if (!drawing) return;
+    e.preventDefault();
+
+    const ctx = ctxRef.current;
+    const { x, y } = getPos(e);
+
+    ctx.lineTo(x, y);
+    ctx.stroke();
+  };
+
+  const stopDrawing = (e) => {
+    if (!drawing) return;
+    e.preventDefault();
+
+    setDrawing(false);
+    const ctx = ctxRef.current;
+    ctx.closePath();
     ctx.globalCompositeOperation = "source-over";
-    ctx.strokeStyle = color;
-    ctx.lineWidth = lineWidth;
-  }
-};
-
-const draw = (e) => {
-  if (!drawing) return;
-
-  const ctx = ctxRef.current;
-  ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-  ctx.stroke();
-};
-
-
-  const stopDrawing = () => {
-  if (!drawing) return;
-  setDrawing(false);
-
-  const ctx = ctxRef.current;
-  ctx.closePath();
-
-  // 🔥 RESET MODE AFTER STROKE
-  ctx.globalCompositeOperation = "source-over";
-};
+  };
 
   const clearCanvas = () => {
     ctxRef.current.clearRect(
@@ -89,7 +121,7 @@ const draw = (e) => {
 
   const doneCanvas = () => {
     const image = canvasRef.current.toDataURL("image/png");
-    onSave(image); // 👈 return image to NoteModal
+    onSave(image);
   };
 
   return (
@@ -111,41 +143,8 @@ const draw = (e) => {
         </div>
 
         <div style={{ display: "flex", gap: "8px" }}>
-          <button
-            onClick={() => setMode("pen")}
-            style={{
-              padding: "6px 10px",
-              borderRadius: "8px",
-              border: "none",
-              cursor: "pointer",
-              background:
-                mode === "pen"
-                  ? "linear-gradient(135deg, #4dabf7, #748ffc)"
-                  : "rgba(255,255,255,0.1)",
-              color: "white",
-              fontWeight: 600,
-            }}
-          >
-            ✏️ Pen
-          </button>
-
-          <button
-            onClick={() => setMode("eraser")}
-            style={{
-              padding: "6px 10px",
-              borderRadius: "8px",
-              border: "none",
-              cursor: "pointer",
-              background:
-                mode === "eraser"
-                  ? "linear-gradient(135deg, #ff6b6b, #fa5252)"
-                  : "rgba(255,255,255,0.1)",
-              color: "white",
-              fontWeight: 600,
-            }}
-          >
-            🧽 Eraser
-          </button>
+          <button onClick={() => setMode("pen")}>✏️ Pen</button>
+          <button onClick={() => setMode("eraser")}>🧽 Eraser</button>
 
           <select
             value={lineWidth}
@@ -166,6 +165,9 @@ const draw = (e) => {
         onMouseMove={draw}
         onMouseUp={stopDrawing}
         onMouseLeave={stopDrawing}
+        onTouchStart={startDrawing}
+        onTouchMove={draw}
+        onTouchEnd={stopDrawing}
       />
 
       {/* ACTIONS */}
@@ -179,9 +181,3 @@ const draw = (e) => {
     </div>
   );
 }
-
-
-
-
-
-

@@ -209,4 +209,9 @@
 .handwriting-actions .save:hover {
   background: linear-gradient(135deg, #5cb3ff, #8598ff);
 }
+.handwriting-canvas {
+  touch-action: none;
+}
+
+
 
