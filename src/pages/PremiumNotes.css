@@ -1039,3 +1039,21 @@ select:focus {
     font-size: 12px;
   }
 }
+/* =====================================
+   MOBILE FIX – PREMIUM HEADER OFFSET
+===================================== */
+@media (max-width: 768px) {
+
+  /* Push whole premium page content down */
+  .premium-page {
+    padding-top: 72px; /* ⬅️ creates space below hamburger */
+  }
+
+  /* Extra breathing for title block */
+  .premium-page h1,
+  .premium-page h2,
+  .premium-page .page-title {
+    margin-top: 12px;
+  }
+
+}
