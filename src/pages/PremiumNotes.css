@@ -950,3 +950,49 @@ select:focus {
     transform: translateY(0);
   }
 }
+/* ============================
+   MOBILE FIX – PREMIUM NOTES
+   ============================ */
+@media (max-width: 768px) {
+  .premium-notes-container {
+    padding: 12px;
+  }
+
+  .premium-note-card {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto 16px auto;
+    box-sizing: border-box;
+  }
+
+  .premium-note-card-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .premium-note-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .premium-badge {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    white-space: nowrap;
+  }
+
+  .premium-note-price {
+    font-size: 20px;
+    margin-top: 6px;
+  }
+
+  .premium-note-author {
+    margin-top: 4px;
+    font-size: 13px;
+    opacity: 0.85;
+  }
+}
