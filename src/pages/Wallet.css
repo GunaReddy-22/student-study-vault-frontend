@@ -1,0 +1,308 @@
+.wallet-page {
+  padding: 32px;
+  color: #fff;
+  min-height: 100vh;
+
+  background:
+    radial-gradient(circle at 20% 10%, rgba(80,140,255,0.18), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(120,160,255,0.12), transparent 45%),
+    linear-gradient(135deg, #050b1e, #020617);
+}
+
+.wallet-page h2 {
+  font-size: 26px;
+  margin-bottom: 20px;
+}
+
+/* BALANCE CARD */
+.wallet-balance-card {
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.08),
+    rgba(255,255,255,0.03)
+  );
+  border-radius: 18px;
+  padding: 22px;
+  max-width: 420px;
+
+  box-shadow:
+    0 20px 50px rgba(0,0,0,0.6),
+    inset 0 0 0 1px rgba(255,255,255,0.06);
+}
+
+.balance-label {
+  font-size: 14px;
+  color: #9aa4b2;
+}
+
+.balance-amount {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 10px 0 18px;
+  color: #8fd3ff;
+}
+
+/* ADD MONEY */
+.add-money {
+  display: flex;
+  gap: 10px;
+}
+
+.add-money input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  background: rgba(255,255,255,0.08);
+  color: white;
+}
+
+.add-money button {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+}
+
+/* TRANSACTIONS */
+.wallet-transactions {
+  margin-top: 32px;
+  max-width: 600px;
+}
+
+.wallet-transactions h3 {
+  margin-bottom: 12px;
+}
+
+.wallet-transactions ul {
+  list-style: none;
+  padding: 0;
+}
+
+.tx {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 14px 16px;
+  margin-bottom: 10px;
+
+  border-radius: 12px;
+  background: rgba(255,255,255,0.05);
+}
+
+.tx-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tx-left span {
+  font-size: 12px;
+  color: #9aa4b2;
+}
+
+.tx-right {
+  font-weight: 700;
+}
+
+.tx.credit .tx-right {
+  color: #22c55e;
+}
+
+.tx.debit .tx-right {
+  color: #ef4444;
+}
+
+.empty {
+  color: #9aa4b2;
+  font-size: 14px;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .wallet-page {
+    padding: 20px 16px;
+  }
+
+  .wallet-balance-card {
+    width: 100%;
+  }
+}
+@media (max-width: 420px) {
+  .add-money {
+    flex-direction: column;
+  }
+
+  .add-money button {
+    width: 100%;
+  }
+}
+/* =====================================================
+   WALLET – PREMIUM EXPERIENCE ADD-ON
+   (Depth • Motion • Glow • Continuity)
+===================================================== */
+
+/* ---------- Page entry (premium feel) ---------- */
+.wallet-page {
+  animation: walletFadeIn 0.6s cubic-bezier(.22,.61,.36,1);
+}
+
+@keyframes walletFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* ---------- Balance card luxury ---------- */
+.wallet-balance-card {
+  position: relative;
+  overflow: hidden;
+
+  transition:
+    transform 0.35s cubic-bezier(.22,.61,.36,1),
+    box-shadow 0.35s cubic-bezier(.22,.61,.36,1);
+}
+
+/* soft glow border */
+.wallet-balance-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+
+  background: linear-gradient(
+    140deg,
+    rgba(99,102,241,0.5),
+    rgba(56,189,248,0.25),
+    transparent 60%
+  );
+
+  opacity: 0.35;
+  filter: blur(14px);
+  z-index: -1;
+}
+
+.wallet-balance-card:hover {
+  transform: translateY(-6px) scale(1.015);
+  box-shadow:
+    0 35px 90px rgba(0,0,0,0.85),
+    0 0 0 1px rgba(99,102,241,0.35);
+}
+
+/* ---------- Balance pulse (subtle premium life) ---------- */
+.balance-amount {
+  text-shadow:
+    0 0 18px rgba(56,189,248,0.45);
+}
+
+/* ---------- Transactions container (premium feed) ---------- */
+.wallet-transactions {
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.03),
+    rgba(255,255,255,0.01)
+  );
+
+  padding: 18px;
+  border-radius: 18px;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.06),
+    0 22px 70px rgba(0,0,0,0.7);
+}
+
+/* ---------- Transaction cards motion ---------- */
+.tx {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+
+.tx:hover {
+  transform: translateX(6px);
+  background: rgba(255,255,255,0.08);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+}
+
+/* ---------- Empty state premium ---------- */
+.empty {
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 14px;
+  color: #c7d2fe;
+  opacity: 0.85;
+}
+
+/* ---------- Smooth scrollbar (matches notes) ---------- */
+.wallet-transactions::-webkit-scrollbar {
+  width: 8px;
+}
+
+.wallet-transactions::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.04);
+}
+
+.wallet-transactions::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(99,102,241,0.6),
+    rgba(56,189,248,0.5)
+  );
+  border-radius: 999px;
+}
+
+/* ---------- Mobile premium spacing ---------- */
+@media (max-width: 768px) {
+  .wallet-balance-card {
+    margin-bottom: 22px;
+  }
+
+  .wallet-transactions {
+    margin-top: 26px;
+    padding: 16px;
+  }
+}
+
+/* ---------- Reduce motion support ---------- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+/* ===============================
+   WALLET HEADING SPACING ADD-ON
+================================ */
+
+/* Push heading down slightly */
+.wallet-page h2 {
+  margin-top: 12px;   /* desktop */
+}
+
+/* Mobile adjustment */
+@media (max-width: 768px) {
+  .wallet-page h2 {
+    margin-top: 18px;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 420px) {
+  .wallet-page h2 {
+    margin-top: 22px;
+  }
+}

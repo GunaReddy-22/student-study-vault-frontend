@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import PublicNotes from "./pages/PublicNotes";
 import PremiumNotes from "./pages/PremiumNotes";
+import Wallet from "./pages/Wallet";
 
 import "./App.css";
 
@@ -85,6 +86,10 @@ function App() {
           <Route
             path="/premium"
             element={isAuth ? <PremiumNotes /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/wallet"
+            element={isAuth ? <Wallet /> : <Navigate to="/login" />}
           />
 
           {/* DEFAULT */}

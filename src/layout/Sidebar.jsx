@@ -37,6 +37,10 @@ function Sidebar({ setIsAuth, isOpen = true, onClose }) {
         <NavLink to="/premium" onClick={onClose}>
           Premium Notes
         </NavLink>
+        <NavLink to="/wallet" onClick={onClose}>
+          Wallet
+        </NavLink>
+
       </nav>
 
       <button className="logout-btn" onClick={logout}>

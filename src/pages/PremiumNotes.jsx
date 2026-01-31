@@ -134,7 +134,25 @@ export default function PremiumNotes() {
     } catch {
       alert("Unlock failed");
     }
-  };
+  }
+  const buyPremiumNote = async () => {
+  try {
+    const res = await api.post(`/notes/${activeNote._id}/buy`);
+
+    alert("✅ Note purchased successfully!");
+
+    // refresh wallet balance (optional global later)
+    setHasAccess(true);
+
+    // refetch access so content unlocks
+    checkAccess(activeNote._id);
+  } catch (err) {
+    const msg =
+      err.response?.data?.message || "Purchase failed";
+
+    alert(msg);
+  }
+};;
 
   return (
     <div className="premium-page">
@@ -251,8 +269,8 @@ export default function PremiumNotes() {
             {/* ===== ACTIONS ===== */}
             <div className="modal-actions">
               {!hasAccess && (
-                <button className="unlock-btn" onClick={unlockNote}>
-                  Unlock for ₹{activeNote.price}
+                <button className="unlock-btn" onClick={buyPremiumNote}>
+                  Buy for ₹{activeNote.price}
                 </button>
               )}
               <button className="cancel" onClick={() => setActiveNote(null)}>
