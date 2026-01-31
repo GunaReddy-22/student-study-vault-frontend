@@ -1057,32 +1057,3 @@ select:focus {
   }
 
 }
-/* =====================================
-   MOBILE POLISH – PREMIUM HEADER
-===================================== */
-@media (max-width: 768px) {
-
-  /* Center title + subtitle */
-  .premium-page h1,
-  .premium-page h2 {
-    text-align: center;
-    width: 100%;
-  }
-
-  .premium-page p {
-    text-align: center;
-    margin-top: 6px;
-    opacity: 0.9;
-  }
-
-  /* Header block spacing */
-  .premium-page > :first-child {
-    margin-bottom: 22px;
-  }
-
-  /* Make card sit nicely under header */
-  .premium-grid {
-    margin-top: 10px;
-  }
-
-}
