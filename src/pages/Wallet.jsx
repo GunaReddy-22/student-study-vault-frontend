@@ -50,6 +50,56 @@ export default function Wallet() {
     }
   };
 
+  const handleRazorpayPayment = async () => {
+  if (!amount || Number(amount) <= 0) {
+    alert("Enter valid amount");
+    return;
+  }
+
+  try {
+    // 1️⃣ Create order
+    const { data } = await api.post("/wallet/create-order", {
+      amount: Number(amount),
+    });
+
+    const options = {
+      key: data.key,
+      amount: data.amount,
+      currency: data.currency,
+      name: "StudyVault",
+      description: "Wallet Top-up",
+      order_id: data.orderId,
+
+      handler: async function (response) {
+        try {
+          // 2️⃣ Verify payment
+          const verifyRes = await api.post("/wallet/verify-payment", {
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+            amount: Number(amount),
+          });
+
+          alert("Payment successful 🎉");
+          setAmount("");
+          fetchWallet();
+        } catch (err) {
+          alert("Payment verification failed");
+        }
+      },
+
+      theme: {
+        color: "#4f46e5",
+      },
+    };
+
+    const razorpay = new window.Razorpay(options);
+    razorpay.open();
+  } catch (err) {
+    alert("Payment initiation failed");
+  }
+};
+
   if (loading) {
     return <div className="wallet-page">Loading wallet...</div>;
   }
@@ -70,7 +120,7 @@ export default function Wallet() {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
           />
-          <button onClick={addDemoMoney}>Add Money</button>
+          <button onClick={handleRazorpayPayment}>Add Money</button>
         </div>
       </div>
 
