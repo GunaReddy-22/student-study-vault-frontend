@@ -26,6 +26,19 @@ function App() {
     location.pathname === "/login" ||
     location.pathname === "/register";
 
+
+  useEffect(() => {
+  const handleStorageChange = () => {
+    setIsAuth(Boolean(localStorage.getItem("token")));
+  };
+
+  window.addEventListener("storage", handleStorageChange);
+
+  return () => {
+    window.removeEventListener("storage", handleStorageChange);
+  };
+}, []);
+
   // 🔐 Disable right click (global)
   /* useEffect(() => {
     const disableRightClick = (e) => e.preventDefault();
