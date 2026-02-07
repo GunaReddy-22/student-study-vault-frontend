@@ -1,4 +1,4 @@
-import "./referenceBookSkeleton.css";
+import "./ReferenceBookSkeleton.css";
 
 export default function ReferenceBookSkeleton() {
   return (
