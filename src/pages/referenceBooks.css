@@ -1,0 +1,228 @@
+.reference-page {
+  padding: 32px;
+  min-height: 100vh;
+  color: white;
+
+  background:
+    radial-gradient(circle at 20% 10%, rgba(80,140,255,0.15), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(120,160,255,0.12), transparent 45%),
+    linear-gradient(135deg, #050b1e, #020617);
+
+  /* NEW */
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* =========================
+   PAGE TITLE
+========================= */
+.reference-page h2 {
+  font-size: 26px;
+  margin-bottom: 28px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+
+  /* subtle glow */
+  text-shadow: 0 0 12px rgba(100,140,255,0.35);
+  position: relative;
+}
+
+/* underline divider */
+.reference-page h2::after {
+  content: "";
+  display: block;
+  width: 120px;
+  height: 2px;
+  margin-top: 10px;
+  background: linear-gradient(
+    to right,
+    #6f8cff,
+    rgba(111,140,255,0.1)
+  );
+}
+
+/* =========================
+   GRID
+========================= */
+.ref-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 24px;
+  align-items: stretch;
+}
+
+/* =========================
+   LOADING STATE
+========================= */
+.loading {
+  color: #9aa4b2;
+  text-align: center;
+  margin-top: 120px;
+  font-size: 15px;
+  letter-spacing: 0.3px;
+
+  animation: fadePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes fadePulse {
+  0% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0.4; }
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+  .reference-page {
+    padding: 20px;
+  }
+
+  .reference-page h2 {
+    font-size: 22px;
+  }
+
+  .ref-grid {
+    gap: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .reference-page {
+    padding: 16px;
+  }
+
+  .reference-page h2 {
+    font-size: 20px;
+  }
+}
+/* ===============================
+   HEADER (TITLE + ADD BUTTON)
+================================ */
+
+.reference-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+/* ===============================
+   ADD BOOK BUTTON (DEV)
+================================ */
+
+.add-book-btn {
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: none;
+
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+
+  box-shadow: 0 12px 30px rgba(34,197,94,0.45);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.add-book-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 45px rgba(34,197,94,0.65);
+}
+
+/* ===============================
+   MOBILE ADJUSTMENT
+================================ */
+
+@media (max-width: 768px) {
+  .reference-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .add-book-btn {
+    width: 100%;
+  }
+}
+/* ==================================================
+   ADDONS: EMPTY STATE + DEV ADD BOOK MODAL
+================================================== */
+
+/* ---------- EMPTY STATE ---------- */
+.empty-state {
+  margin-top: 80px;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 15px;
+  letter-spacing: 0.3px;
+  opacity: 0.9;
+}
+
+/* ---------- DEV MODAL OVERLAY ---------- */
+.dev-modal-test {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.85);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* ---------- DEV MODAL BOX ---------- */
+.dev-modal-box {
+  background: linear-gradient(
+    135deg,
+    rgba(15, 23, 42, 0.95),
+    rgba(2, 6, 23, 0.95)
+  );
+  border-radius: 18px;
+  padding: 28px;
+  width: 100%;
+  max-width: 420px;
+  color: white;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+  animation: modalPop 0.25s ease;
+}
+
+@keyframes modalPop {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.dev-modal-box h3 {
+  margin-bottom: 18px;
+  font-size: 18px;
+}
+
+.dev-modal-box button {
+  margin-top: 16px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #ef4444;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+.reader-section {
+  display: flex;
+  justify-content: center;
+}
+
+/* ---------- ADD BOOK BUTTON SAFE ---------- */
+.add-book-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

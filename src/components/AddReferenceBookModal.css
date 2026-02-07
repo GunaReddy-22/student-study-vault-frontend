@@ -1,0 +1,73 @@
+.dev-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.dev-modal {
+  width: 420px;
+  background: linear-gradient(180deg, #0b1226, #050b1e);
+  border-radius: 18px;
+  padding: 24px;
+  color: white;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+}
+
+.dev-modal h3 {
+  margin-bottom: 16px;
+}
+
+.dev-modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dev-modal input,
+.dev-modal textarea {
+  background: rgba(255,255,255,0.08);
+  border: none;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: white;
+}
+
+.dev-modal textarea {
+  resize: none;
+  height: 80px;
+}
+
+.dev-modal label {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.modal-actions button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modal-actions button:first-child {
+  background: #334155;
+  color: white;
+}
+
+.modal-actions button:last-child {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+}

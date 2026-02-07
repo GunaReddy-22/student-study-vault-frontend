@@ -1,0 +1,256 @@
+.book-details-page {
+  width: 100%;
+  max-width: 100%;
+  padding: 32px;
+
+  /* IMPORTANT */
+  overflow-x: hidden;
+
+  background:
+    radial-gradient(circle at 15% 10%, rgba(80,140,255,0.18), transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(120,160,255,0.14), transparent 50%),
+    linear-gradient(135deg, #050b1e, #020617);
+
+  color: white;
+}
+
+/* =========================
+   MAIN GLASS CARD
+========================= */
+.book-glass {
+  max-width: 1100px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 36px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.08),
+    rgba(255,255,255,0.02)
+  );
+
+  border-radius: 28px;
+  padding: 28px;
+
+  box-shadow:
+    0 40px 100px rgba(0,0,0,0.85),
+    inset 0 0 0 1px rgba(255,255,255,0.06);
+
+  animation: fadeUp 0.6s ease;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* =========================
+   LEFT
+========================= */
+.book-left img {
+  width: 100%;
+  height: 480px;
+  object-fit: cover;
+  border-radius: 22px;
+
+  box-shadow: 0 30px 70px rgba(0,0,0,0.8);
+}
+
+/* =========================
+   RIGHT
+========================= */
+.book-right h1 {
+  font-size: 34px;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+
+.author {
+  font-size: 15px;
+  color: #9aa4b2;
+  margin-bottom: 16px;
+}
+
+.badges {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.badges span {
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(99,102,241,0.25);
+  color: #c7d2fe;
+}
+
+.description {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #d1d5db;
+  margin-bottom: 26px;
+}
+
+/* =========================
+   PRICE + BUY
+========================= */
+.price-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.price {
+  font-size: 36px;
+  font-weight: 800;
+  color: #8fd3ff;
+  text-shadow: 0 0 18px rgba(56,189,248,0.45);
+}
+
+.buy-btn {
+  padding: 14px 28px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 15px;
+
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+
+  box-shadow: 0 20px 40px rgba(34,197,94,0.45);
+  transition: all 0.3s ease;
+}
+
+.buy-btn:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 28px 60px rgba(34,197,94,0.7);
+}
+
+.buy-btn:disabled {
+  background: linear-gradient(135deg, #475569, #334155);
+  opacity: 0.8;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* =========================
+   INFO STRIP
+========================= */
+.info-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+
+  background: rgba(255,255,255,0.04);
+  padding: 16px;
+  border-radius: 16px;
+
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+}
+
+.info-strip div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-strip strong {
+  font-size: 13px;
+  color: #9aa4b2;
+}
+
+.info-strip span {
+  font-size: 14px;
+  color: #e5e7eb;
+}
+
+/* =========================
+   READER SECTION (ONLY LAYOUT)
+========================= */
+.reader-section {
+  width: 100%;
+  max-width: 900px;   /* SAME AS PDF */
+  margin: 48px auto 0;
+  padding-top: 32px;
+  border-top: 1px dashed rgba(255,255,255,0.12);
+}
+
+/* LOCKED STATE */
+.locked-box {
+  padding: 48px;
+  border-radius: 20px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+
+  background: linear-gradient(
+    135deg,
+    rgba(239,68,68,0.14),
+    rgba(239,68,68,0.05)
+  );
+
+  color: #fecaca;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(239,68,68,0.25),
+    0 25px 60px rgba(0,0,0,0.7);
+}
+
+.locked-box::before {
+  content: "🔐";
+  display: block;
+  font-size: 48px;
+  margin-bottom: 14px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 900px) {
+  .book-glass {
+    grid-template-columns: 1fr;
+  }
+
+  .book-left img {
+    height: 420px;
+  }
+}
+
+@media (max-width: 768px) {
+  .book-right h1 {
+    font-size: 28px;
+  }
+
+  .price {
+    font-size: 30px;
+  }
+
+  .reader-section {
+    width: 100%;
+    margin: 24px auto 0;
+    padding-top: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .book-details-page {
+    padding: 20px 16px;
+  }
+
+  .reader-section {
+    margin-top: 24px;
+    padding-top: 24px;
+  }
+}

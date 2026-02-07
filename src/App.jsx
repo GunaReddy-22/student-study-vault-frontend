@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 
 import Sidebar from "./layout/Sidebar";
@@ -9,6 +9,8 @@ import Register from "./pages/Register";
 import PublicNotes from "./pages/PublicNotes";
 import PremiumNotes from "./pages/PremiumNotes";
 import Wallet from "./pages/Wallet";
+import ReferenceBooks from "./pages/ReferenceBooks";
+import ReferenceBookDetails from "./pages/ReferenceBookDetails";
 
 import "./App.css";
 
@@ -24,20 +26,27 @@ function App() {
     location.pathname === "/login" ||
     location.pathname === "/register";
 
+  // 🔐 Disable right click (global)
+  /* useEffect(() => {
+    const disableRightClick = (e) => e.preventDefault();
+    document.addEventListener("contextmenu", disableRightClick);
+
+    return () => {
+      document.removeEventListener("contextmenu", disableRightClick);
+    };
+  }, []); */
+
   return (
     <div className="app">
-      {/* ☰ Hamburger — MOBILE ONLY */}
       {isAuth && !hideSidebar && !sidebarOpen && (
         <button
           className="hamburger"
           onClick={() => setSidebarOpen(true)}
-          aria-label="Open menu"
         >
           ☰
         </button>
       )}
 
-      {/* Overlay — ONLY when sidebar open */}
       {sidebarOpen && (
         <div
           className="sidebar-overlay"
@@ -45,7 +54,6 @@ function App() {
         />
       )}
 
-      {/* Sidebar */}
       {isAuth && !hideSidebar && (
         <Sidebar
           setIsAuth={setIsAuth}
@@ -54,10 +62,8 @@ function App() {
         />
       )}
 
-      {/* MAIN CONTENT */}
       <main className="content">
         <Routes>
-          {/* AUTH ROUTES */}
           <Route
             path="/login"
             element={
@@ -70,7 +76,6 @@ function App() {
           />
           <Route path="/register" element={<Register />} />
 
-          {/* PROTECTED ROUTES */}
           <Route
             path="/dashboard"
             element={isAuth ? <Dashboard /> : <Navigate to="/login" />}
@@ -91,8 +96,17 @@ function App() {
             path="/wallet"
             element={isAuth ? <Wallet /> : <Navigate to="/login" />}
           />
+          <Route
+            path="/reference-books"
+            element={isAuth ? <ReferenceBooks /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/reference-books/:id"
+            element={
+              isAuth ? <ReferenceBookDetails /> : <Navigate to="/login" />
+            }
+          />
 
-          {/* DEFAULT */}
           <Route path="/" element={<Navigate to="/login" />} />
         </Routes>
       </main>

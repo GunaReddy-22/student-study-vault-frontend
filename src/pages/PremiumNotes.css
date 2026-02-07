@@ -1057,3 +1057,327 @@ select:focus {
   }
 
 }
+/* ===============================
+   FIX: PREMIUM SUBJECT CHIP (DEPLOYED LOOK)
+   DO NOT MOVE
+================================ */
+
+.premium-card .subject {
+  display: inline-block;
+  padding: 6px 14px;
+  margin-top: 6px;
+
+  font-size: 12px;
+  font-weight: 500;
+
+  color: #eef2ff;
+
+  border-radius: 999px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(99,102,241,0.45),
+    rgba(79,70,229,0.35)
+  );
+
+  border: 1px solid rgba(99,102,241,0.55);
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.1),
+    0 6px 16px rgba(79,70,229,0.35);
+}
+/* ===============================
+   FIX: AUTHOR ALIGNMENT (PREMIUM)
+================================ */
+
+.premium-card .author {
+  margin-top: 8px;
+  padding: 4px 10px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 11.5px;
+  font-weight: 500;
+
+  color: #c7d2fe;
+
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+}
+/* ======================================
+   🔒 HARD RESET — PREMIUM CARD LAYOUT
+   (MATCH DEPLOYED VERSION)
+====================================== */
+
+/* Card size & spacing */
+.premium-card {
+  padding: 20px;
+  min-height: 190px;
+  max-height: 210px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* TITLE */
+.premium-card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+/* SUBJECT — INLINE PILL (NOT BAR) */
+.premium-card .subject {
+  display: inline-block;
+  width: fit-content;
+
+  padding: 4px 10px;
+  margin-top: 2px;
+
+  font-size: 12px;
+  font-weight: 500;
+
+  border-radius: 999px;
+
+  background: rgba(99,102,241,0.15);
+  color: #c7d2fe;
+
+  border: 1px solid rgba(99,102,241,0.25);
+}
+
+/* AUTHOR — INLINE UNDER SUBJECT */
+.premium-card .author {
+  margin-top: 6px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 11.5px;
+  color: #9aa4b2;
+
+  background: none;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+}
+
+/* PRICE — BOTTOM ANCHOR */
+.premium-card .price {
+  margin-top: auto;
+  font-size: 20px;
+  font-weight: 800;
+  color: #8fd3ff;
+}
+/* =====================================================
+   🚑 DEPLOYED UI LOCK — PREMIUM CARD (FINAL)
+   This block overrides ALL experimental layers
+===================================================== */
+
+/* CARD SIZE + RHYTHM */
+.premium-card {
+  padding: 18px;
+  min-height: 170px;
+  max-height: 185px;
+
+  display: flex;
+  flex-direction: column;
+
+  transform: none !important;
+}
+
+/* TITLE */
+.premium-card h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  letter-spacing: 0;
+  text-shadow: none;
+}
+
+/* SUBJECT (DEPLOYED STYLE) */
+.premium-card .subject {
+  font-size: 11.5px;
+  padding: 3px 9px;
+  margin: 2px 0 0;
+
+  border-radius: 999px;
+  background: rgba(99,102,241,0.12);
+  color: #c7d2fe;
+
+  border: none;
+}
+
+/* AUTHOR */
+.premium-card .author {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #9aa4b2;
+
+  background: none;
+  padding: 0;
+  border: none;
+}
+
+/* PRICE (DEPLOYED SCALE) */
+.premium-card .price {
+  
+  font-size: 18px;
+  font-weight: 700;
+  color: #8fd3ff;
+  text-shadow: none;
+}
+
+/* REMOVE OVER-ANIMATION */
+.premium-card::before,
+.premium-card::after {
+  display: none !important;
+}
+/* =====================================================
+   🔧 SPACING COMPRESSION – PREMIUM CARD (FINAL FIX)
+===================================================== */
+
+.premium-card {
+  gap: 0 !important;
+}
+
+/* TITLE */
+.premium-card h3 {
+  margin: 0 0 4px 0 !important;
+  line-height: 1.25;
+}
+
+/* SUBJECT */
+.premium-card .subject {
+  margin: 2px 0 4px 0 !important;
+  padding: 3px 8px;
+  line-height: 1.2;
+}
+
+/* AUTHOR */
+.premium-card .author {
+  margin: 4px 0 6px 0 !important;
+  line-height: 1.2;
+}
+
+/* PRICE – bring closer */
+.premium-card .price {
+  margin-top: 6px !important;
+  line-height: 1.2;
+}
+/* =====================================
+   EFFECTS LAYER (SAFE – NO LAYOUT)
+===================================== */
+
+/* Page entry animation */
+.premium-page {
+  animation: premiumFadeIn 0.6s ease forwards;
+}
+
+@keyframes premiumFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Card entry animation */
+.premium-card {
+  animation: cardFloatIn 0.5s ease both;
+}
+
+@keyframes cardFloatIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Hover lift (no spacing impact) */
+.premium-card:hover {
+  transform: translateY(-6px);
+}
+
+/* Glow border (safe) */
+.premium-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(99,102,241,0.35),
+    rgba(56,189,248,0.15),
+    transparent 60%
+  );
+  opacity: 0;
+  filter: blur(12px);
+  z-index: -1;
+  transition: opacity 0.35s ease;
+}
+
+.premium-card:hover::before {
+  opacity: 1;
+}
+
+/* Mouse-follow glow (optional, visual only) */
+.premium-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(
+      400px circle at var(--x, 50%) var(--y, 50%),
+      rgba(99,102,241,0.12),
+      transparent 40%
+    );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.premium-card:hover::after {
+  opacity: 1;
+}
+
+/* ===== PREMIUM CARD LUXURY HOVER ===== */
+.premium-card {
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.premium-card:hover {
+  transform: translateY(-8px);
+  box-shadow:
+    0 28px 80px rgba(0,0,0,0.85),
+    0 0 0 1px rgba(99,102,241,0.35);
+}
+
+.premium-card::before {
+  opacity: 0;
+  filter: blur(14px);
+}
+
+.premium-card:hover::before {
+  opacity: 0.55;
+}
+
+.premium-page {
+  animation: premiumFadeIn 0.7s cubic-bezier(.22,.61,.36,1);
+}

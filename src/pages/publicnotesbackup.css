@@ -1,12 +1,6 @@
 /* ===============================
    PAGE
 ================================ */
-.public-notes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 26px;
-  align-items: start;
-}
 .public-notes-page {
   padding: 32px;
   min-height: 100vh;
@@ -74,7 +68,7 @@
 ================================ */
 .public-notes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 280px));
   gap: 26px;
 }
 
@@ -1385,92 +1379,7 @@
   content: "";
   flex-grow: 1;
 }
-/* =========================================
-   🔒 STABILITY LOCK – PUBLIC NOTES CARDS
-   (DO NOT DELETE)
-========================================= */
 
-.public-note-card {
-  animation: none !important;
-  filter: none !important;
-}
-
-.public-note-card::before,
-.public-note-card::after {
-  content: none !important;
-}
-
-.public-note-card:hover {
-  transform: translateY(-4px) !important;
-  background: linear-gradient(
-    180deg,
-    rgba(18, 30, 60, 0.95),
-    rgba(10, 20, 40, 0.95)
-  ) !important;
-  box-shadow:
-    0 22px 55px rgba(0,0,0,0.75),
-    0 0 0 1px rgba(99,102,241,0.22) !important;
-}
-/* ===============================
-   EMERGENCY VISIBILITY FIX
-   (Safe – does NOT break design)
-================================ */
-
-.public-notes-grid {
-  position: relative;
-  z-index: 5;
-}
-
-.public-note-card {
-  position: relative;
-  z-index: 6;
-  opacity: 1 !important;
-  visibility: visible !important;
-}
-
-/* ===== SAFETY PATCH (DO NOT REMOVE FEATURES) ===== */
-
-.public-note-card::before,
-.public-note-card::after {
-  pointer-events: none;
-  z-index: 0;
-}
-
-.public-note-card > * {
-  position: relative;
-  z-index: 1;
-}
-@media (max-width: 768px) {
-  .public-notes-grid {
-    grid-template-columns: 1fr;
-  }
-}
-/* ===== SUBJECT CHIP – RESTORE DEPLOYED LOOK ===== */
-
-.public-note-card .subject {
-  display: inline-block;
-  padding: 6px 14px;
-  margin-top: 6px;
-
-  font-size: 12px;
-  font-weight: 500;
-
-  color: #e0e7ff;
-
-  border-radius: 999px;
-
-  background: linear-gradient(
-    135deg,
-    rgba(99,102,241,0.35),
-    rgba(79,70,229,0.25)
-  );
-
-  border: 1px solid rgba(99,102,241,0.45);
-
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.08),
-    0 4px 12px rgba(79,70,229,0.25);
-}
 
 
 

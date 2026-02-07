@@ -1,0 +1,64 @@
+/* ===============================
+   SKELETON BASE
+================================ */
+
+.skeleton {
+  pointer-events: none;
+  position: relative;
+  overflow: hidden;
+}
+
+/* shimmer */
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.15),
+    transparent
+  );
+  animation: shimmer 1.2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ===============================
+   SHAPES
+================================ */
+
+.skeleton-box {
+  height: 220px;
+  background: rgba(255,255,255,0.08);
+}
+
+.skeleton-line {
+  height: 14px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.skeleton-line.title {
+  width: 85%;
+  height: 16px;
+}
+
+.skeleton-line.author {
+  width: 55%;
+}
+
+.skeleton-pill {
+  height: 22px;
+  width: 80px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+}
+
+.skeleton-pill.small {
+  width: 60px;
+}
