@@ -1,4 +1,4 @@
-import "./ReferenceBookCard.css";
+import "./referenceBookCard.css";
 
 export default function ReferenceBookCard({ book, onClick }) {
   const {
