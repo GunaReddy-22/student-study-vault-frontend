@@ -129,7 +129,7 @@ export default function SecurePdfViewer({ pdfUrl }) {
     <canvas ref={canvasRef} />
 
     {/* WATERMARK */}
-    <div className="watermark">© Student Study Vault</div>
+    <div className="watermark">© Study Vault - 2026</div>
 
     {/* CONTROLS (hide in fullscreen if you want cleaner view) */}
     {!isFullscreen && (
