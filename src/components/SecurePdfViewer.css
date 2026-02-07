@@ -58,7 +58,7 @@ canvas {
 }
 
 .watermark::after {
-  content: "© Student Study Vault";
+  content: "© Study Vault - 2026";
 }
 
 /* CONTROLS */
