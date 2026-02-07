@@ -53,26 +53,34 @@ export default function SecurePdfViewer({ pdfUrl }) {
     if (!pdfRef.current || !canvasRef.current) return;
 
     const renderPage = async () => {
-      const page = await pdfRef.current.getPage(pageNum);
+  const page = await pdfRef.current.getPage(pageNum);
 
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext("2d");
+  const canvas = canvasRef.current;
+  const ctx = canvas.getContext("2d");
 
-      const container = canvas.parentElement;
-      const containerWidth = container.clientWidth;
+  const container = canvas.parentElement;
+  const containerWidth = container.clientWidth;
 
-      const unscaled = page.getViewport({ scale: 1 });
-      const scale = containerWidth / unscaled.width;
-      const viewport = page.getViewport({ scale });
+  const unscaledViewport = page.getViewport({ scale: 1 });
 
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
+  const scale = containerWidth / unscaledViewport.width;
+  const dpr = window.devicePixelRatio || 1;
 
-      await page.render({
-        canvasContext: ctx,
-        viewport,
-      }).promise;
-    };
+  const viewport = page.getViewport({
+    scale: scale * dpr,
+  });
+
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+
+  canvas.style.width = `${viewport.width / dpr}px`;
+  canvas.style.height = `${viewport.height / dpr}px`;
+
+  await page.render({
+    canvasContext: ctx,
+    viewport,
+  }).promise;
+};
 
     renderPage();
   }, [pageNum]);
