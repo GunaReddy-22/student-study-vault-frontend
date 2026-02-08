@@ -8,6 +8,12 @@ export default function Wallet() {
   const [loading, setLoading] = useState(true);
   const [amount, setAmount] = useState("");
 
+  useEffect(() => {
+  alert(
+    "⚠️ Razorpay Test Mode\n\nThis wallet uses Razorpay TEST MODE.\nNo money will be deducted from your account.\n"
+  );
+}, []);
+
   /* =========================
      FETCH WALLET DATA
   ========================= */

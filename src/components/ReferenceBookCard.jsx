@@ -36,9 +36,7 @@ export default function ReferenceBookCard({ book, onClick }) {
 
         <div className="ref-meta">
           <span className="subject">{subject}</span>
-          <span className="purchases">
-            {purchaseCount || 0} bought
-          </span>
+          
         </div>
       </div>
     </div>
