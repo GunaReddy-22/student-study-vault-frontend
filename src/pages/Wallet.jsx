@@ -42,8 +42,8 @@ export default function Wallet() {
      RAZORPAY PAYMENT
   ========================= */
   const handleRazorpayPayment = async () => {
-    if (!amount || Number(amount) <= 0) {
-      alert("Enter a valid amount");
+    if (!amount || Number(amount) < 10) {
+      alert("Minimum add amount is 10");
       return;
     }
 
@@ -148,7 +148,7 @@ export default function Wallet() {
         <div className="add-money">
           <input
             type="number"
-            placeholder="Enter amount"
+            placeholder="Enter amount (min 10)"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
           />
@@ -164,7 +164,7 @@ export default function Wallet() {
 
         <input
           type="number"
-          placeholder="Amount (min ₹100)"
+          placeholder="Amount (min ₹10)"
           value={withdrawAmount}
           onChange={(e) => setWithdrawAmount(e.target.value)}
         />
