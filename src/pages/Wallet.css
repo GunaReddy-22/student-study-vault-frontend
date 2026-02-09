@@ -306,3 +306,153 @@
     margin-top: 22px;
   }
 }
+
+/* =====================================================
+   WALLET – WITHDRAW SECTION (ADD-ON ONLY)
+   Safe to append at bottom
+===================================================== */
+
+.wallet-withdraw-card {
+  margin-top: 28px;
+  max-width: 420px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.07),
+    rgba(255,255,255,0.025)
+  );
+
+  padding: 22px;
+  border-radius: 18px;
+
+  box-shadow:
+    0 22px 60px rgba(0,0,0,0.7),
+    inset 0 0 0 1px rgba(255,255,255,0.06);
+
+  animation: walletFadeIn 0.4s ease;
+}
+
+.wallet-withdraw-card h3 {
+  margin-bottom: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #e5e7eb;
+}
+
+/* Inputs */
+.wallet-withdraw-card input {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 11px 12px;
+
+  border-radius: 10px;
+  border: none;
+  outline: none;
+
+  background: rgba(255,255,255,0.08);
+  color: white;
+}
+
+.wallet-withdraw-card input::placeholder {
+  color: rgba(200,210,230,0.6);
+}
+
+/* Withdraw button */
+.wallet-withdraw-card button {
+  width: 100%;
+  margin-top: 6px;
+
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+
+  font-weight: 700;
+  font-size: 14px;
+
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+
+  box-shadow:
+    0 18px 40px rgba(239,68,68,0.45);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.wallet-withdraw-card button:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow:
+    0 26px 65px rgba(239,68,68,0.65);
+}
+
+/* Disabled feel (future-proof) */
+.wallet-withdraw-card button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* =====================================================
+   MOBILE REFINEMENTS (ADD-ON)
+===================================================== */
+
+@media (max-width: 768px) {
+  .wallet-balance-card,
+  .wallet-withdraw-card {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  .wallet-withdraw-card {
+    padding: 18px;
+  }
+}
+/* =====================================================
+   MOBILE POLISH – FINAL TOUCH (OPTIONAL)
+===================================================== */
+
+@media (max-width: 768px) {
+
+  /* Slightly tighter vertical rhythm */
+  .wallet-page {
+    padding-bottom: 28px;
+  }
+
+  /* Balance card breathing room */
+  .wallet-balance-card {
+    margin-bottom: 18px;
+  }
+
+  /* Make buttons easier to tap */
+  .add-money button,
+  .wallet-withdraw-card button {
+    min-height: 46px;
+    font-size: 15px;
+  }
+
+  /* Inputs feel more native on mobile */
+  .add-money input,
+  .wallet-withdraw-card input {
+    min-height: 44px;
+    font-size: 15px;
+  }
+
+  /* Transactions don’t feel cramped */
+  .tx {
+    padding: 14px 14px;
+  }
+}
+
+/* Ultra-small phones */
+@media (max-width: 360px) {
+  .balance-amount {
+    font-size: 28px;
+  }
+
+  .wallet-page h2 {
+    font-size: 22px;
+  }
+}

@@ -6,9 +6,14 @@ export default function Wallet() {
   const [balance, setBalance] = useState(0);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Top-up
   const [amount, setAmount] = useState("");
 
-
+  // Withdraw
+  const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [withdrawPassword, setWithdrawPassword] = useState("");
+  const [upiId, setUpiId] = useState("");
 
   /* =========================
      FETCH WALLET DATA
@@ -34,73 +39,97 @@ export default function Wallet() {
   }, []);
 
   /* =========================
-     ADD DEMO MONEY
+     RAZORPAY PAYMENT
   ========================= */
-  const addDemoMoney = async () => {
-    if (!amount || Number(amount) <= 0) return;
+  const handleRazorpayPayment = async () => {
+    if (!amount || Number(amount) <= 0) {
+      alert("Enter a valid amount");
+      return;
+    }
 
     try {
-      const res = await api.post("/wallet/add-demo", {
+      // 1️⃣ Create Razorpay order
+      const { data } = await api.post("/wallet/create-order", {
         amount: Number(amount),
       });
 
-      setBalance(res.data.balance);
-      setAmount("");
-      fetchWallet();
+      const options = {
+        key: data.key,
+        amount: data.amount,
+        currency: data.currency,
+        name: "Student Study Vault",
+        description: "Wallet Top-up",
+        order_id: data.orderId,
+
+        // ✅ Payment success handler
+        handler: async function (response) {
+          try {
+            await api.post("/wallet/verify-payment", {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            },{headers: {
+          "Content-Type": "application/json",
+        },});
+
+            alert("✅ Payment successful & wallet updated");
+            setAmount("");
+            fetchWallet();
+          } catch (err) {
+            console.error(err);
+            alert("❌ Payment verification failed");
+          }
+        },
+
+        theme: {
+          color: "#4f46e5",
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
     } catch (err) {
-      alert("Failed to add demo money");
+      console.error(err);
+      alert("❌ Payment initiation failed");
     }
   };
 
-  const handleRazorpayPayment = async () => {
-  if (!amount || Number(amount) <= 0) {
-    alert("Enter valid amount");
-    return;
-  }
+  /* =========================
+     WITHDRAW WALLET
+  ========================= */
+  const handleWithdraw = async () => {
+    /*if (!withdrawAmount || Number(withdrawAmount) < 100) {
+      alert("Minimum withdrawal is ₹100");
+      return;
+    }*/
 
-  try {
-    // 1️⃣ Create order
-    const { data } = await api.post("/wallet/create-order", {
-      amount: Number(amount),
-    });
+    if (!withdrawPassword) {
+      alert("Enter your login password");
+      return;
+    }
 
-    const options = {
-      key: data.key,
-      amount: data.amount,
-      currency: data.currency,
-      name: "StudyVault",
-      description: "Wallet Top-up",
-      order_id: data.orderId,
+    if (!upiId) {
+      alert("Enter your UPI ID");
+      return;
+    }
 
-      handler: async function (response) {
-        try {
-          // 2️⃣ Verify payment
-          const verifyRes = await api.post("/wallet/verify-payment", {
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-            amount: Number(amount),
-          });
+    try {
+      const res = await api.post("/wallet/withdraw", {
+        amount: Number(withdrawAmount),
+        password: withdrawPassword,
+        upiId,
+      });
 
-          alert("Payment successful 🎉");
-          setAmount("");
-          fetchWallet();
-        } catch (err) {
-          alert("Payment verification failed");
-        }
-      },
-
-      theme: {
-        color: "#4f46e5",
-      },
-    };
-
-    const razorpay = new window.Razorpay(options);
-    razorpay.open();
-  } catch (err) {
-    alert("Payment initiation failed");
-  }
-};
+      alert("✅ Withdrawal request submitted");
+      setWithdrawAmount("");
+      setWithdrawPassword("");
+      setUpiId("");
+      setBalance(res.data.balance);
+      fetchWallet();
+    } catch (err) {
+      alert(err.response?.data?.message || "Withdrawal failed");
+    }
+  };
 
   if (loading) {
     return <div className="wallet-page">Loading wallet...</div>;
@@ -110,11 +139,12 @@ export default function Wallet() {
     <div className="wallet-page">
       <h2>💰 My Wallet</h2>
 
-      {/* BALANCE CARD */}
+      {/* ================= BALANCE ================= */}
       <div className="wallet-balance-card">
         <div className="balance-label">Current Balance</div>
         <div className="balance-amount">₹ {balance}</div>
 
+        {/* ADD MONEY */}
         <div className="add-money">
           <input
             type="number"
@@ -122,11 +152,43 @@ export default function Wallet() {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
           />
-          <button onClick={handleRazorpayPayment}>Add Money</button>
+          <button onClick={handleRazorpayPayment}>
+            Add Money
+          </button>
         </div>
       </div>
 
-      {/* TRANSACTIONS */}
+      {/* ================= WITHDRAW ================= */}
+      <div className="wallet-withdraw-card">
+        <h3>🏧 Withdraw Money</h3>
+
+        <input
+          type="number"
+          placeholder="Amount (min ₹100)"
+          value={withdrawAmount}
+          onChange={(e) => setWithdrawAmount(e.target.value)}
+        />
+
+        <input
+          type="password"
+          placeholder="Login password"
+          value={withdrawPassword}
+          onChange={(e) => setWithdrawPassword(e.target.value)}
+        />
+
+        <input
+          type="text"
+          placeholder="Your UPI ID"
+          value={upiId}
+          onChange={(e) => setUpiId(e.target.value)}
+        />
+
+        <button onClick={handleWithdraw}>
+          Withdraw
+        </button>
+      </div>
+
+      {/* ================= TRANSACTIONS ================= */}
       <div className="wallet-transactions">
         <h3>🧾 Transactions</h3>
 

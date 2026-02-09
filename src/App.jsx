@@ -40,14 +40,14 @@ function App() {
 }, []);
 
   // 🔐 Disable right click (global)
-   useEffect(() => {
+   /*useEffect(() => {
     const disableRightClick = (e) => e.preventDefault();
     document.addEventListener("contextmenu", disableRightClick);
 
     return () => {
       document.removeEventListener("contextmenu", disableRightClick);
     };
-  }, []); 
+  }, []); */
 
   return (
     <div className="app">
