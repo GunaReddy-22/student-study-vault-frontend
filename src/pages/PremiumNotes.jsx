@@ -149,20 +149,20 @@ export default function PremiumNotes() {
   }
   const buyPremiumNote = async () => {
   try {
-    const res = await api.post(`/notes/${activeNote._id}/buy`);
+    await api.post(`/notes/${activeNote._id}/buy`);
+
+    // ✅ success UI update
+    setHasAccess(true);
 
     alert("✅ Note purchased successfully!");
 
-    // refresh wallet balance (optional global later)
-    setHasAccess(true);
-
-    // refetch access so content unlocks
-    checkAccess(activeNote._id);
   } catch (err) {
-    const msg =
-      err.response?.data?.message || "Purchase failed";
+    console.error("Purchase error:", err);
 
-    alert(msg);
+    alert(
+      err.response?.data?.message ||
+      "❌ Purchase failed"
+    );
   }
 };;
 
