@@ -8,6 +8,7 @@ export default function PremiumNotes() {
   const [notes, setNotes] = useState([]);
   const [activeNote, setActiveNote] = useState(null);
   const [hasAccess, setHasAccess] = useState(false);
+  const [accessMap, setAccessMap] = useState({});
 
   // Likes
   const [liked, setLiked] = useState(false);
@@ -52,35 +53,38 @@ export default function PremiumNotes() {
   /* =====================
      OPEN NOTE
   ====================== */
-  const openNote = async (note) => {
-    setActiveNote(note);
+const openNote = async (note) => {
+  setActiveNote(note);
 
-    // Reset per-note UI
-    setShowComments(false);
-    setCopied(false);
-    setNewComment("");
+  setShowComments(false);
+  setCopied(false);
+  setNewComment("");
 
-    const userId = getUserIdFromToken();
+  const userId = getUserIdFromToken();
 
-    setLikesCount(note.likes?.length || 0);
-    setLiked(note.likes?.some(id => id.toString() === userId));
+  setLikesCount(note.likes?.length || 0);
+  setLiked(note.likes?.some(id => id.toString() === userId));
 
-    // Access check
-    try {
-      const res = await api.get(`/notes/premium/${note._id}/access`);
-      setHasAccess(res.data.hasAccess);
-    } catch {
-      setHasAccess(false);
-    }
+  try {
+    const res = await api.get(`/notes/premium/${note._id}/access`);
+    setHasAccess(res.data.hasAccess);
 
-    // Load comments
-    try {
-      const res = await api.get(`/notes/${note._id}/comments`);
-      setComments(res.data);
-    } catch {
-      setComments([]);
-    }
-  };
+    // 🔥 SAVE ACCESS STATUS PER NOTE
+    setAccessMap(prev => ({
+      ...prev,
+      [note._id]: res.data.hasAccess,
+    }));
+  } catch {
+    setHasAccess(false);
+  }
+
+  try {
+    const res = await api.get(`/notes/${note._id}/comments`);
+    setComments(res.data);
+  } catch {
+    setComments([]);
+  }
+};
 
   /* =====================
      LIKE / UNLIKE
@@ -151,18 +155,17 @@ export default function PremiumNotes() {
   try {
     await api.post(`/notes/${activeNote._id}/buy`);
 
-    // ✅ success UI update
     setHasAccess(true);
 
+    // 🔥 MARK NOTE AS PURCHASED
+    setAccessMap(prev => ({
+      ...prev,
+      [activeNote._id]: true,
+    }));
+
     alert("✅ Note purchased successfully!");
-
   } catch (err) {
-    console.error("Purchase error:", err);
-
-    alert(
-      err.response?.data?.message ||
-      "❌ Purchase failed"
-    );
+    alert(err.response?.data?.message || "❌ Purchase failed");
   }
 };;
 
