@@ -189,7 +189,9 @@ const openNote = async (note) => {
             </div>
 
             <div className="price">₹{note.price}</div>
-            <div className="lock">🔒 Premium</div>
+            <div className={`lock ${accessMap[note._id] ? "purchased" : ""}`}>
+  {accessMap[note._id] ? "✅ Purchased" : "🔒 Premium"}
+</div>
           </div>
         ))}
       </div>
