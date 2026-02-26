@@ -1381,6 +1381,7 @@ select:focus {
 .premium-page {
   animation: premiumFadeIn 0.7s cubic-bezier(.22,.61,.36,1);
 }
+
 .lock.purchased {
   background: linear-gradient(135deg, #22c55e, #16a34a);
   color: white;
