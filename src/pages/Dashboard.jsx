@@ -83,7 +83,7 @@ setWalletBalance(walletRes.data.balance);
   <div className="card-icon">💰</div>
   <div className="card-title">Wallet Balance</div>
   <div className="card-count">
-  {loading ? "—" : `₹ ${walletBalance}`}
+  {loading ? "₹--" : `₹ ${walletBalance}`}
 </div>
 </div>
         <div
