@@ -51,7 +51,7 @@ export default function Login({ setIsAuth }) {
     type={showPassword ? "text" : "password"}
     placeholder="Enter your password"
     onChange={(e) =>
-              setForm({ ...form, username: e.target.value })}
+              setForm({ ...form, password: e.target.value })}
   />
 
   <span
