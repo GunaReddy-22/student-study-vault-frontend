@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import "./Dashboard.css";
+ 
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ export default function Dashboard() {
   const [totalNotes, setTotalNotes] = useState(0);
   const [publicNotes, setPublicNotes] = useState(0);
   const [privateNotes, setPrivateNotes] = useState(0);
+  const [walletBalance,setWalletBalance] = useState(0);
 
   // ✅ NEW: loading state to prevent jump
   const [loading, setLoading] = useState(true);
@@ -17,13 +19,20 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const res = await api.get("/notes");
-        const myNotes = res.data;
+       const [notesRes, walletRes] = await Promise.all([
+  api.get("/notes"),
+  api.get("/wallet"),
+]);
 
-        setNotes(myNotes);
-        setTotalNotes(myNotes.length);
-        setPublicNotes(myNotes.filter((n) => n.isPublic).length);
-        setPrivateNotes(myNotes.filter((n) => !n.isPublic).length);
+const myNotes = notesRes.data;
+
+setNotes(myNotes);
+setTotalNotes(myNotes.length);
+setPublicNotes(myNotes.filter(n => n.isPublic).length);
+setPrivateNotes(myNotes.filter(n => !n.isPublic).length);
+
+// ✅ wallet
+setWalletBalance(walletRes.data.balance);
       } catch (err) {
         console.error("Failed to load dashboard data", err);
       } finally {
@@ -65,6 +74,18 @@ export default function Dashboard() {
 
       {/* ================= STATS ================= */}
       <div className="stats">
+
+          <div
+  className="card clickable tooltip"
+  data-tooltip="View wallet"
+  onClick={() => navigate("/wallet")}
+>
+  <div className="card-icon">💰</div>
+  <div className="card-title">Wallet Balance</div>
+  <div className="card-count">
+  {loading ? "—" : `₹ ${walletBalance}`}
+</div>
+</div>
         <div
           className="card clickable tooltip"
           data-tooltip="View all notes"
@@ -90,6 +111,7 @@ export default function Dashboard() {
           <div className="card-title">Private Notes</div>
           <div className="card-count">{privateNotes}</div>
         </div>
+      
       </div>
 
       {/* ================= RECENT ACTIVITY ================= */}

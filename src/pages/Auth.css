@@ -249,7 +249,31 @@
     font-size: 20px;
   }
 }
+.password-field {
+  position: relative;
+}
 
+.password-field input {
+  width: 100%;
+  padding-right: 44px; /* space for eye icon */
+}
+
+.toggle-password {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  opacity: 0.7;
+  user-select: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.toggle-password:hover {
+  opacity: 1;
+  transform: translateY(-50%) scale(1.1);
+}
 
 
 

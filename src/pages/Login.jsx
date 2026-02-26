@@ -6,6 +6,7 @@ import "./Auth.css";
 export default function Login({ setIsAuth }) {
   const [form, setForm] = useState({ username: "", password: "" });
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   const submit = async () => {
     try {
@@ -45,13 +46,21 @@ export default function Login({ setIsAuth }) {
 
         <div className="auth-field">
           <label>Password</label>
-          <input
-            type="password"
-            placeholder="Enter your password"
-            onChange={(e) =>
-              setForm({ ...form, password: e.target.value })
-            }
-          />
+         <div className="password-field">
+  <input
+    type={showPassword ? "text" : "password"}
+    placeholder="Enter your password"
+    onChange={(e) =>
+              setForm({ ...form, username: e.target.value })}
+  />
+
+  <span
+    className="toggle-password"
+    onClick={() => setShowPassword(!showPassword)}
+  >
+    {showPassword ? "🙈" : "👁️"}
+  </span>
+</div>
         </div>
 
         <button className="auth-btn" onClick={submit}>
@@ -65,6 +74,5 @@ export default function Login({ setIsAuth }) {
     </div>
   );
 }
-
 
 

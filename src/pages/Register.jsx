@@ -6,6 +6,7 @@ import "./Auth.css";
 export default function Register() {
   const [form, setForm] = useState({ username: "", password: "" });
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   const submit = async () => {
     await api.post("/auth/register", form);
@@ -15,8 +16,8 @@ export default function Register() {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2 className="auth-title">Create Account ✨</h2>
-        <p className="auth-subtitle">Start organizing your study notes</p>
+        <h2 className="auth-title">Create Account✨</h2>
+        <p className="auth-subtitle">Your all-in-one study platform</p>
 
         <div className="auth-field">
           <label>Username</label>
@@ -31,13 +32,22 @@ export default function Register() {
 
         <div className="auth-field">
           <label>Password</label>
-          <input
-            type="password"
-            placeholder="Create a password"
-            onChange={(e) =>
-              setForm({ ...form, password: e.target.value })
+          <div className="password-field">
+  <input
+    type={showPassword ? "text" : "password"}
+    placeholder="Enter your password"
+    onChange={(e) =>
+              setForm({ ...form, username: e.target.value })
             }
-          />
+  />
+
+  <span
+    className="toggle-password"
+    onClick={() => setShowPassword(!showPassword)}
+  >
+    {showPassword ? "🙈" : "👁️"}
+  </span>
+</div>
         </div>
 
         <button className="auth-btn" onClick={submit}>
