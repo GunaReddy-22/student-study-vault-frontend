@@ -5,11 +5,17 @@ import "./Auth.css";
 
 export default function Login({ setIsAuth }) {
   const [form, setForm] = useState({ username: "", password: "" });
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false); // ✅ NEW
+
+  const navigate = useNavigate();
 
   const submit = async () => {
+    if (loading) return; // prevent double click
+
     try {
+      setLoading(true); // ✅ start loading
+
       const res = await api.post("/auth/login", form);
 
       localStorage.setItem("token", res.data.token);
@@ -17,13 +23,15 @@ export default function Login({ setIsAuth }) {
       navigate("/dashboard");
     } catch (err) {
       alert("Invalid username or password");
+    } finally {
+      setLoading(false); // ✅ stop loading
     }
   };
 
   return (
     <div className="auth-container">
       <div className="auth-card">
-        {/* 🔹 HEADER */}
+
         <div className="auth-header">
           <div className="auth-line"></div>
           <h2 className="auth-title">Welcome Back 👋</h2>
@@ -32,7 +40,6 @@ export default function Login({ setIsAuth }) {
           </p>
         </div>
 
-        {/* 🔹 FORM */}
         <div className="auth-field">
           <label>Username</label>
           <input
@@ -46,33 +53,39 @@ export default function Login({ setIsAuth }) {
 
         <div className="auth-field">
           <label>Password</label>
-         <div className="password-field">
-  <input
-    type={showPassword ? "text" : "password"}
-    placeholder="Enter your password"
-    onChange={(e) =>
-              setForm({ ...form, password: e.target.value })}
-  />
 
-  <span
-    className="toggle-password"
-    onClick={() => setShowPassword(!showPassword)}
-  >
-    {showPassword ? "🙈" : "👁️"}
-  </span>
-</div>
+          <div className="password-field">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter your password"
+              onChange={(e) =>
+                setForm({ ...form, password: e.target.value })
+              }
+            />
+
+            <span
+              className="toggle-password"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? "🙈" : "👁️"}
+            </span>
+          </div>
         </div>
 
-        <button className="auth-btn" onClick={submit}>
-          Login
+        {/* ✅ BUTTON UPDATED */}
+        <button
+          className="auth-btn"
+          onClick={submit}
+          disabled={loading}
+        >
+          {loading ? "Logging in..." : "Login"}
         </button>
 
         <div className="auth-footer">
           Don’t have an account? <Link to="/register">Register</Link>
         </div>
+
       </div>
     </div>
   );
-}
-
-
+} 

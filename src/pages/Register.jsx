@@ -7,11 +7,19 @@ export default function Register() {
   const [form, setForm] = useState({ username: "", password: "" });
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const submit = async () => {
+const submit = async () => {
+  try {
+    setLoading(true);
     await api.post("/auth/register", form);
     navigate("/login");
-  };
+  } catch (err) {
+    alert("Registration failed");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="auth-container">
@@ -50,9 +58,13 @@ export default function Register() {
 </div>
         </div>
 
-        <button className="auth-btn" onClick={submit}>
-          Register
-        </button>
+        <button
+  className="auth-btn"
+  onClick={submit}
+  disabled={loading}
+>
+  {loading ? "Creating Account..." : "Create Account"}
+</button>
 
         <div className="auth-footer">
           Already have an account? <Link to="/login">Login</Link>
