@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:4000/api",
+  baseURL: "https://student-study-vault-backend.onrender.com/api",
 });
 
 api.interceptors.request.use((config) => {
@@ -18,4 +18,4 @@ api.interceptors.request.use((config) => {
 
 export default api;
 
-// https://student-study-vault-backend.onrender.com/api
+//
