@@ -13,6 +13,9 @@ import ReferenceBooks from "./pages/ReferenceBooks";
 import ReferenceBookDetails from "./pages/ReferenceBookDetails";
 
 import "./App.css";
+import ForgotPassword from "./pages/ForgotPassword";
+import VerifyOtp from "./pages/VerifyOtp";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   const [isAuth, setIsAuth] = useState(
@@ -23,8 +26,11 @@ function App() {
   const location = useLocation();
 
   const hideSidebar =
-    location.pathname === "/login" ||
-    location.pathname === "/register";
+  location.pathname === "/login" ||
+  location.pathname === "/register" ||
+  location.pathname === "/forgot-password" ||
+  location.pathname === "/verify-otp" ||
+  location.pathname === "/reset-password";
 
 
   useEffect(() => {
@@ -88,6 +94,9 @@ function App() {
             }
           />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/verify-otp" element={<VerifyOtp />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           <Route
             path="/dashboard"

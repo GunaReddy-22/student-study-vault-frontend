@@ -4,17 +4,26 @@ import api from "../services/api";
 import "./Auth.css";
 
 export default function Login({ setIsAuth }) {
-  const [form, setForm] = useState({ username: "", password: "" });
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
+
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false); // ✅ NEW
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const submit = async () => {
-    if (loading) return; // prevent double click
+    if (loading) return;
+
+    if (!form.email || !form.password) {
+      alert("Email and password required");
+      return;
+    }
 
     try {
-      setLoading(true); // ✅ start loading
+      setLoading(true);
 
       const res = await api.post("/auth/login", form);
 
@@ -22,9 +31,12 @@ export default function Login({ setIsAuth }) {
       setIsAuth(true);
       navigate("/dashboard");
     } catch (err) {
-      alert("Invalid username or password");
+      alert(
+        err.response?.data?.message ||
+          "Invalid email or password"
+      );
     } finally {
-      setLoading(false); // ✅ stop loading
+      setLoading(false);
     }
   };
 
@@ -40,17 +52,19 @@ export default function Login({ setIsAuth }) {
           </p>
         </div>
 
+        {/* EMAIL */}
         <div className="auth-field">
-          <label>Username</label>
+          <label>Email</label>
           <input
-            type="text"
-            placeholder="Enter your username"
+            type="email"
+            placeholder="Enter your email"
             onChange={(e) =>
-              setForm({ ...form, username: e.target.value })
+              setForm({ ...form, email: e.target.value })
             }
           />
         </div>
 
+        {/* PASSWORD */}
         <div className="auth-field">
           <label>Password</label>
 
@@ -65,14 +79,34 @@ export default function Login({ setIsAuth }) {
 
             <span
               className="toggle-password"
-              onClick={() => setShowPassword(!showPassword)}
+              onClick={() =>
+                setShowPassword(!showPassword)
+              }
             >
               {showPassword ? "🙈" : "👁️"}
             </span>
           </div>
+
+          {/* 🔥 FORGOT PASSWORD LINK */}
+          <div
+            style={{
+              textAlign: "right",
+              marginTop: "6px",
+            }}
+          >
+            <Link
+              to="/forgot-password"
+              style={{
+                fontSize: "13px",
+                textDecoration: "none",
+                color: "#6f7bff",
+              }}
+            >
+              Forgot Password?
+            </Link>
+          </div>
         </div>
 
-        {/* ✅ BUTTON UPDATED */}
         <button
           className="auth-btn"
           onClick={submit}
@@ -82,10 +116,11 @@ export default function Login({ setIsAuth }) {
         </button>
 
         <div className="auth-footer">
-          Don’t have an account? <Link to="/register">Register</Link>
+          Don’t have an account?{" "}
+          <Link to="/register">Register</Link>
         </div>
 
       </div>
     </div>
   );
-} 
+}
