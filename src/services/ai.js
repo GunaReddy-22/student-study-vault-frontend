@@ -1,5 +1,5 @@
 export const summarizeContent = async (content) => {
-  const res = await fetch("http://localhost:4000/api/ai/summarize", {
+  const res = await fetch("https://student-study-vault-backend.onrender.com/api/ai/summarize", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -17,7 +17,7 @@ export const summarizeContent = async (content) => {
 
 
 export const askAI = async (content, question) => {
-  const res = await fetch("http://localhost:4000/api/ai/ask", {
+  const res = await fetch("https://student-study-vault-backend.onrender.com/api/ai/ask", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
