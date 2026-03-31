@@ -9,6 +9,7 @@ export default function Notes() {
   const [notes, setNotes] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [activeNote, setActiveNote] = useState(null);
+ 
 
   /* ---------------- FETCH NOTES ---------------- */
   const fetchNotes = async () => {
@@ -88,6 +89,7 @@ export default function Notes() {
           refresh={fetchNotes}
         />
       )}
+
     </div>
   );
 }

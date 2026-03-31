@@ -3,6 +3,8 @@ import api from "../services/api";
 import "./PublicNotes.css";
 import { FaHeart, FaCommentDots, FaShare } from "react-icons/fa";
 import { getUserIdFromToken } from "../utils/getUserId";
+import { summarizeContent } from "../services/ai";
+import { askAI } from "../services/ai";
 
 export default function PublicNotes() {
   const [notes, setNotes] = useState([]);
@@ -25,15 +27,21 @@ export default function PublicNotes() {
   // Share
   const [copied, setCopied] = useState(false);
 
+  // AI
+  const [summaries, setSummaries] = useState({});
+  const [loadingAI, setLoadingAI] = useState(null);
+
+  const [question, setQuestion] = useState("");
+const [chats, setChats] = useState({});
+const [loadingChat, setLoadingChat] = useState(false);
+
   const commentRef = useRef(null);
+  const summaryRef = useRef(null);
 
   /* =====================
      FETCH PUBLIC NOTES
   ====================== */
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
     fetchPublicNotes();
   }, []);
 
@@ -43,7 +51,7 @@ export default function PublicNotes() {
       const res = await api.get("/notes/public");
       setNotes(res.data);
     } catch (err) {
-      console.error("Public notes fetch failed", err.response?.status);
+      console.error("Public notes fetch failed", err);
       setNotes([]);
     } finally {
       setLoading(false);
@@ -139,6 +147,62 @@ export default function PublicNotes() {
     setTimeout(() => setCopied(false), 1500);
   };
 
+  /* =====================
+     AI SUMMARIZE
+  ====================== */
+  const handleSummarize = async (noteId, content) => {
+  try {
+    setLoadingAI(noteId);
+
+    const res = await summarizeContent(content);
+
+    setSummaries((prev) => ({
+      ...prev,
+      [noteId]: res,
+    }));
+
+    // 👇 SCROLL AFTER SMALL DELAY
+    setTimeout(() => {
+      summaryRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 200);
+
+  } catch (err) {
+    console.error(err);
+    alert("AI failed");
+  } finally {
+    setLoadingAI(null);
+  }
+};
+
+const handleAsk = async () => {
+  if (!question.trim()) return;
+
+  try {
+    setLoadingChat(true);
+
+    const answer = await askAI(activeNote.content, question);
+
+    setChats((prev) => ({
+      ...prev,
+      [activeNote._id]: [
+        ...(prev[activeNote._id] || []),
+        { type: "q", text: question },
+        { type: "a", text: answer },
+      ],
+    }));
+
+    setQuestion("");
+
+  } catch {
+    alert("AI failed");
+  } finally {
+    setLoadingChat(false);
+  }
+};
+
   return (
     <div className="public-notes-page">
       <h2>🌍 Public Notes</h2>
@@ -231,6 +295,29 @@ export default function PublicNotes() {
               </button>
             </div>
 
+            {/* ✅ AI BUTTON */}
+            <button
+              onClick={() =>
+                handleSummarize(activeNote._id, activeNote.content)
+              }
+              style={{
+                marginTop: "10px",
+                padding: "10px 14px",
+                borderRadius: "10px",
+                background: "linear-gradient(135deg, #4f46e5, #6366f1)",
+                color: "#fff",
+                border: "none",
+                cursor: "pointer",
+                fontSize: "14px",
+                fontWeight: "500",
+                boxShadow: "0 4px 12px rgba(79, 70, 229, 0.3)",
+              }}
+            >
+              {loadingAI === activeNote._id
+                ? "Summarizing..."
+                : "✨ Summarize"}
+            </button>
+
             {copied && <div className="share-toast">🔗 Link copied</div>}
 
             {/* CONTENT */}
@@ -245,6 +332,127 @@ export default function PublicNotes() {
                 {activeNote.content}
               </div>
             )}
+
+            {/* ✅ AI OUTPUT */}
+            {summaries[activeNote._id] && (
+              <div ref={summaryRef}
+                style={{
+                  marginTop: "15px",
+                  padding: "16px",
+                  borderRadius: "14px",
+                  background: "rgba(15, 23, 42, 0.9)",
+                  color: "#e2e8f0",
+                  border: "1px solid rgba(148, 163, 184, 0.2)",
+                  backdropFilter: "blur(10px)",
+                  boxShadow: "0 8px 25px rgba(0,0,0,0.3)",
+                  lineHeight: "1.6",
+                  fontSize: "14px",
+                }}
+              >
+                <h4
+                  style={{
+                    marginBottom: "10px",
+                    fontSize: "15px",
+                    fontWeight: "600",
+                    color: "#c7d2fe",
+                  }}
+                >
+                  🧠 AI Summary
+                </h4>
+
+                <div style={{ whiteSpace: "pre-wrap" }}>
+                  {summaries[activeNote._id]}
+                </div>
+              </div>
+            )}
+
+            {/* 🔥 CHAT SECTION */}
+<div style={{ marginTop: "20px" }}>
+  <h4 style={{ color: "#c7d2fe" }}>💬 Ask AI</h4>
+
+  {/* CHAT */}
+  <div
+    style={{
+      maxHeight: "250px",
+      overflowY: "auto",
+      padding: "10px",
+      background: "#020617",
+      borderRadius: "12px",
+      border: "1px solid #1e293b",
+    }}
+  >
+    {(chats[activeNote._id] || []).map((msg, i) => (
+      <div
+        key={i}
+        style={{
+          display: "flex",
+          justifyContent: msg.type === "q" ? "flex-end" : "flex-start",
+          marginBottom: "10px",
+        }}
+      >
+        <div
+          style={{
+            padding: "10px 14px",
+            borderRadius: "14px",
+            maxWidth: "75%",
+            fontSize: "14px",
+            lineHeight: "1.5",
+            background:
+              msg.type === "q"
+                ? "linear-gradient(135deg, #4f46e5, #6366f1)"
+                : "#1e293b",
+            color: "#fff",
+            boxShadow:
+              msg.type === "q"
+                ? "0 4px 12px rgba(79,70,229,0.4)"
+                : "none",
+          }}
+        >
+          {msg.text}
+        </div>
+      </div>
+    ))}
+
+    {loadingChat && (
+      <div style={{ color: "#94a3b8", fontSize: "13px" }}>
+        AI is typing...
+      </div>
+    )}
+  </div>
+
+  {/* INPUT */}
+  <div style={{ display: "flex", gap: "8px", marginTop: "10px" }}>
+    <input
+      value={question}
+      onChange={(e) => setQuestion(e.target.value)}
+      placeholder="Ask something from this note..."
+      style={{
+        flex: 1,
+        padding: "10px",
+        borderRadius: "10px",
+        border: "1px solid #334155",
+        background: "#0f172a",
+        color: "#fff",
+        outline: "none",
+      }}
+    />
+
+    <button
+      onClick={handleAsk}
+      style={{
+        padding: "10px 16px",
+        borderRadius: "10px",
+        background: "#22c55e",
+        color: "#fff",
+        border: "none",
+        cursor: "pointer",
+        fontWeight: "500",
+      }}
+    >
+      Ask
+    </button>
+  </div>
+</div>
 
             {/* COMMENTS */}
             {showComments && (
