@@ -11,6 +11,7 @@ import PremiumNotes from "./pages/PremiumNotes";
 import Wallet from "./pages/Wallet";
 import ReferenceBooks from "./pages/ReferenceBooks";
 import ReferenceBookDetails from "./pages/ReferenceBookDetails";
+import GlobalAIAssistant from "./components/GlobalAIAssistant";
 
 import "./App.css";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -26,43 +27,39 @@ function App() {
   const location = useLocation();
 
   const hideSidebar =
-  location.pathname === "/login" ||
-  location.pathname === "/register" ||
-  location.pathname === "/forgot-password" ||
-  location.pathname === "/verify-otp" ||
-  location.pathname === "/reset-password";
-
+    location.pathname === "/login" ||
+    location.pathname === "/register" ||
+    location.pathname === "/forgot-password" ||
+    location.pathname === "/verify-otp" ||
+    location.pathname === "/reset-password";
 
   useEffect(() => {
-  const handleStorageChange = () => {
-    setIsAuth(Boolean(localStorage.getItem("token")));
-  };
+    const handleStorageChange = () => {
+      setIsAuth(Boolean(localStorage.getItem("token")));
+    };
 
-  window.addEventListener("storage", handleStorageChange);
-
-  return () => {
-    window.removeEventListener("storage", handleStorageChange);
-  };
-}, []);
-
-  // 🔐 Disable right click (global)
-   /*useEffect(() => {
-    const disableRightClick = (e) => e.preventDefault();
-    document.addEventListener("contextmenu", disableRightClick);
+    window.addEventListener("storage", handleStorageChange);
 
     return () => {
-      document.removeEventListener("contextmenu", disableRightClick);
+      window.removeEventListener("storage", handleStorageChange);
     };
-  }, []); */
+  }, []);
 
   return (
     <div className="app">
+      {/* Ambient bg orbs */}
+      <div className="app-bg-orb orb-1" />
+      <div className="app-bg-orb orb-2" />
+      <div className="app-bg-orb orb-3" />
+
       {isAuth && !hideSidebar && !sidebarOpen && (
         <button
           className="hamburger"
           onClick={() => setSidebarOpen(true)}
         >
-          ☰
+          <span />
+          <span />
+          <span />
         </button>
       )}
 
@@ -132,6 +129,9 @@ function App() {
           <Route path="/" element={<Navigate to="/login" />} />
         </Routes>
       </main>
+
+      {/* Global AI Assistant – visible on all authenticated pages */}
+      {isAuth && !hideSidebar && <GlobalAIAssistant />}
     </div>
   );
 }
