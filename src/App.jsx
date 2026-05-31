@@ -56,10 +56,7 @@ function App() {
         <button
           className="hamburger"
           onClick={() => setSidebarOpen(true)}
-        >
-          <span />
-          <span />
-          <span />
+        > ☰
         </button>
       )}
 
