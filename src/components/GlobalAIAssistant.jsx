@@ -7,9 +7,9 @@ export default function GlobalAIAssistant() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
-      role: "assistant",
-      text: "Hi! I'm your StudyVault AI assistant. Ask me anything about studying, your notes, reference books, or how to use the platform! ✨",
-    },
+  role: "assistant",
+  text: "Hi! I'm StudyVault AI 👋. I can help with studying, coding, career guidance, productivity, and platform usage. For questions about a specific note, use that note's dedicated RAG-powered Note AI for the most accurate answers."
+},
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
