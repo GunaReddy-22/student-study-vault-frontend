@@ -183,7 +183,11 @@ const handleAsk = async () => {
   try {
     setLoadingChat(true);
 
-    const answer = await askAI(activeNote.content, question);
+    const answer = await askAI(
+  activeNote._id,
+  question,
+  chats[activeNote._id] || []
+);
 
     setChats((prev) => ({
       ...prev,
@@ -193,6 +197,7 @@ const handleAsk = async () => {
         { type: "a", text: answer },
       ],
     }));
+    
 
     setQuestion("");
 
