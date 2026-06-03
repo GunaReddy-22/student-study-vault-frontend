@@ -189,7 +189,11 @@ export default function PremiumNotes() {
     try {
       setLoadingChat(true);
 
-      const res = await askAI(activeNote.content, question);
+      const res = await askAI(
+  activeNote._id,
+  question,
+  chats[noteId] || []
+);
 
       setChats((prev) => ({
   ...prev,
