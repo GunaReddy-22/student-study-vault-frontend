@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "../services/api";
+import { summarizeContent } from "../services/ai";
 import "./NoteModal.css";
 import HandwritingCanvas from "./HandwritingCanvas";
 
@@ -22,31 +23,20 @@ export default function NoteModal({ note, close, refresh }) {
 
   // ✅ FIXED FUNCTION
   const summarizeNote = async () => {
-    
+    if (!form.content) return;
 
     try {
       setLoadingAI(true);
-
-      const res = await fetch("http://localhost:4000/api/ai/summarize", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    content: form.content,
-  }),
-});
-
-      const data = await res.json();
-
-      setSummary(data.summary);
+      const data = await summarizeContent(form.content);
+      setSummary(data);
     } catch (err) {
       console.error(err);
-      alert("AI failed");
+      alert("AI summarization failed");
     } finally {
       setLoadingAI(false);
     }
   };
+
 
   const saveNote = async () => {
     if (!form.content) {
