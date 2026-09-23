@@ -1,15 +1,17 @@
 import { useState, useRef, useEffect } from "react";
 import "./GlobalAIAssistant.css";
+import FormattedAIResponse from "./FormattedAIResponse";
 
 const BACKEND = "https://student-study-vault-backend.onrender.com";
+
 
 export default function GlobalAIAssistant() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
-  role: "assistant",
-  text: "Hi! I'm StudyVault AI 👋. I can help with studying, coding, career guidance, productivity, and platform usage. For questions about a specific note, use that note's dedicated RAG-powered Note AI for the most accurate answers."
-},
+      role: "assistant",
+      text: "Hi! I'm StudyVault AI 👋. I can help with studying, coding, career guidance, productivity, and platform usage. For questions about a specific note, use that note's dedicated RAG-powered Note AI for the most accurate answers."
+    },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -39,7 +41,7 @@ export default function GlobalAIAssistant() {
     setLoading(true);
 
     try {
-     const contextPrompt = `
+      const contextPrompt = `
 You are StudyVault AI, the general-purpose AI assistant of the StudyVault platform.
 
 About StudyVault:
@@ -99,9 +101,9 @@ ${q}
       setMessages((prev) => [
         ...prev,
         {
-  role: "assistant",
-  text: "Hi! I'm StudyVault AI 👋. I can help with studying, coding, career guidance, productivity, and platform usage. For questions about a specific note, use that note's dedicated RAG-powered Note AI for the most accurate answers."
-},
+          role: "assistant",
+          text: "Hi! I'm StudyVault AI 👋. I can help with studying, coding, career guidance, productivity, and platform usage. For questions about a specific note, use that note's dedicated RAG-powered Note AI for the most accurate answers."
+        },
       ]);
     } finally {
       setLoading(false);
@@ -200,9 +202,16 @@ ${q}
               {msg.role === "assistant" && (
                 <div className="ai-msg-avatar">✦</div>
               )}
-              <div className="ai-msg-bubble">{msg.text}</div>
+              <div className="ai-msg-bubble">
+                {msg.role === "assistant" ? (
+                  <FormattedAIResponse content={msg.text} />
+                ) : (
+                  msg.text
+                )}
+              </div>
             </div>
           ))}
+
 
           {loading && (
             <div className="ai-msg ai-msg-assistant">

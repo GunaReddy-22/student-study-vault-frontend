@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import api from "../services/api";
 import { summarizeContent } from "../services/ai";
+import FormattedAIResponse from "./FormattedAIResponse";
 import "./NoteModal.css";
 import HandwritingCanvas from "./HandwritingCanvas";
+
 
 export default function NoteModal({ note, close, refresh }) {
   const [form, setForm] = useState({
@@ -207,18 +209,18 @@ export default function NoteModal({ note, close, refresh }) {
               <div
                 style={{
                   marginTop: "15px",
-                  padding: "15px",
+                  padding: "16px",
                   borderRadius: "12px",
                   background: "#0f172a",
                   color: "#e2e8f0",
                   border: "1px solid #334155",
-                  whiteSpace: "pre-wrap",
                 }}
               >
-                <h3>🧠 AI Summary</h3>
-                {summary}
+                <h4 style={{ marginBottom: "10px", color: "#c7d2fe" }}>🧠 AI Summary</h4>
+                <FormattedAIResponse content={summary} />
               </div>
             )}
+
           </>
         )}
 

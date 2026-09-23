@@ -3,8 +3,9 @@ import api from "../services/api";
 import "./PremiumNotes.css";
 import { FaHeart, FaCommentDots, FaShare } from "react-icons/fa";
 import { getUserIdFromToken } from "../utils/getUserId";
-
 import { summarizeContent, askAI } from "../services/ai";
+import FormattedAIResponse from "../components/FormattedAIResponse";
+
 
 export default function PremiumNotes() {
   const [notes, setNotes] = useState([]);
@@ -346,9 +347,7 @@ export default function PremiumNotes() {
                 <h4 style={{ marginBottom: "10px", color: "#c7d2fe" }}>
                   🧠 AI Summary
                 </h4>
-                <div style={{ whiteSpace: "pre-wrap" }}>
-                  {summaries[activeNote._id]}
-                </div>
+                <FormattedAIResponse content={summaries[activeNote._id]} />
               </div>
             )}
            {hasAccess && (
@@ -379,7 +378,7 @@ export default function PremiumNotes() {
             style={{
               padding: "10px 14px",
               borderRadius: "14px",
-              maxWidth: "75%",
+              maxWidth: "85%",
               fontSize: "14px",
               lineHeight: "1.5",
               background:
@@ -389,10 +388,15 @@ export default function PremiumNotes() {
               color: "#fff",
             }}
           >
-            {msg.text}
+            {msg.type === "q" ? (
+              msg.text
+            ) : (
+              <FormattedAIResponse content={msg.text} />
+            )}
           </div>
         </div>
       ))}
+
 
       <div ref={chatEndRef} />
 

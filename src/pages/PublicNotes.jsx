@@ -3,8 +3,9 @@ import api from "../services/api";
 import "./PublicNotes.css";
 import { FaHeart, FaCommentDots, FaShare } from "react-icons/fa";
 import { getUserIdFromToken } from "../utils/getUserId";
-import { summarizeContent } from "../services/ai";
-import { askAI } from "../services/ai";
+import { summarizeContent, askAI } from "../services/ai";
+import FormattedAIResponse from "../components/FormattedAIResponse";
+
 
 export default function PublicNotes() {
   const [notes, setNotes] = useState([]);
@@ -365,9 +366,7 @@ const handleAsk = async () => {
                   🧠 AI Summary
                 </h4>
 
-                <div style={{ whiteSpace: "pre-wrap" }}>
-                  {summaries[activeNote._id]}
-                </div>
+                <FormattedAIResponse content={summaries[activeNote._id]} />
               </div>
             )}
 
@@ -399,7 +398,7 @@ const handleAsk = async () => {
           style={{
             padding: "10px 14px",
             borderRadius: "14px",
-            maxWidth: "75%",
+            maxWidth: "85%",
             fontSize: "14px",
             lineHeight: "1.5",
             background:
@@ -413,10 +412,15 @@ const handleAsk = async () => {
                 : "none",
           }}
         >
-          {msg.text}
+          {msg.type === "q" ? (
+            msg.text
+          ) : (
+            <FormattedAIResponse content={msg.text} />
+          )}
         </div>
       </div>
     ))}
+
 
     {loadingChat && (
       <div style={{ color: "#94a3b8", fontSize: "13px" }}>
