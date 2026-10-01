@@ -36,7 +36,6 @@ body {
   flex: 1;
   min-width: 0;
   padding: 32px;
-  overflow-x: clip;
   position: relative;
   z-index: 1;
 }
@@ -47,7 +46,8 @@ body {
 
 @media (max-width: 767px) {
   .content {
-    padding: 20px 16px;
+    padding: 14px 12px;
+    padding-top: 64px; /* Clean single offset for fixed hamburger button */
   }
 }
 

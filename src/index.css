@@ -31,10 +31,7 @@ body {
 body {
   background-color: #0f172a;
   color: #e5e7eb;
-  font-family: "Segoe UI", system-ui, sans-serif;
-
-  /* 🔑 Important for mobile sidebar */
-  
+  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
 }
 
 /* ===============================
@@ -53,4 +50,88 @@ body {
 a {
   text-decoration: none;
   color: inherit;
+}
+
+/* ==================================================
+   GLOBAL MODAL SYSTEM (PERFECT DESKTOP & MOBILE CENTERED)
+================================================== */
+.modal-overlay,
+.quiz-modal-overlay,
+.dev-modal-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  background: rgba(2, 6, 23, 0.85) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  z-index: 99999 !important;
+  padding: 16px !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  box-sizing: border-box !important;
+}
+
+.modal,
+.modal-card,
+.quiz-modal-container,
+.premium-modal {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 540px !important;
+  max-height: calc(100dvh - 40px) !important;
+  height: auto !important;
+  border-radius: 18px !important;
+  margin: auto !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  animation: globalModalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-sizing: border-box !important;
+}
+
+@keyframes globalModalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 768px) {
+  .modal-overlay,
+  .quiz-modal-overlay,
+  .dev-modal-overlay {
+    padding: 10px 8px !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .modal,
+  .modal-card,
+  .quiz-modal-container,
+  .premium-modal {
+    width: 96% !important;
+    max-width: 96% !important;
+    max-height: calc(100dvh - 20px) !important;
+    border-radius: 16px !important;
+    padding: 18px 14px !important;
+    margin: auto !important;
+  }
+
+  /* Touch-friendly buttons on mobile */
+  .modal .cancel,
+  .modal-card .btn-secondary,
+  .scorecard-actions-bar button {
+    height: 48px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 12px;
+  }
 }

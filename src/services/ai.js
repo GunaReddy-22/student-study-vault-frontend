@@ -1,47 +1,36 @@
+// services/ai.js
+import api from "./api";
+
 export const summarizeContent = async (content) => {
-  const res = await fetch("https://student-study-vault-backend.onrender.com/api/ai/summarize", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ content }),
-  });
-
-  if (!res.ok) {
-    throw new Error("AI failed");
-  }
-
-  const data = await res.json();
-  return data.summary;
+  const res = await api.post("/ai/summarize", { content });
+  return res.data.summary;
 };
 
+export const askAI = async (noteId, question, chatHistory = [], content = "") => {
+  const res = await api.post("/ai/ask", {
+    noteId,
+    question,
+    chatHistory,
+    content,
+  });
+  return res.data.answer;
+};
 
-export const askAI = async (
-  noteId,
-  question,
-  chatHistory = []
-) => {
-  const res = await fetch(
-    "https://student-study-vault-backend.onrender.com/api/ai/ask",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        noteId,
-        question,
-        chatHistory,
-      }),
-    }
-  );
+export const generateQuiz = async (noteId) => {
+  const res = await api.post("/ai/quiz/generate", { noteId });
+  return res.data.quiz;
+};
 
-  if (!res.ok) {
-    const err = await res.text();
-    console.log(err);
-    throw new Error("AI failed");
-  }
+export const evaluateQuiz = async ({ noteId, questions, userAnswers }) => {
+  const res = await api.post("/ai/quiz/evaluate", {
+    noteId,
+    questions,
+    userAnswers,
+  });
+  return res.data.evaluation;
+};
 
-  const data = await res.json();
-  return data.answer;
+export const getQuizHistory = async (noteId) => {
+  const res = await api.get(`/ai/quiz/history/${noteId}`);
+  return res.data.history || [];
 };

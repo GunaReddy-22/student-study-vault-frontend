@@ -70,14 +70,13 @@
   color: #facc15;
 }
 
-/* ===============================
-   TEXT
-================================ */
 .premium-card h3 {
   font-size: 17px;
   font-weight: 600;
   color: #eaf1ff;
   margin-bottom: 6px;
+  padding-right: 105px !important;
+  word-break: break-word;
 }
 
 .subject {
@@ -892,17 +891,15 @@ select:focus {
 ================================ */
 
 .premium-page {
-  animation: premiumFade 0.6s ease forwards;
+  animation: premiumFade 0.4s ease forwards;
 }
 
 @keyframes premiumFade {
   from {
     opacity: 0;
-    transform: translateY(12px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 /* ===============================
@@ -998,25 +995,38 @@ select:focus {
 }
 /* =====================================
    MOBILE ALIGNMENT FIX – PREMIUM NOTES
-   (REAL CLASSES)
 ===================================== */
 @media (max-width: 768px) {
 
-  /* Page padding tighter */
+  /* Page padding unified with App.css */
   .premium-page {
-    padding: 16px 14px;
+    padding: 0 !important;
+  }
+
+  .premium-page h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .premium-page > p {
+    margin-top: 0;
+    margin-bottom: 18px;
+    font-size: 13.5px;
+    color: #94a3b8;
   }
 
   /* Force single centered column */
   .premium-grid {
     grid-template-columns: 1fr;
     justify-items: center;
+    gap: 16px;
   }
 
   /* Card centered & full width */
   .premium-card {
     width: 100%;
-    max-width: 92vw;
+    max-width: 100%;
     margin: 0 auto;
   }
 
@@ -1026,36 +1036,20 @@ select:focus {
     box-sizing: border-box;
   }
 
-  /* Text balance */
+  /* Text balance and collision prevention */
   .premium-card h3 {
-    font-size: 16px;
+    font-size: 15.5px !important;
+    padding-right: 105px !important;
+    word-break: break-word;
   }
 
   .price {
-    font-size: 22px;
+    font-size: 20px;
   }
 
   .author {
     font-size: 12px;
   }
-}
-/* =====================================
-   MOBILE FIX – PREMIUM HEADER OFFSET
-===================================== */
-@media (max-width: 768px) {
-
-  /* Push whole premium page content down */
-  .premium-page {
-    padding-top: 72px; /* ⬅️ creates space below hamburger */
-  }
-
-  /* Extra breathing for title block */
-  .premium-page h1,
-  .premium-page h2,
-  .premium-page .page-title {
-    margin-top: 12px;
-  }
-
 }
 /* ===============================
    FIX: PREMIUM SUBJECT CHIP (DEPLOYED LOOK)
@@ -1251,6 +1245,8 @@ select:focus {
 .premium-card h3 {
   margin: 0 0 4px 0 !important;
   line-height: 1.25;
+  padding-right: 105px !important;
+  word-break: break-word;
 }
 
 /* SUBJECT */
@@ -1277,17 +1273,15 @@ select:focus {
 
 /* Page entry animation */
 .premium-page {
-  animation: premiumFadeIn 0.6s ease forwards;
+  animation: premiumFadeIn 0.4s ease forwards;
 }
 
 @keyframes premiumFadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 

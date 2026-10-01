@@ -150,7 +150,7 @@ useEffect(() => {
     pdfLoading ? (
       <div className="locked-box">📄 Loading book…</div>
     ) : pdfUrl ? (
-      <SecurePdfViewer pdfUrl={pdfUrl} />
+      <SecurePdfViewer pdfUrl={pdfUrl} bookTitle={book.title} />
     ) : (
       <div className="locked-box">❌ Failed to load book</div>
     )

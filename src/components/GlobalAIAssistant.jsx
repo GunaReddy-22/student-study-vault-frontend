@@ -2,7 +2,15 @@ import { useState, useRef, useEffect } from "react";
 import "./GlobalAIAssistant.css";
 import FormattedAIResponse from "./FormattedAIResponse";
 
-const BACKEND = "https://student-study-vault-backend.onrender.com";
+const isLocal =
+  typeof window !== "undefined" &&
+  (window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1");
+
+const BACKEND = isLocal
+  ? "http://localhost:4000"
+  : "https://student-study-vault-backend.onrender.com";
+
 
 
 export default function GlobalAIAssistant() {

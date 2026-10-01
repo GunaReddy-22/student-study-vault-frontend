@@ -1,19 +1,4 @@
-import axios from "axios";
-
-const API = axios.create({
-  baseURL: "https://student-study-vault-backend.onrender.com/api",
-});
-
-/* =========================
-   AUTH INTERCEPTOR
-========================= */
-API.interceptors.request.use((req) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    req.headers.Authorization = `Bearer ${token}`;
-  }
-  return req;
-});
+import API from "./api";
 
 /* =========================
    📚 GET ALL REFERENCE BOOKS

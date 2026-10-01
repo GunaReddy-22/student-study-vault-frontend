@@ -181,10 +181,10 @@
 ========================= */
 .reader-section {
   width: 100%;
-  max-width: 900px;   /* SAME AS PDF */
+  max-width: 1100px;
   margin: 48px auto 0;
   padding-top: 32px;
-  border-top: 1px dashed rgba(255,255,255,0.12);
+  border-top: 1px dashed rgba(255, 255, 255, 0.12);
 }
 
 /* LOCKED STATE */

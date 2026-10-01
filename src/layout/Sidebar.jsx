@@ -37,8 +37,13 @@ function Sidebar({ setIsAuth, isOpen = true, onClose }) {
         <NavLink to="/premium" onClick={onClose}>
           Premium Notes
         </NavLink>
+
         <NavLink to="/reference-books" onClick={onClose}>
           Reference Books
+        </NavLink>
+
+        <NavLink to="/quizzes" onClick={onClose}>
+          Practice Quizzes
         </NavLink>
 
         <NavLink to="/wallet" onClick={onClose}>

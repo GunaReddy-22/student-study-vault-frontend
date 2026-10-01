@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import api from "../services/api";
 import NoteCard from "../components/NoteCard";
 import NoteModal from "../components/NoteModal";
+import QuizModal from "../components/QuizModal";
 import "./Notes.css";
-
 
 export default function Notes() {
   const [notes, setNotes] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [activeNote, setActiveNote] = useState(null);
- 
+  const [quizNote, setQuizNote] = useState(null);
 
   /* ---------------- FETCH NOTES ---------------- */
   const fetchNotes = async () => {
@@ -70,6 +70,7 @@ export default function Notes() {
             note={note}
             onEdit={() => openEdit(note)}
             onDelete={() => deleteNote(note._id)}
+            onQuiz={(n) => setQuizNote(n)}
           />
         ))}
       </div>
@@ -90,6 +91,15 @@ export default function Notes() {
         />
       )}
 
+      {/* 🧠 QUIZ MODAL FOR PRIVATE NOTE */}
+      {quizNote && (
+        <QuizModal
+          noteId={quizNote._id}
+          noteTitle={quizNote.title}
+          noteSubject={quizNote.subject}
+          onClose={() => setQuizNote(null)}
+        />
+      )}
     </div>
   );
 }

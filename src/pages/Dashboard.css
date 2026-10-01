@@ -13,17 +13,15 @@
     radial-gradient(circle at 80% 70%, rgba(120,160,255,0.12), transparent 45%),
     linear-gradient(135deg, #050b1e, #020617);
 
-  animation: dashboardFade 0.8s ease forwards;
+  animation: dashboardFade 0.4s ease forwards;
 }
 
 @keyframes dashboardFade {
   from {
     opacity: 0;
-    transform: translateY(10px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
@@ -252,16 +250,7 @@
 
 @media (max-width: 767px) {
   .dashboard {
-    padding: 20px 16px;
-  }
-}
-/* =====================================
-   MOBILE: PREVENT HAMBURGER OVERLAP
-===================================== */
-
-@media (max-width: 767px) {
-  .dashboard {
-    padding-top: 76px; /* space for hamburger */
+    padding: 0 !important;
   }
 }
 /* ===============================

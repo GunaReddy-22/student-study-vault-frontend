@@ -11,6 +11,8 @@ import PremiumNotes from "./pages/PremiumNotes";
 import Wallet from "./pages/Wallet";
 import ReferenceBooks from "./pages/ReferenceBooks";
 import ReferenceBookDetails from "./pages/ReferenceBookDetails";
+import PracticeQuizzes from "./pages/PracticeQuizzes";
+import QuizRunner from "./pages/QuizRunner";
 import GlobalAIAssistant from "./components/GlobalAIAssistant";
 
 import "./App.css";
@@ -26,12 +28,16 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
+  const isQuizTestRunner = location.pathname.startsWith("/quizzes/test");
+  const isQuizSection = location.pathname.startsWith("/quizzes") || location.pathname.startsWith("/practice-quizzes");
+
   const hideSidebar =
     location.pathname === "/login" ||
     location.pathname === "/register" ||
     location.pathname === "/forgot-password" ||
     location.pathname === "/verify-otp" ||
-    location.pathname === "/reset-password";
+    location.pathname === "/reset-password" ||
+    isQuizTestRunner;
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -52,7 +58,7 @@ function App() {
       <div className="app-bg-orb orb-2" />
       <div className="app-bg-orb orb-3" />
 
-      {isAuth && !hideSidebar && !sidebarOpen && (
+      {isAuth && !hideSidebar && !sidebarOpen && !isQuizTestRunner && (
         <button
           className="hamburger"
           onClick={() => setSidebarOpen(true)}
@@ -117,18 +123,57 @@ function App() {
             element={isAuth ? <ReferenceBooks /> : <Navigate to="/login" />}
           />
           <Route
+            path="/reference%20books"
+            element={isAuth ? <Navigate to="/reference-books" replace /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/reference books"
+            element={isAuth ? <Navigate to="/reference-books" replace /> : <Navigate to="/login" />}
+          />
+          <Route
             path="/reference-books/:id"
             element={
               isAuth ? <ReferenceBookDetails /> : <Navigate to="/login" />
             }
           />
+          <Route
+            path="/reference%20books/:id"
+            element={
+              isAuth ? <ReferenceBookDetails /> : <Navigate to="/login" />
+            }
+          />
+          <Route
+            path="/reference books/:id"
+            element={
+              isAuth ? <ReferenceBookDetails /> : <Navigate to="/login" />
+            }
+          />
 
-          <Route path="/" element={<Navigate to="/login" />} />
+          {/* 🎯 Practice Quizzes & CBT Test Runner */}
+          <Route
+            path="/quizzes"
+            element={isAuth ? <PracticeQuizzes /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/practice-quizzes"
+            element={isAuth ? <Navigate to="/quizzes" replace /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/quizzes/test"
+            element={isAuth ? <QuizRunner /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/quizzes/test/:quizId"
+            element={isAuth ? <QuizRunner /> : <Navigate to="/login" />}
+          />
+
+          <Route path="/" element={<Navigate to={isAuth ? "/dashboard" : "/login"} replace />} />
+          <Route path="*" element={<Navigate to={isAuth ? "/dashboard" : "/login"} replace />} />
         </Routes>
       </main>
 
-      {/* Global AI Assistant – visible on all authenticated pages */}
-      {isAuth && !hideSidebar && <GlobalAIAssistant />}
+      {/* Global AI Assistant – visible on authenticated study pages, hidden during Quizzes/Exams */}
+      {isAuth && !hideSidebar && !isQuizSection && <GlobalAIAssistant />}
     </div>
   );
 }

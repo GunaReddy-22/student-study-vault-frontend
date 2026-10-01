@@ -5,6 +5,7 @@ import { FaHeart, FaCommentDots, FaShare } from "react-icons/fa";
 import { getUserIdFromToken } from "../utils/getUserId";
 import { summarizeContent, askAI } from "../services/ai";
 import FormattedAIResponse from "../components/FormattedAIResponse";
+import QuizModal from "../components/QuizModal";
 
 
 export default function PublicNotes() {
@@ -33,8 +34,9 @@ export default function PublicNotes() {
   const [loadingAI, setLoadingAI] = useState(null);
 
   const [question, setQuestion] = useState("");
-const [chats, setChats] = useState({});
-const [loadingChat, setLoadingChat] = useState(false);
+  const [chats, setChats] = useState({});
+  const [loadingChat, setLoadingChat] = useState(false);
+  const [showQuiz, setShowQuiz] = useState(false);
 
   const commentRef = useRef(null);
   const summaryRef = useRef(null);
@@ -262,7 +264,7 @@ const handleAsk = async () => {
       </div>
 
       {/* ===== MODAL ===== */}
-      {activeNote && (
+      {activeNote && !showQuiz && (
         <div className="modal-overlay" onClick={() => setActiveNote(null)}>
           <div
             className="modal read-modal"
@@ -301,28 +303,49 @@ const handleAsk = async () => {
               </button>
             </div>
 
-            {/* ✅ AI BUTTON */}
-            <button
-              onClick={() =>
-                handleSummarize(activeNote._id, activeNote.content)
-              }
-              style={{
-                marginTop: "10px",
-                padding: "10px 14px",
-                borderRadius: "10px",
-                background: "linear-gradient(135deg, #4f46e5, #6366f1)",
-                color: "#fff",
-                border: "none",
-                cursor: "pointer",
-                fontSize: "14px",
-                fontWeight: "500",
-                boxShadow: "0 4px 12px rgba(79, 70, 229, 0.3)",
-              }}
-            >
-              {loadingAI === activeNote._id
-                ? "Summarizing..."
-                : "✨ Summarize"}
-            </button>
+            {/* ✅ AI BUTTONS */}
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "10px" }}>
+              <button
+                onClick={() =>
+                  handleSummarize(activeNote._id, activeNote.content)
+                }
+                style={{
+                  padding: "10px 14px",
+                  borderRadius: "10px",
+                  background: "linear-gradient(135deg, #4f46e5, #6366f1)",
+                  color: "#fff",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  boxShadow: "0 4px 12px rgba(79, 70, 229, 0.3)",
+                }}
+              >
+                {loadingAI === activeNote._id
+                  ? "Summarizing..."
+                  : "✨ Summarize"}
+              </button>
+
+              <button
+                onClick={() => setShowQuiz(true)}
+                style={{
+                  padding: "10px 14px",
+                  borderRadius: "10px",
+                  background: "linear-gradient(135deg, #10b981, #059669)",
+                  color: "#fff",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  boxShadow: "0 4px 12px rgba(16, 185, 129, 0.3)",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                }}
+              >
+                ⚡ Take AI Quiz
+              </button>
+            </div>
 
             {copied && <div className="share-toast">🔗 Link copied</div>}
 
@@ -488,11 +511,21 @@ const handleAsk = async () => {
               </div>
             )}
 
-            <button className="cancel" onClick={() => setActiveNote(null)}>
+            <button className="cancel" onClick={() => { setActiveNote(null); setShowQuiz(false); }}>
               Close
             </button>
           </div>
         </div>
+      )}
+
+      {/* 🧠 AI QUIZ MODAL */}
+      {showQuiz && activeNote && (
+        <QuizModal
+          noteId={activeNote._id}
+          noteTitle={activeNote.title}
+          noteSubject={activeNote.subject}
+          onClose={() => setShowQuiz(false)}
+        />
       )}
     </div>
   );

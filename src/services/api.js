@@ -1,8 +1,17 @@
 // services/api.js
 import axios from "axios";
 
+const isLocal =
+  typeof window !== "undefined" &&
+  (window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1");
+
+const defaultBaseURL = isLocal
+  ? "http://localhost:4000/api"
+  : "https://student-study-vault-backend.onrender.com/api";
+
 const api = axios.create({
-  baseURL: "https://student-study-vault-backend.onrender.com/api",
+  baseURL: import.meta.env.VITE_API_URL || defaultBaseURL,
 });
 
 api.interceptors.request.use((config) => {

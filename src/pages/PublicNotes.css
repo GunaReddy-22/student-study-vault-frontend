@@ -17,17 +17,15 @@
     radial-gradient(circle at 80% 70%, rgba(120,160,255,0.12), transparent 45%),
     linear-gradient(135deg, #050b1e, #020617);
 
-  animation: pageFade 0.6s ease forwards;
+  animation: pageFade 0.4s ease forwards;
 }
 
 @keyframes pageFade {
   from {
     opacity: 0;
-    transform: translateY(10px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
@@ -1120,8 +1118,8 @@
 
   /* ---------- PAGE PADDING ---------- */
   .public-notes-page {
-    padding: 20px 16px;
-    min-height: 100vh;
+    padding: 0 !important;
+    min-height: auto;
   }
 
   /* ---------- CONTROLS STACK ---------- */
@@ -1186,26 +1184,27 @@
 
   /* ---------- MODAL OVERLAY ---------- */
   .modal-overlay {
-    align-items: flex-end;
-    padding: 10px;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 12px 8px !important;
   }
 
-  /* ---------- MODAL (BOTTOM SHEET STYLE) ---------- */
+  /* ---------- MODAL (CENTERED RESPONSIVE) ---------- */
   .modal {
-    width: 100%;
-    max-width: 100%;
-    max-height: 92vh;
-
-    padding: 20px 16px 24px;
-    border-radius: 18px 18px 0 0;
-
-    animation: publicModalSlideUp 0.32s ease;
+    width: 96% !important;
+    max-width: 96% !important;
+    max-height: calc(100dvh - 24px) !important;
+    margin: auto !important;
+    padding: 20px 16px 20px !important;
+    border-radius: 16px !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
   }
 
   /* Modal content readability */
   .public-note-content {
-    font-size: 15px;
-    line-height: 1.7;
+    font-size: 14.5px;
+    line-height: 1.65;
   }
 
   /* Handwritten image fit */
@@ -1216,21 +1215,9 @@
 
   /* Close button touch-friendly */
   .modal .cancel {
-    height: 50px;
-    font-size: 16px;
-    margin-top: 20px;
-  }
-}
-
-/* ---------- MOBILE MODAL ANIMATION ---------- */
-@keyframes publicModalSlideUp {
-  from {
-    transform: translateY(40px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
+    height: 48px;
+    font-size: 15px;
+    margin-top: 18px;
   }
 }
 /* =====================================================
@@ -1330,40 +1317,17 @@
     font-size: 16px;
   }
 }
-/* =========================================
-   🔧 FIX: HAMBURGER COLLISION (PUBLIC NOTES)
-========================================= */
-
-@media (max-width: 767px) {
-
-  /* Push ONLY Public Notes header down */
-  .public-notes-page > h2,
-  .public-notes-page > .subtitle {
-    padding-top: 56px;
-  }
-
-
-}
-/* =========================================
-   🔧 FIX: TITLE–SUBTITLE GAP (PUBLIC NOTES)
-========================================= */
-
 .public-notes-page h2 {
-  margin-bottom: 6px;   /* reduce big gap */
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
 }
 
 .public-notes-page .subtitle {
-  margin-top: 0;        /* remove stacked margin */
-}
-@media (max-width: 767px) {
-  .public-notes-page h2 {
-    margin-bottom: 4px;
-  }
-
-  .public-notes-page .subtitle {
-    font-size: 13px;
-    opacity: 0.85;
-  }
+  margin-top: 0;
+  margin-bottom: 18px;
+  font-size: 13.5px;
+  color: #94a3b8;
 }
 /* =========================================
    FIX: FULL PAGE BACKGROUND (PUBLIC NOTES)
