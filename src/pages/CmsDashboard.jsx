@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   getCmsStats,
   getCmsUsers,
@@ -28,6 +28,14 @@ import {
   replyCmsSupportTicket,
   deleteCmsSupportTicket,
 } from "../services/cmsApi";
+import {
+  getSocket,
+  joinTicketRoom,
+  leaveTicketRoom,
+  joinAdminSupportChannel,
+  leaveAdminSupportChannel,
+  emitTyping,
+} from "../services/socket";
 import "./CmsDashboard.css";
 
 export default function CmsDashboard() {
@@ -120,6 +128,9 @@ export default function CmsDashboard() {
   const [staffNewStatus, setStaffNewStatus] = useState("in_progress");
   const [staffResolutionNotes, setStaffResolutionNotes] = useState("");
   const [supportActionLoading, setSupportActionLoading] = useState(false);
+  const [studentTyping, setStudentTyping] = useState(false);
+  const adminChatEndRef = useRef(null);
+  const adminTypingTimeoutRef = useRef(null);
 
   // Image Lightbox
   const [lightboxUrl, setLightboxUrl] = useState(null);
@@ -210,11 +221,90 @@ export default function CmsDashboard() {
     }
   }, []);
 
+  /* ========================================================
+     CMS WEBSOCKET REAL-TIME LISTENERS
+     ======================================================== */
   useEffect(() => {
-    fetchStats();
-    fetchWithdrawals();
-    fetchSupportTickets();
-  }, [fetchStats, fetchWithdrawals, fetchSupportTickets]);
+    const socket = getSocket();
+    joinAdminSupportChannel();
+
+    const handleNewTicket = (data) => {
+      if (data && data.ticket) {
+        setSupportTickets((prev) => [data.ticket, ...prev.filter((t) => t._id !== data.ticket._id)]);
+        showToast(`🚨 New Ticket: [${data.ticket.ticketId}] ${data.ticket.subject}`, "info");
+      }
+    };
+
+    const handleTicketUpdated = (data) => {
+      if (data && data.ticketId) {
+        setSupportTickets((prev) =>
+          prev.map((t) =>
+            t._id === data.ticketId
+              ? { ...t, status: data.status || t.status, resolutionNotes: data.resolutionNotes ?? t.resolutionNotes, ...(data.ticket || {}) }
+              : t
+          )
+        );
+      }
+    };
+
+    const handleTicketDeleted = (data) => {
+      if (data && data.ticketId) {
+        setSupportTickets((prev) => prev.filter((t) => t._id !== data.ticketId));
+      }
+    };
+
+    socket.on("new_ticket_created", handleNewTicket);
+    socket.on("ticket_status_updated", handleTicketUpdated);
+    socket.on("ticket_deleted", handleTicketDeleted);
+
+    return () => {
+      leaveAdminSupportChannel();
+      socket.off("new_ticket_created", handleNewTicket);
+      socket.off("ticket_status_updated", handleTicketUpdated);
+      socket.off("ticket_deleted", handleTicketDeleted);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!inspectingTicket?._id) return;
+    const socket = getSocket();
+    const ticketId = inspectingTicket._id;
+
+    joinTicketRoom(ticketId);
+
+    const handleMessage = (data) => {
+      if (data.ticketId === ticketId) {
+        setInspectingTicket((prev) => {
+          if (!prev || prev._id !== ticketId) return prev;
+          return {
+            ...prev,
+            status: data.ticket?.status || prev.status,
+            messages: data.ticket?.messages || [...(prev.messages || []), data.message],
+          };
+        });
+      }
+    };
+
+    const handleTyping = (data) => {
+      if (data.ticketId === ticketId && data.role === "user") {
+        setStudentTyping(Boolean(data.isTyping));
+      }
+    };
+
+    socket.on("ticket_message", handleMessage);
+    socket.on("user_typing", handleTyping);
+
+    return () => {
+      leaveTicketRoom(ticketId);
+      socket.off("ticket_message", handleMessage);
+      socket.off("user_typing", handleTyping);
+      setStudentTyping(false);
+    };
+  }, [inspectingTicket?._id]);
+
+  useEffect(() => {
+    adminChatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [inspectingTicket?.messages, studentTyping]);
 
   useEffect(() => {
     if (activeTab === "withdrawals") fetchWithdrawals(withdrawalFilter);
@@ -666,11 +756,25 @@ export default function CmsDashboard() {
     (t) => t.status === "open" || t.status === "in_progress"
   ).length;
 
+  const handleStaffReplyChange = (e) => {
+    setStaffReplyText(e.target.value);
+    if (inspectingTicket?._id) {
+      emitTyping(inspectingTicket._id, "StudyVault Staff", "admin", true);
+      if (adminTypingTimeoutRef.current) clearTimeout(adminTypingTimeoutRef.current);
+      adminTypingTimeoutRef.current = setTimeout(() => {
+        emitTyping(inspectingTicket._id, "StudyVault Staff", "admin", false);
+      }, 1400);
+    }
+  };
+
   const handleSendStaffReply = async (e) => {
     e.preventDefault();
     if (!inspectingTicket || !staffReplyText.trim()) return;
     try {
       setSupportActionLoading(true);
+      if (adminTypingTimeoutRef.current) clearTimeout(adminTypingTimeoutRef.current);
+      emitTyping(inspectingTicket._id, "StudyVault Staff", "admin", false);
+
       const res = await replyCmsSupportTicket(inspectingTicket._id, {
         message: staffReplyText.trim(),
         status: staffNewStatus,
@@ -3176,7 +3280,7 @@ export default function CmsDashboard() {
                 {/* Message Timeline */}
                 <div className="cms-chat-stream">
                   {inspectingTicket.messages?.map((msg, idx) => {
-                    const isStaff = msg.senderRole === "admin" || msg.senderRole === "developer";
+                    const isStaff = msg.senderRole === "admin" || msg.senderRole === "developer" || msg.role === "admin";
                     return (
                       <div key={idx} className={`cms-chat-bubble ${isStaff ? "staff-bubble" : "user-bubble"}`}>
                         <div className="bubble-header">
@@ -3191,16 +3295,24 @@ export default function CmsDashboard() {
                       </div>
                     );
                   })}
+
+                  {/* Student Typing Indicator */}
+                  {studentTyping && (
+                    <div className="live-typing-bubble">
+                      <span>👤 {inspectingTicket.userId?.username || "Student"} is typing...</span>
+                    </div>
+                  )}
+                  <div ref={adminChatEndRef} />
                 </div>
 
                 {/* Staff Reply Form */}
                 <form onSubmit={handleSendStaffReply} className="cms-staff-reply-box">
-                  <label className="reply-label">💬 Reply as StudyVault Staff</label>
+                  <label className="reply-label">💬 Reply as StudyVault Staff (Real-time Live Chat)</label>
                   <textarea
                     rows="3"
-                    placeholder="Type your official response to the student..."
+                    placeholder="Type your official response to the student in real-time..."
                     value={staffReplyText}
-                    onChange={(e) => setStaffReplyText(e.target.value)}
+                    onChange={handleStaffReplyChange}
                     required
                   />
 

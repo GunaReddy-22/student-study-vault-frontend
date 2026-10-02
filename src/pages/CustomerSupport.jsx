@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { createPortal } from "react-dom";
 import {
   getUserTickets,
@@ -6,6 +6,12 @@ import {
   replyToTicket,
   closeTicket,
 } from "../services/supportApi";
+import {
+  getSocket,
+  joinTicketRoom,
+  leaveTicketRoom,
+  emitTyping,
+} from "../services/socket";
 import "./CustomerSupport.css";
 import {
   FaHeadset,
@@ -50,6 +56,9 @@ export default function CustomerSupport() {
   // Reply State inside Conversation Modal
   const [replyText, setReplyText] = useState("");
   const [replyLoading, setReplyLoading] = useState(false);
+  const [staffTyping, setStaffTyping] = useState(false);
+  const chatEndRef = useRef(null);
+  const typingTimeoutRef = useRef(null);
 
   // FAQ Accordion State
   const [openFaqIdx, setOpenFaqIdx] = useState(null);
@@ -74,6 +83,65 @@ export default function CustomerSupport() {
   useEffect(() => {
     fetchTickets();
   }, []);
+
+  /* ========================================================
+     WEBSOCKET REAL-TIME CONVERSATION HOOKS
+     ======================================================== */
+  useEffect(() => {
+    if (!activeTicket?._id) return;
+    const socket = getSocket();
+    const ticketId = activeTicket._id;
+
+    joinTicketRoom(ticketId);
+
+    const handleMessage = (data) => {
+      if (data.ticketId === ticketId) {
+        setActiveTicket((prev) => {
+          if (!prev || prev._id !== ticketId) return prev;
+          return {
+            ...prev,
+            status: data.ticket?.status || prev.status,
+            messages: data.ticket?.messages || [...(prev.messages || []), data.message],
+          };
+        });
+
+        setTickets((prev) =>
+          prev.map((t) => (t._id === ticketId ? (data.ticket || t) : t))
+        );
+      }
+    };
+
+    const handleStatus = (data) => {
+      if (data.ticketId === ticketId) {
+        setActiveTicket((prev) => (prev && prev._id === ticketId ? { ...prev, status: data.status, resolutionNotes: data.resolutionNotes || prev.resolutionNotes } : prev));
+        setTickets((prev) =>
+          prev.map((t) => (t._id === ticketId ? { ...t, status: data.status, resolutionNotes: data.resolutionNotes || t.resolutionNotes } : t))
+        );
+      }
+    };
+
+    const handleTyping = (data) => {
+      if (data.ticketId === ticketId && (data.role === "admin" || data.role === "developer")) {
+        setStaffTyping(Boolean(data.isTyping));
+      }
+    };
+
+    socket.on("ticket_message", handleMessage);
+    socket.on("ticket_status_updated", handleStatus);
+    socket.on("user_typing", handleTyping);
+
+    return () => {
+      leaveTicketRoom(ticketId);
+      socket.off("ticket_message", handleMessage);
+      socket.off("ticket_status_updated", handleStatus);
+      socket.off("user_typing", handleTyping);
+      setStaffTyping(false);
+    };
+  }, [activeTicket?._id]);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [activeTicket?.messages, staffTyping]);
 
   /* ========================================================
      FILTER TICKETS
@@ -144,11 +212,25 @@ export default function CustomerSupport() {
   /* ========================================================
      SEND REPLY HANDLER
      ======================================================== */
+  const handleReplyChange = (e) => {
+    setReplyText(e.target.value);
+    if (activeTicket?._id) {
+      emitTyping(activeTicket._id, "Student", "user", true);
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = setTimeout(() => {
+        emitTyping(activeTicket._id, "Student", "user", false);
+      }, 1400);
+    }
+  };
+
   const handleSendReply = async () => {
     if (!replyText.trim() || !activeTicket) return;
 
     try {
       setReplyLoading(true);
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+      emitTyping(activeTicket._id, "Student", "user", false);
+
       const res = await replyToTicket(activeTicket._id, replyText.trim());
       if (res.success && res.ticket) {
         setActiveTicket(res.ticket);
@@ -725,6 +807,15 @@ export default function CustomerSupport() {
                       <span>No staff replies yet. Our support team is reviewing your ticket.</span>
                     </div>
                   )}
+
+                  {/* Staff Live Typing Indicator */}
+                  {staffTyping && (
+                    <div className="live-typing-bubble">
+                      <FaCommentDots className="typing-icon" />
+                      <span>StudyVault Support Staff is typing a response...</span>
+                    </div>
+                  )}
+                  <div ref={chatEndRef} />
                 </div>
               </div>
 
@@ -734,9 +825,9 @@ export default function CustomerSupport() {
                   <div className="reply-input-bar">
                     <input
                       type="text"
-                      placeholder="Type your response to support staff..."
+                      placeholder="Type your response to support staff (real-time chat)..."
                       value={replyText}
-                      onChange={(e) => setReplyText(e.target.value)}
+                      onChange={handleReplyChange}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && !e.shiftKey) {
                           e.preventDefault();
