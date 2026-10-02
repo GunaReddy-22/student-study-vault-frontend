@@ -2419,17 +2419,15 @@ export default function CmsDashboard() {
 
             {/* Filter Bar */}
             <div className="cms-filter-toolbar">
-              <div className="cms-search-input-wrap">
+              <div className="search-input-wrapper">
                 <span className="search-icon">🔍</span>
                 <input
                   type="text"
+                  className="modern-search-input"
                   placeholder="Search Ticket ID, Student, Email, or Subject..."
                   value={supportSearch}
                   onChange={(e) => setSupportSearch(e.target.value)}
                 />
-                {supportSearch && (
-                  <button className="clear-search-btn" onClick={() => setSupportSearch("")}>✕</button>
-                )}
               </div>
 
               <div className="cms-filter-dropdowns">
@@ -2485,7 +2483,7 @@ export default function CmsDashboard() {
                     <th>Status</th>
                     <th>Messages</th>
                     <th>Created</th>
-                    <th>Actions</th>
+                    <th style={{ textAlign: "right" }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -2545,10 +2543,10 @@ export default function CmsDashboard() {
                             minute: "2-digit",
                           })}
                         </td>
-                        <td>
-                          <div className="table-action-btns">
+                        <td style={{ textAlign: "right" }}>
+                          <div className="action-buttons-inline" style={{ justifyContent: "flex-end" }}>
                             <button
-                              className="tbl-btn blue"
+                              className="table-act-btn primary"
                               title="Inspect Ticket & Reply"
                               onClick={() => {
                                 setInspectingTicket(t);
@@ -2561,7 +2559,7 @@ export default function CmsDashboard() {
                             </button>
                             {t.status !== "resolved" && (
                               <button
-                                className="tbl-btn green"
+                                className="table-act-btn success icon-only"
                                 title="Mark as Resolved"
                                 onClick={() => handleUpdateTicketStatus(t._id, "resolved")}
                               >
@@ -2569,7 +2567,7 @@ export default function CmsDashboard() {
                               </button>
                             )}
                             <button
-                              className="tbl-btn red"
+                              className="table-act-btn danger icon-only"
                               title="Delete Ticket"
                               onClick={() => handleDeleteTicket(t._id)}
                             >
@@ -2612,7 +2610,7 @@ export default function CmsDashboard() {
 
                   <div className="cms-m-card-actions">
                     <button
-                      className="m-action-btn blue"
+                      className="table-act-btn primary full-flex"
                       onClick={() => {
                         setInspectingTicket(t);
                         setStaffNewStatus(t.status === "open" ? "in_progress" : t.status);
@@ -2624,12 +2622,18 @@ export default function CmsDashboard() {
                     </button>
                     {t.status !== "resolved" && (
                       <button
-                        className="m-action-btn green"
+                        className="table-act-btn success"
                         onClick={() => handleUpdateTicketStatus(t._id, "resolved")}
                       >
                         ✔ Resolve
                       </button>
                     )}
+                    <button
+                      className="table-act-btn danger icon-only"
+                      onClick={() => handleDeleteTicket(t._id)}
+                    >
+                      🗑️
+                    </button>
                   </div>
                 </div>
               ))}
