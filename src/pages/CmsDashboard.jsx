@@ -307,6 +307,7 @@ export default function CmsDashboard() {
   }, [inspectingTicket?.messages, studentTyping]);
 
   useEffect(() => {
+    if (activeTab === "overview") fetchStats();
     if (activeTab === "withdrawals") fetchWithdrawals(withdrawalFilter);
     if (activeTab === "users") fetchUsers(searchUser);
     if (activeTab === "quizzes") fetchQuizzes();
@@ -322,6 +323,7 @@ export default function CmsDashboard() {
     }
   }, [
     activeTab,
+    fetchStats,
     fetchWithdrawals,
     fetchUsers,
     fetchQuizzes,
