@@ -155,7 +155,7 @@ export default function Wallet() {
         </div>
       </div>
 
-      <div className="wallet-cards-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "20px", margin: "24px 0" }}>
+      <div className="wallet-cards-grid">
         {/* ================= BALANCE & TOP UP ================= */}
         <div className="wallet-balance-card">
           <div className="balance-label">Available Balance</div>
@@ -175,13 +175,13 @@ export default function Wallet() {
         </div>
 
         {/* ================= WITHDRAW TO UPI ================= */}
-        <div className="wallet-withdraw-card" style={{ background: "rgba(15, 23, 42, 0.7)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "18px", padding: "22px" }}>
-          <h3 style={{ margin: "0 0 4px", fontSize: "18px", color: "#38bdf8" }}>🏧 Withdraw to UPI ID</h3>
-          <p style={{ fontSize: "12px", color: "#94a3b8", marginBottom: "14px" }}>
+        <div className="wallet-withdraw-card">
+          <h3 className="withdraw-title">🏧 Withdraw to UPI ID</h3>
+          <p className="withdraw-desc">
             Submit payout request. Once approved by developer, the amount is disbursed to your UPI.
           </p>
 
-          <form onSubmit={handleWithdraw} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+          <form onSubmit={handleWithdraw} className="withdraw-form">
             <input
               type="number"
               min="10"
@@ -190,7 +190,6 @@ export default function Wallet() {
               value={withdrawAmount}
               onChange={(e) => setWithdrawAmount(e.target.value)}
               required
-              style={{ padding: "10px 14px", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "10px", color: "#fff", outline: "none" }}
             />
 
             <input
@@ -199,7 +198,6 @@ export default function Wallet() {
               value={upiId}
               onChange={(e) => setUpiId(e.target.value)}
               required
-              style={{ padding: "10px 14px", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "10px", color: "#fff", outline: "none" }}
             />
 
             <input
@@ -208,22 +206,12 @@ export default function Wallet() {
               value={withdrawPassword}
               onChange={(e) => setWithdrawPassword(e.target.value)}
               required
-              style={{ padding: "10px 14px", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "10px", color: "#fff", outline: "none" }}
             />
 
             <button
               type="submit"
               disabled={withdrawSubmitting || balance < 10}
-              style={{
-                padding: "12px",
-                background: "linear-gradient(135deg, #4f46e5, #06b6d4)",
-                border: "none",
-                borderRadius: "10px",
-                color: "#fff",
-                fontWeight: "700",
-                cursor: "pointer",
-                marginTop: "4px",
-              }}
+              className="withdraw-submit-btn"
             >
               {withdrawSubmitting ? "Submitting Request..." : "Request Payout to UPI"}
             </button>
@@ -233,74 +221,17 @@ export default function Wallet() {
 
       {/* ================= WITHDRAWAL REQUESTS TRACKER ================= */}
       {myWithdrawals.length > 0 && (
-        <div className="wallet-transactions" style={{ marginBottom: "28px" }}>
+        <div className="wallet-transactions payout-tracker-section">
           <h3 style={{ marginBottom: "12px" }}>📋 My Payout & Withdrawal Requests</h3>
-          <ul style={{ listStyle: "none", padding: 0 }}>
+          <ul className="wallet-payouts-list">
             {myWithdrawals.map((req) => (
-              <li
-                key={req._id}
-                className="tx"
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  padding: "16px",
-                  background: "rgba(15, 23, 42, 0.6)",
-                  borderRadius: "12px",
-                  marginBottom: "10px",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                }}
-              >
-                <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <span style={{ fontSize: "18px", fontWeight: "800", color: "#f8fafc" }}>₹{req.amount}</span>
-                    <span style={{ fontSize: "12px", color: "#38bdf8", background: "rgba(56, 189, 248, 0.1)", padding: "3px 8px", borderRadius: "6px" }}>
-                      UPI: {req.upiId}
-                    </span>
+              <li key={req._id} className="wallet-payout-card">
+                <div className="wallet-payout-header">
+                  <div className="wallet-payout-amount-box">
+                    <span className="wallet-payout-amount">₹{req.amount}</span>
+                    <span className="wallet-payout-upi">UPI: {req.upiId}</span>
                   </div>
-                  <span style={{ fontSize: "11px", color: "#94a3b8", display: "block", marginTop: "4px" }}>
-                    Requested on: {new Date(req.createdAt).toLocaleString()}
-                  </span>
-                  {req.payoutRef && (
-                    <div style={{ fontSize: "12px", color: "#10b981", marginTop: "6px", fontWeight: "600" }}>
-                      ✔ Paid via UPI (UTR Reference: {req.payoutRef})
-                    </div>
-                  )}
-                  {req.rejectionReason && (
-                    <div style={{ fontSize: "12px", color: "#ef4444", marginTop: "6px" }}>
-                      ✖ Rejected: {req.rejectionReason} (Amount has been refunded to your wallet)
-                    </div>
-                  )}
-                </div>
-
-                <div>
-                  <span
-                    style={{
-                      padding: "6px 14px",
-                      borderRadius: "20px",
-                      fontSize: "12px",
-                      fontWeight: "700",
-                      background:
-                        req.status === "APPROVED"
-                          ? "rgba(16, 185, 129, 0.2)"
-                          : req.status === "REJECTED"
-                          ? "rgba(239, 68, 68, 0.2)"
-                          : "rgba(245, 158, 11, 0.2)",
-                      color:
-                        req.status === "APPROVED"
-                          ? "#34d399"
-                          : req.status === "REJECTED"
-                          ? "#f87171"
-                          : "#fbbf24",
-                      border: `1px solid ${
-                        req.status === "APPROVED"
-                          ? "rgba(16, 185, 129, 0.4)"
-                          : req.status === "REJECTED"
-                          ? "rgba(239, 68, 68, 0.4)"
-                          : "rgba(245, 158, 11, 0.4)"
-                      }`,
-                    }}
-                  >
+                  <span className={`wallet-payout-status ${req.status?.toLowerCase() || "pending"}`}>
                     {req.status === "APPROVED"
                       ? "● Disbursed to UPI"
                       : req.status === "REJECTED"
@@ -308,6 +239,21 @@ export default function Wallet() {
                       : "⏳ Pending Dev Approval"}
                   </span>
                 </div>
+
+                <div className="wallet-payout-meta">
+                  <span>Requested on: {new Date(req.createdAt).toLocaleString()}</span>
+                </div>
+
+                {req.payoutRef && (
+                  <div className="wallet-payout-ref-box success">
+                    ✔ Paid via UPI (UTR Reference: {req.payoutRef})
+                  </div>
+                )}
+                {req.rejectionReason && (
+                  <div className="wallet-payout-ref-box error">
+                    ✖ Rejected: {req.rejectionReason} (Amount has been refunded to your wallet)
+                  </div>
+                )}
               </li>
             ))}
           </ul>

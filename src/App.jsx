@@ -60,12 +60,20 @@ function App() {
       <div className="app-bg-orb orb-2" />
       <div className="app-bg-orb orb-3" />
 
-      {isAuth && !hideSidebar && !sidebarOpen && !isQuizTestRunner && (
-        <button
-          className="hamburger"
-          onClick={() => setSidebarOpen(true)}
-        > ☰
-        </button>
+      {isAuth && !hideSidebar && !isQuizTestRunner && (
+        <header className="mobile-header-bar">
+          <button
+            className="mobile-menu-btn"
+            onClick={() => setSidebarOpen(true)}
+            aria-label="Open Navigation Menu"
+          >
+            ☰
+          </button>
+          <div className="mobile-header-brand">
+            <span className="mobile-brand-icon">📚</span>
+            <span className="mobile-brand-title">StudyVault</span>
+          </div>
+        </header>
       )}
 
       {sidebarOpen && (

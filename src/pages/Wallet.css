@@ -1,114 +1,354 @@
-.wallet-page {
-  padding: 32px;
-  color: #fff;
-  min-height: 100vh;
+/* =====================================================
+   💰 STUDYVAULT WALLET & PAYOUT CENTER STYLES
+   ===================================================== */
 
-  background:
-    radial-gradient(circle at 20% 10%, rgba(80,140,255,0.18), transparent 40%),
-    radial-gradient(circle at 80% 70%, rgba(120,160,255,0.12), transparent 45%),
-    linear-gradient(135deg, #050b1e, #020617);
+.wallet-page {
+  width: 100%;
+  color: #fff;
+  min-height: 100%;
+  padding: 0;
+  animation: walletFadeIn 0.35s ease-out;
 }
 
-.wallet-page h2 {
+@keyframes walletFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.wallet-loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: #94a3b8;
+  font-size: 15px;
+}
+
+.wallet-header-strip h2 {
   font-size: 26px;
-  margin-bottom: 20px;
+  font-weight: 800;
+  margin: 0;
+  color: #f8fafc;
+}
+
+/* =====================================================
+   CARDS GRID (BALANCE & WITHDRAW)
+   ===================================================== */
+.wallet-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin: 24px 0;
 }
 
 /* BALANCE CARD */
 .wallet-balance-card {
-  background: linear-gradient(
-    180deg,
-    rgba(255,255,255,0.08),
-    rgba(255,255,255,0.03)
-  );
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 18px;
-  padding: 22px;
-  max-width: 420px;
-
-  box-shadow:
-    0 20px 50px rgba(0,0,0,0.6),
-    inset 0 0 0 1px rgba(255,255,255,0.06);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .balance-label {
-  font-size: 14px;
-  color: #9aa4b2;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #94a3b8;
 }
 
 .balance-amount {
-  font-size: 32px;
+  font-size: 34px;
   font-weight: 800;
-  margin: 10px 0 18px;
-  color: #8fd3ff;
+  margin: 10px 0 20px;
+  color: #38bdf8;
+  text-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
 }
 
-/* ADD MONEY */
 .add-money {
   display: flex;
   gap: 10px;
+  margin-top: auto;
 }
 
 .add-money input {
   flex: 1;
-  padding: 10px;
+  min-width: 0;
+  padding: 11px 14px;
   border-radius: 10px;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   outline: none;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.06);
   color: white;
+  font-size: 14px;
+}
+
+.add-money input:focus {
+  border-color: #22c55e;
 }
 
 .add-money button {
-  padding: 10px 16px;
+  padding: 11px 18px;
   border-radius: 10px;
   border: none;
   cursor: pointer;
-  font-weight: 600;
-
+  font-weight: 700;
+  font-size: 13.5px;
   background: linear-gradient(135deg, #22c55e, #16a34a);
   color: white;
+  white-space: nowrap;
+  transition: all 0.2s;
 }
 
-/* TRANSACTIONS */
+.add-money button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(34, 197, 94, 0.35);
+}
+
+/* WITHDRAW TO UPI CARD */
+.wallet-withdraw-card {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.withdraw-title {
+  margin: 0 0 4px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.withdraw-desc {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-bottom: 14px;
+  line-height: 1.4;
+}
+
+.withdraw-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.withdraw-form input {
+  width: 100%;
+  padding: 11px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 13.5px;
+  outline: none;
+}
+
+.withdraw-form input:focus {
+  border-color: #38bdf8;
+}
+
+.withdraw-submit-btn {
+  padding: 12px;
+  background: linear-gradient(135deg, #4f46e5, #06b6d4);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: all 0.2s;
+}
+
+.withdraw-submit-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+}
+
+.withdraw-submit-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* =====================================================
+   PAYOUT REQUESTS TRACKER & LEDGER
+   ===================================================== */
 .wallet-transactions {
   margin-top: 32px;
-  max-width: 600px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
 }
 
 .wallet-transactions h3 {
-  margin-bottom: 12px;
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #f8fafc;
 }
 
+.wallet-payouts-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wallet-payout-card {
+  background: rgba(2, 6, 23, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wallet-payout-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.wallet-payout-amount-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.wallet-payout-amount {
+  font-size: 20px;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.wallet-payout-upi {
+  font-size: 12px;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  padding: 3px 8px;
+  border-radius: 6px;
+  word-break: break-all;
+}
+
+.wallet-payout-status {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.wallet-payout-status.approved {
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.wallet-payout-status.rejected {
+  background: rgba(239, 68, 68, 0.18);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.wallet-payout-status.pending {
+  background: rgba(245, 158, 11, 0.18);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.wallet-payout-meta {
+  font-size: 11.5px;
+  color: #94a3b8;
+}
+
+.wallet-payout-ref-box {
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.wallet-payout-ref-box.success {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: #34d399;
+  font-weight: 600;
+}
+
+.wallet-payout-ref-box.error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: #f87171;
+}
+
+/* ACTIVITY LEDGER ITEMS */
 .wallet-transactions ul {
   list-style: none;
   padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .tx {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   padding: 14px 16px;
-  margin-bottom: 10px;
-
   border-radius: 12px;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  gap: 12px;
 }
 
 .tx-left {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
+  min-width: 0;
+}
+
+.tx-left p {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #f1f5f9;
+  word-break: break-word;
 }
 
 .tx-left span {
-  font-size: 12px;
-  color: #9aa4b2;
+  font-size: 11.5px;
+  color: #94a3b8;
 }
 
 .tx-right {
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 800;
+  white-space: nowrap;
 }
 
 .tx.credit .tx-right {
@@ -120,21 +360,61 @@
 }
 
 .empty {
-  color: #9aa4b2;
-  font-size: 14px;
+  color: #94a3b8;
+  font-size: 13.5px;
+  text-align: center;
+  padding: 24px;
+  margin: 0;
 }
 
-/* MOBILE */
+/* =====================================================
+   MOBILE RESPONSIVENESS
+   ===================================================== */
 @media (max-width: 768px) {
-  .wallet-page {
-    padding: 20px 16px;
+  .wallet-header-strip h2 {
+    font-size: 20px;
   }
 
-  .wallet-balance-card {
-    width: 100%;
+  .wallet-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin: 16px 0;
+  }
+
+  .wallet-balance-card,
+  .wallet-withdraw-card {
+    padding: 18px 16px;
+    border-radius: 14px;
+  }
+
+  .balance-amount {
+    font-size: 28px;
+  }
+
+  .wallet-transactions {
+    margin-top: 20px;
+    padding: 16px 14px;
+    border-radius: 14px;
+  }
+
+  .wallet-transactions h3 {
+    font-size: 16px;
+  }
+
+  .tx {
+    padding: 12px;
+  }
+
+  .tx-left p {
+    font-size: 12.5px;
+  }
+
+  .tx-right {
+    font-size: 14px;
   }
 }
-@media (max-width: 420px) {
+
+@media (max-width: 480px) {
   .add-money {
     flex-direction: column;
   }
@@ -142,317 +422,10 @@
   .add-money button {
     width: 100%;
   }
-}
-/* =====================================================
-   WALLET – PREMIUM EXPERIENCE ADD-ON
-   (Depth • Motion • Glow • Continuity)
-===================================================== */
 
-/* ---------- Page entry (premium feel) ---------- */
-.wallet-page {
-  animation: walletFadeIn 0.6s cubic-bezier(.22,.61,.36,1);
-}
-
-@keyframes walletFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-    filter: blur(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0);
-  }
-}
-
-/* ---------- Balance card luxury ---------- */
-.wallet-balance-card {
-  position: relative;
-  overflow: hidden;
-
-  transition:
-    transform 0.35s cubic-bezier(.22,.61,.36,1),
-    box-shadow 0.35s cubic-bezier(.22,.61,.36,1);
-}
-
-/* soft glow border */
-.wallet-balance-card::before {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-
-  background: linear-gradient(
-    140deg,
-    rgba(99,102,241,0.5),
-    rgba(56,189,248,0.25),
-    transparent 60%
-  );
-
-  opacity: 0.35;
-  filter: blur(14px);
-  z-index: -1;
-}
-
-.wallet-balance-card:hover {
-  transform: translateY(-6px) scale(1.015);
-  box-shadow:
-    0 35px 90px rgba(0,0,0,0.85),
-    0 0 0 1px rgba(99,102,241,0.35);
-}
-
-/* ---------- Balance pulse (subtle premium life) ---------- */
-.balance-amount {
-  text-shadow:
-    0 0 18px rgba(56,189,248,0.45);
-}
-
-/* ---------- Transactions container (premium feed) ---------- */
-.wallet-transactions {
-  background: linear-gradient(
-    180deg,
-    rgba(255,255,255,0.03),
-    rgba(255,255,255,0.01)
-  );
-
-  padding: 18px;
-  border-radius: 18px;
-
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.06),
-    0 22px 70px rgba(0,0,0,0.7);
-}
-
-/* ---------- Transaction cards motion ---------- */
-.tx {
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease,
-    background 0.25s ease;
-}
-
-.tx:hover {
-  transform: translateX(6px);
-  background: rgba(255,255,255,0.08);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.5);
-}
-
-/* ---------- Empty state premium ---------- */
-.empty {
-  text-align: center;
-  padding: 40px 20px;
-  font-size: 14px;
-  color: #c7d2fe;
-  opacity: 0.85;
-}
-
-/* ---------- Smooth scrollbar (matches notes) ---------- */
-.wallet-transactions::-webkit-scrollbar {
-  width: 8px;
-}
-
-.wallet-transactions::-webkit-scrollbar-track {
-  background: rgba(255,255,255,0.04);
-}
-
-.wallet-transactions::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    180deg,
-    rgba(99,102,241,0.6),
-    rgba(56,189,248,0.5)
-  );
-  border-radius: 999px;
-}
-
-/* ---------- Mobile premium spacing ---------- */
-@media (max-width: 768px) {
-  .wallet-balance-card {
-    margin-bottom: 22px;
-  }
-
-  .wallet-transactions {
-    margin-top: 26px;
-    padding: 16px;
-  }
-}
-
-/* ---------- Reduce motion support ---------- */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation: none !important;
-    transition: none !important;
-  }
-}
-/* ===============================
-   WALLET HEADING SPACING ADD-ON
-================================ */
-
-/* Push heading down slightly */
-.wallet-page h2 {
-  margin-top: 12px;   /* desktop */
-}
-
-/* Mobile adjustment */
-@media (max-width: 768px) {
-  .wallet-page h2 {
-    margin-top: 18px;
-  }
-}
-
-/* Very small screens */
-@media (max-width: 420px) {
-  .wallet-page h2 {
-    margin-top: 22px;
-  }
-}
-
-/* =====================================================
-   WALLET – WITHDRAW SECTION (ADD-ON ONLY)
-   Safe to append at bottom
-===================================================== */
-
-.wallet-withdraw-card {
-  margin-top: 28px;
-  max-width: 420px;
-
-  background: linear-gradient(
-    180deg,
-    rgba(255,255,255,0.07),
-    rgba(255,255,255,0.025)
-  );
-
-  padding: 22px;
-  border-radius: 18px;
-
-  box-shadow:
-    0 22px 60px rgba(0,0,0,0.7),
-    inset 0 0 0 1px rgba(255,255,255,0.06);
-
-  animation: walletFadeIn 0.4s ease;
-}
-
-.wallet-withdraw-card h3 {
-  margin-bottom: 14px;
-  font-size: 16px;
-  font-weight: 700;
-  color: #e5e7eb;
-}
-
-/* Inputs */
-.wallet-withdraw-card input {
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 11px 12px;
-
-  border-radius: 10px;
-  border: none;
-  outline: none;
-
-  background: rgba(255,255,255,0.08);
-  color: white;
-}
-
-.wallet-withdraw-card input::placeholder {
-  color: rgba(200,210,230,0.6);
-}
-
-/* Withdraw button */
-.wallet-withdraw-card button {
-  width: 100%;
-  margin-top: 6px;
-
-  padding: 12px;
-  border-radius: 12px;
-  border: none;
-  cursor: pointer;
-
-  font-weight: 700;
-  font-size: 14px;
-
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  color: white;
-
-  box-shadow:
-    0 18px 40px rgba(239,68,68,0.45);
-
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
-}
-
-.wallet-withdraw-card button:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow:
-    0 26px 65px rgba(239,68,68,0.65);
-}
-
-/* Disabled feel (future-proof) */
-.wallet-withdraw-card button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-
-/* =====================================================
-   MOBILE REFINEMENTS (ADD-ON)
-===================================================== */
-
-@media (max-width: 768px) {
-  .wallet-balance-card,
-  .wallet-withdraw-card {
-    max-width: 100%;
-  }
-}
-
-@media (max-width: 420px) {
-  .wallet-withdraw-card {
-    padding: 18px;
-  }
-}
-/* =====================================================
-   MOBILE POLISH – FINAL TOUCH (OPTIONAL)
-===================================================== */
-
-@media (max-width: 768px) {
-
-  /* Slightly tighter vertical rhythm */
-  .wallet-page {
-    padding-bottom: 28px;
-  }
-
-  /* Balance card breathing room */
-  .wallet-balance-card {
-    margin-bottom: 18px;
-  }
-
-  /* Make buttons easier to tap */
-  .add-money button,
-  .wallet-withdraw-card button {
-    min-height: 46px;
-    font-size: 15px;
-  }
-
-  /* Inputs feel more native on mobile */
-  .add-money input,
-  .wallet-withdraw-card input {
-    min-height: 44px;
-    font-size: 15px;
-  }
-
-  /* Transactions don’t feel cramped */
-  .tx {
-    padding: 14px 14px;
-  }
-}
-
-/* Ultra-small phones */
-@media (max-width: 360px) {
-  .balance-amount {
-    font-size: 28px;
-  }
-
-  .wallet-page h2 {
-    font-size: 22px;
+  .wallet-payout-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
 }
