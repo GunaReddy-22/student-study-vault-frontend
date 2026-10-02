@@ -14,6 +14,7 @@ import ReferenceBookDetails from "./pages/ReferenceBookDetails";
 import PracticeQuizzes from "./pages/PracticeQuizzes";
 import QuizRunner from "./pages/QuizRunner";
 import CmsDashboard from "./pages/CmsDashboard";
+import CustomerSupport from "./pages/CustomerSupport";
 import GlobalAIAssistant from "./components/GlobalAIAssistant";
 
 import "./App.css";
@@ -166,6 +167,12 @@ function App() {
           <Route
             path="/quizzes/test/:quizId"
             element={isAuth ? <QuizRunner /> : <Navigate to="/login" />}
+          />
+
+          {/* 🎧 Customer Support */}
+          <Route
+            path="/support"
+            element={isAuth ? <CustomerSupport /> : <Navigate to="/login" />}
           />
 
           {/* ⚙️ Master Developer CMS Control */}

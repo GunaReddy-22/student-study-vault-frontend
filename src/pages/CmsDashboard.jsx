@@ -23,6 +23,10 @@ import {
   getCmsWithdrawals,
   approveCmsWithdrawal,
   rejectCmsWithdrawal,
+  getCmsSupportTickets,
+  updateCmsSupportTicket,
+  replyCmsSupportTicket,
+  deleteCmsSupportTicket,
 } from "../services/cmsApi";
 import "./CmsDashboard.css";
 
@@ -105,6 +109,18 @@ export default function CmsDashboard() {
   const [transactions, setTransactions] = useState([]);
   const [txFilter, setTxFilter] = useState("ALL");
 
+  // Support Tickets CMS State
+  const [supportTickets, setSupportTickets] = useState([]);
+  const [supportStatusFilter, setSupportStatusFilter] = useState("ALL");
+  const [supportPriorityFilter, setSupportPriorityFilter] = useState("ALL");
+  const [supportCategoryFilter, setSupportCategoryFilter] = useState("ALL");
+  const [supportSearch, setSupportSearch] = useState("");
+  const [inspectingTicket, setInspectingTicket] = useState(null);
+  const [staffReplyText, setStaffReplyText] = useState("");
+  const [staffNewStatus, setStaffNewStatus] = useState("in_progress");
+  const [staffResolutionNotes, setStaffResolutionNotes] = useState("");
+  const [supportActionLoading, setSupportActionLoading] = useState(false);
+
   // Image Lightbox
   const [lightboxUrl, setLightboxUrl] = useState(null);
 
@@ -178,10 +194,27 @@ export default function CmsDashboard() {
     }
   }, []);
 
+  const fetchSupportTickets = useCallback(async (filters = {}) => {
+    try {
+      const params = {};
+      if (filters.status && filters.status !== "ALL") params.status = filters.status;
+      if (filters.priority && filters.priority !== "ALL") params.priority = filters.priority;
+      if (filters.category && filters.category !== "ALL") params.category = filters.category;
+      if (filters.q) params.q = filters.q;
+      const res = await getCmsSupportTickets(params);
+      if (res.success) {
+        setSupportTickets(res.tickets || []);
+      }
+    } catch (err) {
+      console.error("Failed to load CMS support tickets:", err);
+    }
+  }, []);
+
   useEffect(() => {
     fetchStats();
     fetchWithdrawals();
-  }, [fetchStats, fetchWithdrawals]);
+    fetchSupportTickets();
+  }, [fetchStats, fetchWithdrawals, fetchSupportTickets]);
 
   useEffect(() => {
     if (activeTab === "withdrawals") fetchWithdrawals(withdrawalFilter);
@@ -189,7 +222,30 @@ export default function CmsDashboard() {
     if (activeTab === "quizzes") fetchQuizzes();
     if (activeTab === "notes") fetchNotes(noteFilter);
     if (activeTab === "ledger") fetchTransactions();
-  }, [activeTab, fetchWithdrawals, fetchUsers, fetchQuizzes, fetchNotes, fetchTransactions, searchUser, noteFilter, withdrawalFilter]);
+    if (activeTab === "support") {
+      fetchSupportTickets({
+        status: supportStatusFilter,
+        priority: supportPriorityFilter,
+        category: supportCategoryFilter,
+        q: supportSearch,
+      });
+    }
+  }, [
+    activeTab,
+    fetchWithdrawals,
+    fetchUsers,
+    fetchQuizzes,
+    fetchNotes,
+    fetchTransactions,
+    fetchSupportTickets,
+    searchUser,
+    noteFilter,
+    withdrawalFilter,
+    supportStatusFilter,
+    supportPriorityFilter,
+    supportCategoryFilter,
+    supportSearch,
+  ]);
 
   /* ========================================================
      WITHDRAWAL & PAYOUT APPROVAL HANDLERS
@@ -603,6 +659,102 @@ export default function CmsDashboard() {
     );
   });
 
+  /* ========================================================
+     SUPPORT TICKET CMS ACTIONS
+     ======================================================== */
+  const openTicketsCount = supportTickets.filter(
+    (t) => t.status === "open" || t.status === "in_progress"
+  ).length;
+
+  const handleSendStaffReply = async (e) => {
+    e.preventDefault();
+    if (!inspectingTicket || !staffReplyText.trim()) return;
+    try {
+      setSupportActionLoading(true);
+      const res = await replyCmsSupportTicket(inspectingTicket._id, {
+        message: staffReplyText.trim(),
+        status: staffNewStatus,
+      });
+      if (res.success) {
+        showToast("Staff response sent to user successfully!", "success");
+        setInspectingTicket(res.ticket);
+        setStaffReplyText("");
+        fetchSupportTickets({
+          status: supportStatusFilter,
+          priority: supportPriorityFilter,
+          category: supportCategoryFilter,
+          q: supportSearch,
+        });
+      }
+    } catch (err) {
+      showToast(err.response?.data?.message || "Failed to send staff response", "error");
+    } finally {
+      setSupportActionLoading(false);
+    }
+  };
+
+  const handleUpdateTicketStatus = async (ticketId, newStatus, resolutionNotes = "") => {
+    try {
+      setSupportActionLoading(true);
+      const res = await updateCmsSupportTicket(ticketId, {
+        status: newStatus,
+        resolutionNotes: resolutionNotes || undefined,
+      });
+      if (res.success) {
+        showToast(`Ticket status changed to ${newStatus.replace("_", " ").toUpperCase()}`, "success");
+        if (inspectingTicket && inspectingTicket._id === ticketId) {
+          setInspectingTicket(res.ticket);
+        }
+        fetchSupportTickets({
+          status: supportStatusFilter,
+          priority: supportPriorityFilter,
+          category: supportCategoryFilter,
+          q: supportSearch,
+        });
+      }
+    } catch (err) {
+      showToast(err.response?.data?.message || "Failed to update ticket", "error");
+    } finally {
+      setSupportActionLoading(false);
+    }
+  };
+
+  const handleDeleteTicket = async (ticketId) => {
+    if (!window.confirm("Are you sure you want to permanently delete this support ticket?")) return;
+    try {
+      const res = await deleteCmsSupportTicket(ticketId);
+      if (res.success) {
+        showToast("Support ticket deleted", "success");
+        if (inspectingTicket && inspectingTicket._id === ticketId) {
+          setInspectingTicket(null);
+        }
+        fetchSupportTickets({
+          status: supportStatusFilter,
+          priority: supportPriorityFilter,
+          category: supportCategoryFilter,
+          q: supportSearch,
+        });
+      }
+    } catch (err) {
+      showToast(err.response?.data?.message || "Failed to delete ticket", "error");
+    }
+  };
+
+  const filteredSupportTickets = supportTickets.filter((t) => {
+    if (supportStatusFilter !== "ALL" && t.status !== supportStatusFilter) return false;
+    if (supportPriorityFilter !== "ALL" && t.priority !== supportPriorityFilter) return false;
+    if (supportCategoryFilter !== "ALL" && t.category !== supportCategoryFilter) return false;
+    if (supportSearch.trim()) {
+      const q = supportSearch.toLowerCase();
+      const matchId = t.ticketId && t.ticketId.toLowerCase().includes(q);
+      const matchSub = t.subject && t.subject.toLowerCase().includes(q);
+      const matchUser = t.userId?.username && t.userId.username.toLowerCase().includes(q);
+      const matchEmail = t.userId?.email && t.userId.email.toLowerCase().includes(q);
+      if (!matchId && !matchSub && !matchUser && !matchEmail) return false;
+    }
+    return true;
+  });
+
   return (
     <div className="cms-wrapper">
       {/* GLOBAL TOAST */}
@@ -688,6 +840,9 @@ export default function CmsDashboard() {
           <option value="cloudinary">☁️ Cloudinary Media Vault</option>
           <option value="notes">📚 Notes Moderation ({notes.length || statsData?.stats?.totalNotes || 0})</option>
           <option value="ledger">🧾 Audit Ledger ({transactions.length})</option>
+          <option value="support">
+            🎧 Support Tickets {openTicketsCount > 0 ? `(${openTicketsCount} Open!)` : `(${supportTickets.length})`}
+          </option>
         </select>
       </div>
 
@@ -710,6 +865,17 @@ export default function CmsDashboard() {
             <span>Withdrawals & Payouts</span>
             {pendingWithdrawalsCount > 0 && (
               <span className="nav-counter-tag">{pendingWithdrawalsCount}</span>
+            )}
+          </button>
+
+          <button
+            className={`cms-nav-item ${activeTab === "support" ? "active" : ""}`}
+            onClick={() => setActiveTab("support")}
+          >
+            <span className="nav-icon">🎧</span>
+            <span>Support Tickets</span>
+            {openTicketsCount > 0 && (
+              <span className="nav-counter-tag red">{openTicketsCount}</span>
             )}
           </button>
 
@@ -2077,6 +2243,297 @@ export default function CmsDashboard() {
         </div>
       )}
 
+      {/* ================= TAB 8: SUPPORT TICKETS ================= */}
+      {activeTab === "support" && (
+        <div className="cms-tab-content">
+          {/* Support Ticket Metric Counters */}
+          <div className="cms-kpi-grid">
+            <div className="cms-kpi-card accent-rose">
+              <div className="kpi-top">
+                <span className="kpi-tag">Open / Unresolved</span>
+                <span className="kpi-icon-pill">🚨</span>
+              </div>
+              <div className="kpi-val" style={{ color: openTicketsCount > 0 ? "#f43f5e" : "#f8fafc" }}>
+                {supportTickets.filter((t) => t.status === "open").length}
+              </div>
+              <div className="kpi-desc">Awaiting first staff response</div>
+            </div>
+
+            <div className="cms-kpi-card accent-amber">
+              <div className="kpi-top">
+                <span className="kpi-tag">In Progress</span>
+                <span className="kpi-icon-pill">⏳</span>
+              </div>
+              <div className="kpi-val" style={{ color: "#fbbf24" }}>
+                {supportTickets.filter((t) => t.status === "in_progress").length}
+              </div>
+              <div className="kpi-desc">Currently being addressed by dev team</div>
+            </div>
+
+            <div className="cms-kpi-card accent-emerald">
+              <div className="kpi-top">
+                <span className="kpi-tag">Resolved & Closed</span>
+                <span className="kpi-icon-pill">✔</span>
+              </div>
+              <div className="kpi-val" style={{ color: "#10b981" }}>
+                {supportTickets.filter((t) => t.status === "resolved" || t.status === "closed").length}
+              </div>
+              <div className="kpi-desc">Successfully settled support inquiries</div>
+            </div>
+
+            <div className="cms-kpi-card accent-purple">
+              <div className="kpi-top">
+                <span className="kpi-tag">Total Raised</span>
+                <span className="kpi-icon-pill">🎧</span>
+              </div>
+              <div className="kpi-val">{supportTickets.length}</div>
+              <div className="kpi-desc">All-time student tickets on platform</div>
+            </div>
+          </div>
+
+          {/* Support Control Panel */}
+          <div className="cms-panel-card">
+            <div className="panel-card-header">
+              <div>
+                <h3>🎧 Customer Support Management ({filteredSupportTickets.length})</h3>
+                <p>Real-time ticket queue, staff chat replies, and priority ticket resolution</p>
+              </div>
+              <button
+                className="panel-link-btn"
+                onClick={() =>
+                  fetchSupportTickets({
+                    status: supportStatusFilter,
+                    priority: supportPriorityFilter,
+                    category: supportCategoryFilter,
+                    q: supportSearch,
+                  })
+                }
+              >
+                🔄 Refresh Queue
+              </button>
+            </div>
+
+            {/* Filter Bar */}
+            <div className="cms-filter-toolbar">
+              <div className="cms-search-input-wrap">
+                <span className="search-icon">🔍</span>
+                <input
+                  type="text"
+                  placeholder="Search Ticket ID, Student, Email, or Subject..."
+                  value={supportSearch}
+                  onChange={(e) => setSupportSearch(e.target.value)}
+                />
+                {supportSearch && (
+                  <button className="clear-search-btn" onClick={() => setSupportSearch("")}>✕</button>
+                )}
+              </div>
+
+              <div className="cms-filter-dropdowns">
+                <select
+                  className="modern-select"
+                  value={supportStatusFilter}
+                  onChange={(e) => setSupportStatusFilter(e.target.value)}
+                >
+                  <option value="ALL">All Statuses</option>
+                  <option value="open">Open (Unresolved)</option>
+                  <option value="in_progress">In Progress</option>
+                  <option value="resolved">Resolved</option>
+                  <option value="closed">Closed</option>
+                </select>
+
+                <select
+                  className="modern-select"
+                  value={supportPriorityFilter}
+                  onChange={(e) => setSupportPriorityFilter(e.target.value)}
+                >
+                  <option value="ALL">All Priorities</option>
+                  <option value="urgent">🔥 Urgent</option>
+                  <option value="high">🔴 High</option>
+                  <option value="medium">🟡 Medium</option>
+                  <option value="low">🟢 Low</option>
+                </select>
+
+                <select
+                  className="modern-select"
+                  value={supportCategoryFilter}
+                  onChange={(e) => setSupportCategoryFilter(e.target.value)}
+                >
+                  <option value="ALL">All Categories</option>
+                  <option value="billing">💳 Billing & Wallet</option>
+                  <option value="technical">🛠️ Technical Bug</option>
+                  <option value="content">📚 Notes & Vault</option>
+                  <option value="quiz">🎯 Quiz & Tests</option>
+                  <option value="other">💬 General Inquiry</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="modern-table-container cms-desktop-table-container">
+              <table className="modern-table">
+                <thead>
+                  <tr>
+                    <th>Ticket ID</th>
+                    <th>Student User</th>
+                    <th>Category</th>
+                    <th>Priority</th>
+                    <th>Subject & Summary</th>
+                    <th>Status</th>
+                    <th>Messages</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredSupportTickets.length === 0 ? (
+                    <tr>
+                      <td colSpan="9" style={{ textAlign: "center", padding: "40px", color: "#64748b" }}>
+                        <div style={{ fontSize: "28px", marginBottom: "8px" }}>🎉</div>
+                        <div>No support tickets match the selected filters.</div>
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredSupportTickets.map((t) => (
+                      <tr key={t._id}>
+                        <td>
+                          <span className="cms-ticket-id-badge">{t.ticketId || t._id.slice(-6).toUpperCase()}</span>
+                        </td>
+                        <td>
+                          <div className="user-avatar-cell">
+                            <div className="user-avatar-circle">
+                              {(t.userId?.username || "U").charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                              <div className="username-text">{t.userId?.username || "Student"}</div>
+                              <span className="email-sub">{t.userId?.email || "No email"}</span>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <span className="cms-category-badge">{t.category?.toUpperCase()}</span>
+                        </td>
+                        <td>
+                          <span className={`cms-priority-badge priority-${t.priority}`}>
+                            {t.priority === "urgent" && "🔥 "}
+                            {t.priority?.toUpperCase()}
+                          </span>
+                        </td>
+                        <td style={{ maxWidth: "260px" }}>
+                          <div className="ticket-table-subject">{t.subject}</div>
+                          <div className="ticket-table-desc">{t.description}</div>
+                        </td>
+                        <td>
+                          <span className={`cms-status-pill status-${t.status}`}>
+                            {t.status === "open" && "🟡 Open"}
+                            {t.status === "in_progress" && "🔵 In Progress"}
+                            {t.status === "resolved" && "🟢 Resolved"}
+                            {t.status === "closed" && "⚪ Closed"}
+                          </span>
+                        </td>
+                        <td style={{ textAlign: "center", fontWeight: "600", color: "#94a3b8" }}>
+                          💬 {t.messages?.length || 0}
+                        </td>
+                        <td className="date-cell">
+                          {new Date(t.createdAt).toLocaleDateString(undefined, {
+                            month: "short",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </td>
+                        <td>
+                          <div className="table-action-btns">
+                            <button
+                              className="tbl-btn blue"
+                              title="Inspect Ticket & Reply"
+                              onClick={() => {
+                                setInspectingTicket(t);
+                                setStaffNewStatus(t.status === "open" ? "in_progress" : t.status);
+                                setStaffResolutionNotes(t.resolutionNotes || "");
+                                setStaffReplyText("");
+                              }}
+                            >
+                              💬 Reply
+                            </button>
+                            {t.status !== "resolved" && (
+                              <button
+                                className="tbl-btn green"
+                                title="Mark as Resolved"
+                                onClick={() => handleUpdateTicketStatus(t._id, "resolved")}
+                              >
+                                ✔
+                              </button>
+                            )}
+                            <button
+                              className="tbl-btn red"
+                              title="Delete Ticket"
+                              onClick={() => handleDeleteTicket(t._id)}
+                            >
+                              🗑️
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="cms-mobile-cards-container">
+              {filteredSupportTickets.map((t) => (
+                <div key={t._id} className="cms-m-card">
+                  <div className="cms-m-card-header">
+                    <div>
+                      <span className="cms-ticket-id-badge">{t.ticketId || t._id.slice(-6).toUpperCase()}</span>
+                      <span className={`cms-priority-badge priority-${t.priority}`} style={{ marginLeft: "8px" }}>
+                        {t.priority?.toUpperCase()}
+                      </span>
+                    </div>
+                    <span className={`cms-status-pill status-${t.status}`}>
+                      {t.status?.toUpperCase()}
+                    </span>
+                  </div>
+
+                  <div className="cms-m-card-body">
+                    <h4 style={{ margin: "0 0 4px", fontSize: "14px", color: "#f8fafc" }}>{t.subject}</h4>
+                    <p style={{ margin: "0 0 10px", fontSize: "12.5px", color: "#94a3b8" }}>{t.description}</p>
+
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px", color: "#64748b" }}>
+                      <span>👤 {t.userId?.username || "Student"}</span>
+                      <span>💬 {t.messages?.length || 0} messages</span>
+                    </div>
+                  </div>
+
+                  <div className="cms-m-card-actions">
+                    <button
+                      className="m-action-btn blue"
+                      onClick={() => {
+                        setInspectingTicket(t);
+                        setStaffNewStatus(t.status === "open" ? "in_progress" : t.status);
+                        setStaffResolutionNotes(t.resolutionNotes || "");
+                        setStaffReplyText("");
+                      }}
+                    >
+                      💬 Inspect & Reply
+                    </button>
+                    {t.status !== "resolved" && (
+                      <button
+                        className="m-action-btn green"
+                        onClick={() => handleUpdateTicketStatus(t._id, "resolved")}
+                      >
+                        ✔ Resolve
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ================= MODAL 1: APPROVE PAYOUT MODAL ================= */}
       {approvingWithdrawal && (
         <div className="modern-modal-backdrop">
@@ -2660,6 +3117,191 @@ export default function CmsDashboard() {
             <button className="lightbox-dismiss-btn" onClick={() => setLightboxUrl(null)}>
               ✕ Close Preview
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* ================= MODAL 8: SUPPORT TICKET INSPECTOR & STAFF DRAWER ================= */}
+      {inspectingTicket && (
+        <div className="modern-modal-backdrop" onClick={() => setInspectingTicket(null)}>
+          <div className="modern-modal-card large cms-support-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header-strip">
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+                  <span className="cms-ticket-id-badge">{inspectingTicket.ticketId || inspectingTicket._id}</span>
+                  <span className={`cms-priority-badge priority-${inspectingTicket.priority}`}>
+                    {inspectingTicket.priority?.toUpperCase()}
+                  </span>
+                  <span className={`cms-status-pill status-${inspectingTicket.status}`}>
+                    {inspectingTicket.status?.toUpperCase()}
+                  </span>
+                </div>
+                <h3 style={{ margin: 0, fontSize: "18px" }}>{inspectingTicket.subject}</h3>
+                <p style={{ margin: "4px 0 0", fontSize: "13px", color: "#94a3b8" }}>
+                  Raised by <strong>{inspectingTicket.userId?.username}</strong> ({inspectingTicket.userId?.email}) •{" "}
+                  {new Date(inspectingTicket.createdAt).toLocaleString()}
+                </p>
+              </div>
+              <button className="modal-close-icon" onClick={() => setInspectingTicket(null)}>✕</button>
+            </div>
+
+            <div className="cms-ticket-inspect-body">
+              {/* Left Column: Conversation Thread */}
+              <div className="cms-ticket-thread-section">
+                {/* Initial Description Card */}
+                <div className="cms-thread-origin-card">
+                  <div className="origin-badge">📌 Ticket Description</div>
+                  <p className="origin-text">{inspectingTicket.description}</p>
+
+                  {/* Screenshots */}
+                  {inspectingTicket.attachments && inspectingTicket.attachments.length > 0 && (
+                    <div className="cms-attachments-gallery">
+                      <span className="gallery-label">Attached Screenshots ({inspectingTicket.attachments.length}):</span>
+                      <div className="gallery-previews">
+                        {inspectingTicket.attachments.map((att, idx) => (
+                          <div
+                            key={idx}
+                            className="gallery-thumb-card"
+                            onClick={() => setLightboxUrl(att.url || att)}
+                          >
+                            <img src={att.url || att} alt={`Attachment ${idx + 1}`} />
+                            <span className="zoom-hint">🔍 View</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Message Timeline */}
+                <div className="cms-chat-stream">
+                  {inspectingTicket.messages?.map((msg, idx) => {
+                    const isStaff = msg.senderRole === "admin" || msg.senderRole === "developer";
+                    return (
+                      <div key={idx} className={`cms-chat-bubble ${isStaff ? "staff-bubble" : "user-bubble"}`}>
+                        <div className="bubble-header">
+                          <span className="bubble-author">
+                            {isStaff ? "🛡️ StudyVault Dev Staff" : `👤 ${msg.senderName || inspectingTicket.userId?.username || "Student"}`}
+                          </span>
+                          <span className="bubble-timestamp">
+                            {new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                          </span>
+                        </div>
+                        <div className="bubble-body">{msg.message}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Staff Reply Form */}
+                <form onSubmit={handleSendStaffReply} className="cms-staff-reply-box">
+                  <label className="reply-label">💬 Reply as StudyVault Staff</label>
+                  <textarea
+                    rows="3"
+                    placeholder="Type your official response to the student..."
+                    value={staffReplyText}
+                    onChange={(e) => setStaffReplyText(e.target.value)}
+                    required
+                  />
+
+                  <div className="reply-controls-bar">
+                    <div className="reply-status-picker">
+                      <span>Update Status:</span>
+                      <select
+                        value={staffNewStatus}
+                        onChange={(e) => setStaffNewStatus(e.target.value)}
+                        className="modern-select mini"
+                      >
+                        <option value="in_progress">🔵 In Progress</option>
+                        <option value="resolved">🟢 Resolved</option>
+                        <option value="closed">⚪ Closed</option>
+                        <option value="open">🟡 Keep Open</option>
+                      </select>
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="modal-primary-btn blue"
+                      disabled={supportActionLoading || !staffReplyText.trim()}
+                    >
+                      {supportActionLoading ? "Sending..." : "📤 Send Response"}
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Right Column: Ticket Controls & Metadata */}
+              <div className="cms-ticket-sidebar-section">
+                <div className="cms-side-box">
+                  <h4>⚙️ Ticket Status Control</h4>
+                  <div className="status-button-stack">
+                    <button
+                      type="button"
+                      className={`status-opt-btn ${inspectingTicket.status === "open" ? "active" : ""}`}
+                      onClick={() => handleUpdateTicketStatus(inspectingTicket._id, "open")}
+                    >
+                      🟡 Open (Unresolved)
+                    </button>
+                    <button
+                      type="button"
+                      className={`status-opt-btn in-prog ${inspectingTicket.status === "in_progress" ? "active" : ""}`}
+                      onClick={() => handleUpdateTicketStatus(inspectingTicket._id, "in_progress")}
+                    >
+                      🔵 Mark In Progress
+                    </button>
+                    <button
+                      type="button"
+                      className={`status-opt-btn resolve ${inspectingTicket.status === "resolved" ? "active" : ""}`}
+                      onClick={() => handleUpdateTicketStatus(inspectingTicket._id, "resolved", staffResolutionNotes)}
+                    >
+                      🟢 Mark as Resolved
+                    </button>
+                    <button
+                      type="button"
+                      className={`status-opt-btn close ${inspectingTicket.status === "closed" ? "active" : ""}`}
+                      onClick={() => handleUpdateTicketStatus(inspectingTicket._id, "closed")}
+                    >
+                      ⚪ Close Ticket
+                    </button>
+                  </div>
+                </div>
+
+                <div className="cms-side-box">
+                  <h4>📝 Resolution Notes</h4>
+                  <textarea
+                    rows="3"
+                    placeholder="Add internal or public resolution notes..."
+                    value={staffResolutionNotes}
+                    onChange={(e) => setStaffResolutionNotes(e.target.value)}
+                    style={{ width: "100%", fontSize: "12.5px" }}
+                  />
+                  <button
+                    type="button"
+                    className="modal-secondary-btn full-width"
+                    style={{ marginTop: "6px", fontSize: "12px", padding: "6px 12px" }}
+                    onClick={() =>
+                      handleUpdateTicketStatus(inspectingTicket._id, inspectingTicket.status, staffResolutionNotes)
+                    }
+                  >
+                    💾 Save Notes
+                  </button>
+                </div>
+
+                <div className="cms-side-box danger-zone">
+                  <h4>⚠️ Danger Zone</h4>
+                  <p style={{ fontSize: "12px", color: "#ef4444", margin: "0 0 8px" }}>
+                    Permanently delete this ticket and message history.
+                  </p>
+                  <button
+                    type="button"
+                    className="modal-primary-btn red full-width"
+                    onClick={() => handleDeleteTicket(inspectingTicket._id)}
+                  >
+                    🗑️ Delete Ticket
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}

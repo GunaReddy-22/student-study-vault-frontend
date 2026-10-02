@@ -136,3 +136,24 @@ export async function submitWithdrawalRequest(payload) {
   const res = await api.post("/wallet/withdraw", payload);
   return res.data;
 }
+
+// 9. Support Tickets CMS Control
+export async function getCmsSupportTickets(params = {}) {
+  const res = await api.get("/support/admin/tickets", { params });
+  return res.data;
+}
+
+export async function updateCmsSupportTicket(ticketId, updateData) {
+  const res = await api.patch(`/support/admin/tickets/${ticketId}`, updateData);
+  return res.data;
+}
+
+export async function replyCmsSupportTicket(ticketId, replyData) {
+  const res = await api.post(`/support/admin/tickets/${ticketId}/reply`, replyData);
+  return res.data;
+}
+
+export async function deleteCmsSupportTicket(ticketId) {
+  const res = await api.delete(`/support/admin/tickets/${ticketId}`);
+  return res.data;
+}

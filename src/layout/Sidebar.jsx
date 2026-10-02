@@ -59,6 +59,10 @@ function Sidebar({ setIsAuth, isOpen = true, onClose }) {
           Wallet
         </NavLink>
 
+        <NavLink to="/support" onClick={onClose}>
+          🎧 Customer Support
+        </NavLink>
+
         {isDeveloper && (
           <NavLink
             to="/cms"
