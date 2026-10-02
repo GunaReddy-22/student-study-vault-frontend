@@ -137,6 +137,136 @@
 }
 
 /* ============================================================
+   💡 TRANSPARENT MOTIVATIONAL QUOTE CARD
+   ============================================================ */
+.dash-quote-card {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.015) 100%
+  );
+  border: 1px dashed rgba(129, 140, 248, 0.35);
+  border-radius: 20px;
+  padding: 22px 26px;
+  position: relative;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dash-quote-card:hover {
+  border-color: rgba(129, 140, 248, 0.6);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35), 0 0 20px rgba(99, 102, 241, 0.08);
+}
+
+.quote-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.quote-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  color: #c7d2fe;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.quote-spark-icon {
+  font-size: 13px;
+}
+
+.quote-refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quote-refresh-btn:hover:not(:disabled) {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.4);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.quote-refresh-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.refresh-symbol {
+  display: inline-block;
+  font-size: 12px;
+  transition: transform 0.4s ease;
+}
+
+.refresh-symbol.spin {
+  animation: quoteSpin 0.6s linear infinite;
+}
+
+@keyframes quoteSpin {
+  to { transform: rotate(360deg); }
+}
+
+.quote-body {
+  padding: 4px 0;
+}
+
+.quote-text {
+  font-size: 16px;
+  line-height: 1.6;
+  font-style: italic;
+  font-weight: 500;
+  color: #f1f5f9;
+  margin: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.quote-text.fading {
+  opacity: 0.3;
+  transform: translateY(2px);
+}
+
+.quote-author-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.quote-author-pill {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #38bdf8;
+  letter-spacing: 0.2px;
+}
+
+/* ============================================================
    STATS GRID & GLOWING CARDS
    ============================================================ */
 .dash-stats-grid {

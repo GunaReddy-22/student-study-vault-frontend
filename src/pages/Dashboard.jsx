@@ -28,6 +28,49 @@ export default function Dashboard() {
   const [username, setUsername] = useState("Scholar");
   const [loading, setLoading] = useState(true);
 
+  // 💡 Motivational Quote State
+  const [quote, setQuote] = useState({
+    text: "The secret of getting ahead is getting started.",
+    author: "Mark Twain",
+  });
+  const [quoteLoading, setQuoteLoading] = useState(false);
+
+  // Curated Fallback Quotes for Scholars & Students
+  const fallbackQuotes = [
+    { text: "Live as if you were to die tomorrow. Learn as if you were to live forever.", author: "Mahatma Gandhi" },
+    { text: "Education is the most powerful weapon which you can use to change the world.", author: "Nelson Mandela" },
+    { text: "It always seems impossible until it's done.", author: "Nelson Mandela" },
+    { text: "The beautiful thing about learning is that no one can take it away from you.", author: "B.B. King" },
+    { text: "Success is the sum of small efforts, repeated day in and day out.", author: "Robert Collier" },
+    { text: "Dream, dream, dream. Dreams transform into thoughts and thoughts result in action.", author: "Dr. A.P.J. Abdul Kalam" },
+    { text: "You don't have to be great to start, but you have to start to be great.", author: "Zig Ziglar" },
+    { text: "Develop a passion for learning. If you do, you will never cease to grow.", author: "Anthony J. D'Angelo" },
+    { text: "The expert in anything was once a beginner.", author: "Helen Hayes" },
+    { text: "Do not wait to strike till the iron is hot; but make it hot by striking.", author: "William Butler Yeats" }
+  ];
+
+  const fetchNewQuote = async () => {
+    try {
+      setQuoteLoading(true);
+      // Free public quotes API
+      const res = await fetch("https://dummyjson.com/quotes/random");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.quote && data.author) {
+          setQuote({ text: data.quote, author: data.author });
+          return;
+        }
+      }
+      throw new Error("Fallback required");
+    } catch (_) {
+      // Pick random from rich curated student collection
+      const randomItem = fallbackQuotes[Math.floor(Math.random() * fallbackQuotes.length)];
+      setQuote(randomItem);
+    } finally {
+      setTimeout(() => setQuoteLoading(false), 250);
+    }
+  };
+
   useEffect(() => {
     // Get user from token
     const token = localStorage.getItem("token");
@@ -37,6 +80,8 @@ export default function Dashboard() {
         if (payload.username) setUsername(payload.username);
       } catch (_) {}
     }
+
+    fetchNewQuote();
 
     const fetchDashboardData = async () => {
       try {
@@ -108,6 +153,34 @@ export default function Dashboard() {
               <FiHeadphones /> Customer Support
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* 💡 TRANSPARENT MOTIVATIONAL QUOTE WIDGET */}
+      <div className="dash-quote-card">
+        <div className="quote-badge-row">
+          <div className="quote-chip">
+            <span className="quote-spark-icon">✨</span> Daily Motivation
+          </div>
+          <button
+            className="quote-refresh-btn"
+            onClick={fetchNewQuote}
+            disabled={quoteLoading}
+            title="Get another motivational quote"
+          >
+            <span className={`refresh-symbol ${quoteLoading ? "spin" : ""}`}>🔄</span>
+            <span>Inspire Me</span>
+          </button>
+        </div>
+
+        <div className="quote-body">
+          <p className={`quote-text ${quoteLoading ? "fading" : ""}`}>
+            “{quote.text}”
+          </p>
+        </div>
+
+        <div className="quote-author-row">
+          <span className="quote-author-pill">— {quote.author}</span>
         </div>
       </div>
 
