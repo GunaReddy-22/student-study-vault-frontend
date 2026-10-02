@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import api from "../services/api";
 import "./NoteModal.css";
 import HandwritingCanvas from "./HandwritingCanvas";
+import FormattedAIResponse from "./FormattedAIResponse";
 
 export default function NoteModal({ note, close, refresh }) {
   const [form, setForm] = useState({
@@ -286,11 +287,10 @@ export default function NoteModal({ note, close, refresh }) {
                     background: "#0f172a",
                     color: "#e2e8f0",
                     border: "1px solid #334155",
-                    whiteSpace: "pre-wrap",
                   }}
                 >
                   <h4 style={{ color: "#c7d2fe", marginBottom: "8px" }}>🧠 AI Summary</h4>
-                  {summary}
+                  <FormattedAIResponse content={summary} />
                 </div>
               )}
             </>

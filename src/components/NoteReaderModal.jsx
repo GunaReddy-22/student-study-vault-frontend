@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import api from "../services/api";
 import "./NoteReaderModal.css";
+import FormattedAIResponse from "./FormattedAIResponse";
 import {
   FaTimes,
   FaSearchPlus,
@@ -215,7 +216,7 @@ export default function NoteReaderModal({ note, onClose, onEdit, onQuiz }) {
                 {summary && (
                   <div className="reader-ai-summary">
                     <h4>🧠 Key Takeaways</h4>
-                    <p>{summary}</p>
+                    <FormattedAIResponse content={summary} />
                   </div>
                 )}
               </div>

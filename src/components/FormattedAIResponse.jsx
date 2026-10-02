@@ -8,12 +8,6 @@ export default function FormattedAIResponse({ content }) {
   const renderInline = (text) => {
     if (!text) return "";
 
-    // Split by code blocks, bold, etc.
-    const parts = [];
-    let remaining = text;
-    let key = 0;
-
-    // Replace bold **text** and inline `code`
     const regex = /(\*\*.*?\*\*|`.*?`|\*.*?\*)/g;
     const splitParts = text.split(regex);
 
@@ -43,12 +37,27 @@ export default function FormattedAIResponse({ content }) {
     });
   };
 
-  // Pre-process content into lines and structured blocks
-  const lines = content.replace(/\r\n/g, "\n").split("\n");
+  // 🧹 Normalize and structure raw AI output
+  let normalized = content.replace(/\r\n/g, "\n");
+
+  // 1. Convert horizontal rules and markdown separators to newlines
+  normalized = normalized.replace(/\s*---\s*/g, "\n\n");
+
+  // 2. Separate inline bold section headers (e.g. "... **Key Concepts** - ")
+  normalized = normalized.replace(/([.!?])\s+(\*\*[A-Z][^*]+\*\*:?)/g, "$1\n\n### $2");
+
+  // 3. Separate inline bullet points (e.g. "... - **Structure**: ...")
+  normalized = normalized.replace(/\s+-\s+(\*\*[^*]+\*\*:?|[A-Za-z])/g, "\n- $1");
+
+  // 4. Separate inline numbered lists (e.g. "... 1. Read ... 2. Identify ...")
+  normalized = normalized.replace(/([.!?:]|\*\*)\s+(\d+\.)\s+/g, "$1\n$2 ");
+
+  // Parse lines into structured blocks
+  const lines = normalized.split("\n");
   const blocks = [];
   let currentList = null;
 
-  lines.forEach((rawLine, i) => {
+  lines.forEach((rawLine) => {
     const line = rawLine.trim();
 
     // Empty line
@@ -68,7 +77,7 @@ export default function FormattedAIResponse({ content }) {
       }
       blocks.push({
         type: "h3",
-        text: line.replace(/^###\s+/, ""),
+        text: line.replace(/^###\s+/, "").replace(/^\*\*|\*\*$/g, ""),
       });
       return;
     }
@@ -80,7 +89,7 @@ export default function FormattedAIResponse({ content }) {
       }
       blocks.push({
         type: "h2",
-        text: line.replace(/^#{1,2}\s+/, ""),
+        text: line.replace(/^#{1,2}\s+/, "").replace(/^\*\*|\*\*$/g, ""),
       });
       return;
     }
