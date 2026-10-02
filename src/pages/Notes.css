@@ -1,162 +1,331 @@
-/* ===============================
-   NOTES PAGE – CLEAN & RESPONSIVE
-================================ */
+/* ============================================================
+   📚 MODERN STUDY VAULT NOTES DASHBOARD CSS
+   ============================================================ */
 
-.notes-page {
+.notes-page-container {
   width: 100%;
   min-height: 100%;
-  padding: 32px;
-
+  padding: 0;
   color: #ffffff;
-
-  background:
-    radial-gradient(circle at 15% 10%, rgba(80,140,255,0.18), transparent 40%),
-    radial-gradient(circle at 85% 80%, rgba(120,160,255,0.12), transparent 45%),
-    linear-gradient(135deg, #050b1e, #020617);
-
-  animation: fadeInNotes 0.4s ease forwards;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: notesPageFadeIn 0.35s ease-out;
 }
 
-@keyframes fadeInNotes {
+@keyframes notesPageFadeIn {
   from {
     opacity: 0;
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* ===============================
-   HEADER
-================================ */
-
-.dashboard-header h2 {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 24px;
-}
-
-/* ===============================
-   NOTES GRID
-================================ */
-
-.notes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+/* 🌟 HERO HEADER */
+.notes-hero-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: 20px;
+  flex-wrap: wrap;
+  padding-bottom: 8px;
 }
 
-/* ===============================
-   ADD NEW NOTE CARD
-================================ */
-
-.create-note {
-  min-height: 180px;
-
-  border-radius: 18px;
-  border: 2px dashed rgba(255, 255, 255, 0.25);
-
-  background: linear-gradient(
-    180deg,
-    rgba(255,255,255,0.06),
-    rgba(255,255,255,0.02)
-  );
-
+.notes-hero-left {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  gap: 6px;
+}
+
+.notes-title-row {
+  display: flex;
   align-items: center;
+  gap: 12px;
+}
 
-  color: rgba(255,255,255,0.85);
+.notes-main-title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin: 0;
+  background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.notes-count-badge {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: rgba(99, 102, 241, 0.18);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  color: #c7d2fe;
+}
+
+.notes-hero-subtitle {
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0;
+  max-width: 600px;
+  line-height: 1.5;
+}
+
+.btn-create-primary {
+  height: 44px;
+  padding: 0 22px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   cursor: pointer;
-
-  transition:
-    transform 0.25s ease,
-    border-color 0.25s ease,
-    box-shadow 0.25s ease;
+  box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.45);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
 }
 
-.create-note:hover {
-  transform: translateY(-6px) scale(1.02);
-  border-color: rgba(99,102,241,0.7);
-
-  box-shadow:
-    0 22px 55px rgba(0,0,0,0.65),
-    0 0 0 1px rgba(99,102,241,0.35);
+.btn-create-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px -4px rgba(79, 70, 229, 0.6);
+  background: linear-gradient(135deg, #4338ca 0%, #0891b2 100%);
 }
 
-.create-plus {
-  font-size: 36px;
-  font-weight: 500;
-  margin-bottom: 10px;
-  color: #a5b4fc;
+/* 🔍 SEARCH & FILTER CONTROLS BAR */
+.notes-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 10px 14px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
-.create-note div:last-child {
-  font-size: 15px;
+.notes-search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(2, 6, 23, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 0 12px;
+  height: 38px;
+  flex: 1;
+  min-width: 240px;
+  max-width: 420px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.notes-search-box:focus-within {
+  border-color: rgba(99, 102, 241, 0.6);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.search-icon {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.notes-search-box input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #f1f5f9;
+  font-size: 13.5px;
+  width: 100%;
+}
+
+.notes-search-box input::placeholder {
+  color: #64748b;
+}
+
+.search-clear-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.search-clear-btn:hover {
+  color: #f1f5f9;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Filter Pills */
+.notes-filter-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.notes-filter-pills::-webkit-scrollbar {
+  height: 0px;
+}
+
+.filter-pill {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: #94a3b8;
+  font-size: 12.5px;
   font-weight: 600;
-  opacity: 0.9;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
 }
 
-/* ===============================
-   MOBILE FIX
-================================ */
+.filter-pill:hover {
+  background: rgba(255, 255, 255, 0.09);
+  color: #f1f5f9;
+  border-color: rgba(255, 255, 255, 0.15);
+}
 
-@media (max-width: 767px) {
-  .notes-page {
-    padding: 0 !important;
+.filter-pill.active {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.5);
+  color: #c7d2fe;
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.25);
+}
+
+/* 🗂️ NOTES GRID */
+.notes-grid-layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 22px;
+}
+
+/* 🌀 LOADING STATE */
+.notes-loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  gap: 16px;
+  color: #94a3b8;
+}
+
+.notes-spinner {
+  width: 38px;
+  height: 38px;
+  border: 3px solid rgba(99, 102, 241, 0.2);
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: spinnerRotate 0.8s linear infinite;
+}
+
+@keyframes spinnerRotate {
+  to { transform: rotate(360deg); }
+}
+
+/* 📭 EMPTY STATE */
+.notes-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 70px 20px;
+  text-align: center;
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+}
+
+.empty-state-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  color: #818cf8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  margin-bottom: 16px;
+}
+
+.notes-empty-state h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 0 0 8px 0;
+}
+
+.notes-empty-state p {
+  font-size: 14px;
+  color: #64748b;
+  max-width: 420px;
+  margin: 0 0 20px 0;
+  line-height: 1.5;
+}
+
+.empty-create-btn {
+  height: 40px;
+  padding: 0 18px;
+}
+
+/* 📱 RESPONSIVE MEDIA QUERIES */
+@media (max-width: 768px) {
+  .notes-page-container {
+    padding: 18px 14px;
+    gap: 16px;
   }
 
-  .dashboard-header {
-    padding-left: 0 !important;
-    margin-bottom: 20px;
+  .notes-hero-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
   }
 
-  .dashboard-header h2 {
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 4px;
-    text-align: left;
+  .notes-main-title {
+    font-size: 22px;
   }
 
-  .notes-grid {
+  .btn-create-primary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .notes-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 10px;
+    gap: 12px;
+  }
+
+  .notes-search-box {
+    max-width: 100%;
+  }
+
+  .notes-filter-pills {
+    width: 100%;
+  }
+
+  .notes-grid-layout {
     grid-template-columns: 1fr;
     gap: 16px;
   }
-}
-/* =====================================================
-   CARD ENTRY ANIMATION (FIX JUMPING ISSUE)
-   Applies when switching pages
-===================================================== */
-
-/* Base state */
-.notes-grid > * {
-  opacity: 0;
-  transform: translateY(16px) scale(0.96);
-  animation: noteCardEnter 0.5s cubic-bezier(.22,.61,.36,1) forwards;
-  will-change: transform, opacity;
-}
-
-/* Stagger effect */
-.notes-grid > *:nth-child(1) { animation-delay: 0.05s; }
-.notes-grid > *:nth-child(2) { animation-delay: 0.10s; }
-.notes-grid > *:nth-child(3) { animation-delay: 0.15s; }
-.notes-grid > *:nth-child(4) { animation-delay: 0.20s; }
-.notes-grid > *:nth-child(5) { animation-delay: 0.25s; }
-.notes-grid > *:nth-child(6) { animation-delay: 0.30s; }
-
-@keyframes noteCardEnter {
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-/* =====================================================
-   PERFORMANCE & STABILITY
-===================================================== */
-
-/* Prevent layout shift during animation */
-.notes-grid {
-  contain: layout paint;
 }

@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>iPad Handwriting Studio</title>
+<style>
+  :root {
+    --bg-workspace: #090e1a;
+    --paper-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.08);
+    --panel-bg: rgba(18, 26, 46, 0.98);
+    --panel-border: rgba(255, 255, 255, 0.12);
+    --accent: #6366f1;
+    --accent-hover: #4f46e5;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    background-color: var(--bg-workspace);
+    color: #f8fafc;
+    height: 100%;
+    height: 100dvh;
+    width: 100vw;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+    touch-action: pan-y pinch-zoom;
+  }
+
+  /* ============================================================
+     🍎 RESPONSIVE HEADER & TOOLBAR
+     ============================================================ */
+  .studio-header {
+    background: var(--panel-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--panel-border);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    flex-shrink: 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  /* Main Top Row */
+  .header-main-row {
+    min-height: 48px;
+    padding: 6px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: nowrap;
+  }
+
+  .header-left, .header-center, .header-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .app-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+    white-space: nowrap;
+    margin-right: 2px;
+  }
+
+  /* Sub Toolbar Row for Tools & Swatches */
+  .header-tools-row {
+    min-height: 44px;
+    padding: 4px 14px;
+    background: rgba(13, 20, 36, 0.92);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .header-tools-row::-webkit-scrollbar { display: none; }
+
+  .tools-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .row-divider {
+    width: 1px;
+    height: 22px;
+    background: rgba(255, 255, 255, 0.14);
+    margin: 0 3px;
+    flex-shrink: 0;
+  }
+
+  /* Tool Buttons */
+  .tool-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+  }
+
+  .tool-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+  }
+
+  .tool-btn:active {
+    transform: scale(0.92);
+  }
+
+  .tool-btn.active {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(79, 70, 229, 0.7));
+    border-color: rgba(99, 102, 241, 0.8);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+  }
+
+  /* Palette Swatches */
+  .palette-strip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .palette-swatch {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+    flex-shrink: 0;
+  }
+  .palette-swatch:hover { transform: scale(1.2); }
+  .palette-swatch:active { transform: scale(0.9); }
+  .palette-swatch.active {
+    border-color: #ffffff;
+    transform: scale(1.25);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  }
+
+  .color-wheel-picker {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    outline: none;
+    flex-shrink: 0;
+  }
+
+  /* Stroke Controls */
+  .stroke-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .stroke-dot-preview {
+    border-radius: 50%;
+    background: #ffffff;
+    transition: width 0.1s, height 0.1s;
+    flex-shrink: 0;
+  }
+  .stroke-slider {
+    width: 75px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+  .stroke-badge {
+    font-size: 11px;
+    font-weight: 700;
+    color: #cbd5e1;
+    min-width: 26px;
+  }
+
+  /* Paper Selector */
+  .paper-select {
+    appearance: none;
+    padding: 5px 26px 5px 10px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: #18223a url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 24 24' fill='white' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5'/%3E%3C/svg%3E") no-repeat right 8px center;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    max-width: 160px;
+  }
+
+  .paper-select option {
+    background-color: #0f172a !important;
+    color: #f8fafc !important;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  /* Zoom Box */
+  .zoom-box {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    overflow: hidden;
+    height: 32px;
+  }
+  .btn-zoom {
+    border: none;
+    background: transparent;
+    color: #cbd5e1;
+    padding: 0 8px;
+    height: 100%;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .btn-zoom:hover { background: rgba(255, 255, 255, 0.14); color: #fff; }
+  .zoom-val {
+    font-size: 11px;
+    font-weight: 600;
+    min-width: 40px;
+    text-align: center;
+    color: #e2e8f0;
+  }
+
+  /* Action Buttons */
+  .action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 5px 10px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+    color: #e2e8f0;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .action-btn:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+  }
+  .action-btn:active {
+    transform: scale(0.95);
+  }
+  .action-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  .btn-danger-outline {
+    background: rgba(239, 68, 68, 0.12);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+  }
+  .btn-danger-outline:hover {
+    background: rgba(239, 68, 68, 0.25);
+    color: #fff;
+  }
+
+  .btn-primary-gradient {
+    background: linear-gradient(135deg, #4f46e5, #06b6d4);
+    border: none;
+    color: #ffffff;
+    font-weight: 700;
+    padding: 5px 14px;
+    box-shadow: 0 3px 12px rgba(79, 70, 229, 0.4);
+  }
+  .btn-primary-gradient:hover {
+    background: linear-gradient(135deg, #4338ca, #0891b2);
+    transform: translateY(-1px);
+  }
+
+  /* ============================================================
+     📜 INFINITE SCROLLABLE IPAD CANVAS WORKSPACE
+     ============================================================ */
+  .canvas-workspace {
+    flex: 1;
+    width: 100%;
+    overflow-y: scroll;
+    overflow-x: auto;
+    position: relative;
+    background: var(--bg-workspace);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 12px 140px 12px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) rgba(15, 23, 42, 0.6);
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .canvas-workspace::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .canvas-workspace::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.6);
+  }
+  .canvas-workspace::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 4px;
+  }
+
+  .canvas-workspace.panning-mode {
+    cursor: grab;
+  }
+  .canvas-workspace.panning-active {
+    cursor: grabbing;
+  }
+
+  .paper-container {
+    position: relative;
+    width: min(96vw, 1200px);
+    box-shadow: var(--paper-shadow);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.1s ease-out;
+    transform-origin: top center;
+    margin: 0 auto;
+    flex-shrink: 0;
+  }
+
+  /* Layer 1: Background Template */
+  #bgCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* Layer 2: Ink & Drawing Strokes */
+  #inkCanvas {
+    position: relative;
+    width: 100%;
+    height: auto;
+    display: block;
+    z-index: 2;
+    cursor: crosshair;
+    touch-action: none;
+    background: transparent;
+  }
+
+  /* Continuous End of Paper Indicator */
+  .continuous-scroll-indicator {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+  }
+
+  .infinite-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .infinite-pill:hover {
+    background: rgba(99, 102, 241, 0.2);
+    color: #ffffff;
+    border-color: rgba(99, 102, 241, 0.5);
+  }
+
+  /* ============================================================
+     📱 MOBILE & TABLET RESPONSIVE ADAPTATIONS
+     ============================================================ */
+  /* Tablet Styles (600px - 1024px) */
+  @media (max-width: 1024px) {
+    .header-main-row {
+      padding: 6px 10px;
+    }
+    .paper-container {
+      width: 98vw;
+    }
+    .stroke-slider {
+      width: 65px;
+    }
+  }
+
+  /* Mobile Styles (< 600px) */
+  @media (max-width: 600px) {
+    .app-title span:last-child {
+      display: none; /* Hide 'iPad Notes Canvas' text on tiny screens, keep icon */
+    }
+
+    .paper-select {
+      max-width: 110px;
+      font-size: 11px;
+      padding-left: 6px;
+    }
+
+    .zoom-box {
+      display: none; /* Hide manual zoom box on mobile to save critical toolbar space (touch gestures handle zoom) */
+    }
+
+    .btn-label-text {
+      display: none; /* Show icon only for buttons on phones */
+    }
+
+    .action-btn {
+      padding: 5px 8px;
+      font-size: 11px;
+    }
+
+    .header-tools-row {
+      padding: 4px 8px;
+      gap: 6px;
+    }
+
+    .tool-btn {
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      font-size: 15px;
+    }
+
+    .palette-swatch {
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
+    }
+
+    .stroke-slider {
+      width: 50px;
+    }
+
+    .canvas-workspace {
+      padding: 8px 4px 100px 4px; /* Maximize drawing surface on phones */
+    }
+
+    .paper-container {
+      width: 100vw;
+      border-radius: 0; /* Full edge-to-edge on mobile phones */
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- 🍎 RESPONSIVE HEADER & UNIFIED TOOLBAR -->
+<header class="studio-header">
+  <!-- Top Action Row -->
+  <div class="header-main-row">
+    <div class="header-left">
+      <div class="app-title">
+        <span>🎨</span>
+        <span>iPad Canvas</span>
+      </div>
+
+      <select id="paper-select" class="paper-select" onchange="changePaperStyle(this.value)">
+        <option value="ruled">📝 Ruled</option>
+        <option value="grid">📐 Grid</option>
+        <option value="dots">▫️ Dots</option>
+        <option value="white">📄 White</option>
+        <option value="cornell">📑 Cornell</option>
+        <option value="dark">🌑 Dark</option>
+        <option value="cream">📜 Cream</option>
+      </select>
+    </div>
+
+    <div class="header-center">
+      <div class="zoom-box">
+        <button class="btn-zoom" onclick="adjustZoom(-0.15)" title="Zoom Out">−</button>
+        <span class="zoom-val" id="zoom-label">100%</span>
+        <button class="btn-zoom" onclick="adjustZoom(0.15)" title="Zoom In">+</button>
+        <button class="btn-zoom" onclick="resetZoom()" title="Reset to 100%" style="font-size: 10px;">100%</button>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <button class="action-btn" id="btn-undo" onclick="handleUndo()" title="Undo (Ctrl+Z)" disabled>↩️<span class="btn-label-text"> Undo</span></button>
+      <button class="action-btn" id="btn-redo" onclick="handleRedo()" title="Redo (Ctrl+Y)" disabled>↪️<span class="btn-label-text"> Redo</span></button>
+      <button class="action-btn" onclick="clearActiveCanvas()" title="Clear Entire Canvas">🧹<span class="btn-label-text"> Clear</span></button>
+      <button class="action-btn btn-danger-outline" onclick="cancelAndExit()">✕<span class="btn-label-text"> Cancel</span></button>
+      <button class="action-btn btn-primary-gradient" onclick="saveAndExport()">✨<span class="btn-label-text"> Done</span></button>
+    </div>
+  </div>
+
+  <!-- Tools & Colors Sub Row -->
+  <div class="header-tools-row">
+    <!-- Drawing Instruments -->
+    <div class="tools-group">
+      <button class="tool-btn active" id="tool-pen" onclick="setDrawingTool('pen')" title="Ink Pen">✏️</button>
+      <button class="tool-btn" id="tool-calligraphy" onclick="setDrawingTool('calligraphy')" title="Calligraphy Pen">✒️</button>
+      <button class="tool-btn" id="tool-highlighter" onclick="setDrawingTool('highlighter')" title="Highlighter">🖍️</button>
+      <button class="tool-btn" id="tool-pencil" onclick="setDrawingTool('pencil')" title="Graphite Pencil">📝</button>
+      <button class="tool-btn" id="tool-eraser" onclick="setDrawingTool('eraser')" title="Eraser">🧽</button>
+    </div>
+
+    <div class="row-divider"></div>
+
+    <!-- Shapes & Hand -->
+    <div class="tools-group">
+      <button class="tool-btn" id="tool-line" onclick="setDrawingTool('line')" title="Straight Line">📏</button>
+      <button class="tool-btn" id="tool-arrow" onclick="setDrawingTool('arrow')" title="Arrow">➡️</button>
+      <button class="tool-btn" id="tool-rect" onclick="setDrawingTool('rect')" title="Rectangle / Box">🔲</button>
+      <button class="tool-btn" id="tool-circle" onclick="setDrawingTool('circle')" title="Circle / Ellipse">⭕</button>
+      <button class="tool-btn" id="tool-hand" onclick="setDrawingTool('hand')" title="Pan & Move Canvas">✋</button>
+    </div>
+
+    <div class="row-divider"></div>
+
+    <!-- Color Swatches -->
+    <div class="palette-strip" id="palette-strip"></div>
+    <input type="color" id="custom-color-input" class="color-wheel-picker" value="#1e293b" onchange="setCustomColor(this.value)" title="Choose Custom Color">
+
+    <div class="row-divider"></div>
+
+    <!-- Stroke Slider -->
+    <div class="stroke-controls">
+      <div class="stroke-dot-preview" id="stroke-preview" style="width: 4px; height: 4px;"></div>
+      <input type="range" class="stroke-slider" min="1" max="30" value="3" id="stroke-slider" oninput="setStrokeWidth(Number(this.value))">
+      <span class="stroke-badge" id="stroke-badge">3px</span>
+    </div>
+  </div>
+</header>
+
+<!-- 📜 INFINITE SCROLLABLE IPAD CANVAS WORKSPACE -->
+<main class="canvas-workspace" id="workspace">
+  <div class="paper-container" id="paper-container">
+    <!-- Layer 1: Background Template -->
+    <canvas id="bgCanvas"></canvas>
+    <!-- Layer 2: Drawing Ink -->
+    <canvas id="inkCanvas"></canvas>
+  </div>
+
+  <div class="continuous-scroll-indicator">
+    <div class="infinite-pill" onclick="expandCanvasHeight(1500)">
+      <span>📜 Infinite Apple Notes Mode • Scroll or tap to add space (+1500px)</span>
+    </div>
+  </div>
+</main>
+
+<script>
+// ============================================================
+// 📱 TWO-LAYER INFINITE IPAD CANVAS ARCHITECTURE
+// ============================================================
+const bgCanvas = document.getElementById('bgCanvas');
+const bgCtx = bgCanvas.getContext('2d');
+const inkCanvas = document.getElementById('inkCanvas');
+const inkCtx = inkCanvas.getContext('2d', { willReadFrequently: true });
+
+const workspace = document.getElementById('workspace');
+const paperContainer = document.getElementById('paper-container');
+const strokePreview = document.getElementById('stroke-preview');
+const strokeBadge = document.getElementById('stroke-badge');
+const strokeSlider = document.getElementById('stroke-slider');
+const zoomLabel = document.getElementById('zoom-label');
+
+// Generous starting height for seamless infinite scrolling
+let canvasWidth = 1200;
+let canvasHeight = 3600;
+let currentZoom = 1.0;
+
+// Tool states
+let activeTool = 'pen';
+let activeColor = '#1e293b';
+let activeWidth = 3;
+let activePaper = 'ruled';
+
+// Drawing state
+let isDrawing = false;
+let startX = 0, startY = 0;
+let lastX = 0, lastY = 0;
+let points = [];
+let shapeSnapshot = null;
+
+// Touch & gesture state
+let touchMode = 'draw'; // 'draw' | 'scroll'
+let panStartX = 0, panStartY = 0;
+let scrollLeftStart = 0, scrollTopStart = 0;
+
+// Undo & Redo History
+const historyStack = [];
+const redoStack = [];
+
+// Apple Color Palette
+const PALETTE_COLORS = [
+  { label: 'Black / Charcoal', hex: '#1e293b' },
+  { label: 'Royal Blue', hex: '#2563eb' },
+  { label: 'Emerald Green', hex: '#059669' },
+  { label: 'Crimson Red', hex: '#dc2626' },
+  { label: 'Amber Gold', hex: '#d97706' },
+  { label: 'Violet Purple', hex: '#7c3aed' },
+  { label: 'Pure White', hex: '#ffffff' },
+  { label: 'Neon Yellow', hex: '#fef08a' }
+];
+
+// Build Swatches
+const paletteContainer = document.getElementById('palette-strip');
+PALETTE_COLORS.forEach(c => {
+  const dot = document.createElement('div');
+  dot.className = 'palette-swatch' + (c.hex === activeColor ? ' active' : '');
+  dot.style.background = c.hex;
+  dot.title = c.label;
+  dot.onclick = () => selectColor(c.hex);
+  paletteContainer.appendChild(dot);
+});
+
+function updateStrokeUI() {
+  strokePreview.style.width = Math.max(3, Math.min(20, activeWidth)) + 'px';
+  strokePreview.style.height = Math.max(3, Math.min(20, activeWidth)) + 'px';
+  strokePreview.style.background = activeColor;
+  strokeBadge.textContent = activeWidth + 'px';
+  strokeSlider.value = activeWidth;
+}
+
+function setStrokeWidth(w) {
+  activeWidth = w;
+  updateStrokeUI();
+}
+
+function selectColor(hex) {
+  activeColor = hex;
+  document.querySelectorAll('.palette-swatch').forEach(d => {
+    d.classList.toggle('active', d.style.background === hex);
+  });
+  updateStrokeUI();
+  if (activeTool === 'eraser' || activeTool === 'hand') {
+    setDrawingTool('pen');
+  }
+}
+
+function setCustomColor(hex) {
+  selectColor(hex);
+}
+
+function setDrawingTool(tool) {
+  activeTool = tool;
+  document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('tool-' + tool);
+  if (btn) btn.classList.add('active');
+  workspace.classList.toggle('panning-mode', tool === 'hand');
+}
+
+// ============================================================
+// 📐 PAPER BACKGROUND ENGINE (LAYER 1)
+// ============================================================
+function drawPaperBackground(context, width, height, paperType) {
+  context.save();
+  context.clearRect(0, 0, width, height);
+
+  let bgColor = '#ffffff';
+  let lineColor = 'rgba(79, 140, 255, 0.22)';
+  let marginColor = 'rgba(239, 68, 68, 0.4)';
+
+  if (paperType === 'dark') {
+    bgColor = '#0f172a';
+    lineColor = 'rgba(255, 255, 255, 0.12)';
+  } else if (paperType === 'cream') {
+    bgColor = '#fdfbf7';
+    lineColor = 'rgba(180, 150, 120, 0.25)';
+  }
+
+  context.fillStyle = bgColor;
+  context.fillRect(0, 0, width, height);
+
+  if (paperType === 'ruled') {
+    const lineGap = 36;
+    context.strokeStyle = lineColor;
+    context.lineWidth = 1;
+    for (let y = lineGap * 2; y < height; y += lineGap) {
+      context.beginPath();
+      context.moveTo(0, y);
+      context.lineTo(width, y);
+      context.stroke();
+    }
+    // Red Left Margin Line
+    context.strokeStyle = marginColor;
+    context.lineWidth = 1.5;
+    context.beginPath();
+    context.moveTo(90, 0);
+    context.lineTo(90, height);
+    context.stroke();
+  } else if (paperType === 'grid') {
+    const step = 28;
+    context.strokeStyle = lineColor;
+    context.lineWidth = 1;
+    context.beginPath();
+    for (let x = step; x < width; x += step) {
+      context.moveTo(x, 0); context.lineTo(x, height);
+    }
+    for (let y = step; y < height; y += step) {
+      context.moveTo(0, y); context.lineTo(width, y);
+    }
+    context.stroke();
+  } else if (paperType === 'dots') {
+    const step = 28;
+    context.fillStyle = paperType === 'dark' ? 'rgba(255, 255, 255, 0.35)' : 'rgba(100, 116, 139, 0.35)';
+    for (let x = step; x < width; x += step) {
+      for (let y = step; y < height; y += step) {
+        context.beginPath();
+        context.arc(x, y, 1.2, 0, Math.PI * 2);
+        context.fill();
+      }
+    }
+  } else if (paperType === 'cornell') {
+    context.strokeStyle = lineColor;
+    context.lineWidth = 1;
+    const lineGap = 34;
+    for (let y = 100; y < height - 160; y += lineGap) {
+      context.beginPath();
+      context.moveTo(260, y);
+      context.lineTo(width, y);
+      context.stroke();
+    }
+    // Header line
+    context.strokeStyle = 'rgba(99, 102, 241, 0.4)';
+    context.lineWidth = 2;
+    context.beginPath();
+    context.moveTo(0, 100);
+    context.lineTo(width, 100);
+    context.stroke();
+
+    // Cue column separator
+    context.beginPath();
+    context.moveTo(260, 100);
+    context.lineTo(260, height - 160);
+    context.stroke();
+
+    // Summary separator
+    context.beginPath();
+    context.moveTo(0, height - 160);
+    context.lineTo(width, height - 160);
+    context.stroke();
+
+    context.fillStyle = 'rgba(100, 116, 139, 0.6)';
+    context.font = '600 14px sans-serif';
+    context.fillText('TOPIC / TITLE', 24, 60);
+    context.fillText('CUES / QUESTIONS', 24, 130);
+    context.fillText('NOTES', 280, 130);
+    context.fillText('SUMMARY', 24, height - 130);
+  }
+
+  context.restore();
+}
+
+function changePaperStyle(style) {
+  activePaper = style;
+  drawPaperBackground(bgCtx, canvasWidth, canvasHeight, style);
+}
+
+// ============================================================
+// ➕ INFINITE AUTO-EXPAND CANVAS HEIGHT (APPLE NOTES STYLE)
+// ============================================================
+let isExpanding = false;
+function expandCanvasHeight(addedHeight = 1500) {
+  if (isExpanding) return;
+  isExpanding = true;
+
+  saveHistorySnapshot();
+
+  const tempInk = document.createElement('canvas');
+  tempInk.width = inkCanvas.width;
+  tempInk.height = inkCanvas.height;
+  tempInk.getContext('2d').drawImage(inkCanvas, 0, 0);
+
+  canvasHeight += addedHeight;
+
+  bgCanvas.height = canvasHeight;
+  inkCanvas.height = canvasHeight;
+
+  drawPaperBackground(bgCtx, canvasWidth, canvasHeight, activePaper);
+  inkCtx.drawImage(tempInk, 0, 0);
+
+  setTimeout(() => {
+    isExpanding = false;
+  }, 100);
+}
+
+function checkInfiniteScroll() {
+  const scrollRemaining = workspace.scrollHeight - (workspace.scrollTop + workspace.clientHeight);
+  if (scrollRemaining < 800) {
+    expandCanvasHeight(1500);
+  }
+}
+
+workspace.addEventListener('scroll', checkInfiniteScroll, { passive: true });
+
+inkCanvas.addEventListener('wheel', (e) => {
+  workspace.scrollTop += e.deltaY * 0.9;
+  checkInfiniteScroll();
+}, { passive: true });
+
+// Zoom
+function adjustZoom(delta) {
+  currentZoom = Math.min(2.5, Math.max(0.4, currentZoom + delta));
+  applyZoom();
+}
+function resetZoom() {
+  currentZoom = 1.0;
+  applyZoom();
+}
+function applyZoom() {
+  paperContainer.style.transform = `scale(${currentZoom})`;
+  if (zoomLabel) zoomLabel.textContent = Math.round(currentZoom * 100) + '%';
+}
+
+// ============================================================
+// 🔄 UNDO & REDO ENGINE
+// ============================================================
+function saveHistorySnapshot() {
+  historyStack.push(inkCanvas.toDataURL('image/png'));
+  if (historyStack.length > 30) historyStack.shift();
+  redoStack.length = 0;
+  updateHistoryButtons();
+}
+
+function updateHistoryButtons() {
+  document.getElementById('btn-undo').disabled = historyStack.length === 0;
+  document.getElementById('btn-redo').disabled = redoStack.length === 0;
+}
+
+function handleUndo() {
+  if (historyStack.length === 0) return;
+  redoStack.push(inkCanvas.toDataURL('image/png'));
+  const prevImg = historyStack.pop();
+  const img = new Image();
+  img.onload = () => {
+    inkCtx.clearRect(0, 0, inkCanvas.width, inkCanvas.height);
+    inkCtx.drawImage(img, 0, 0);
+    updateHistoryButtons();
+  };
+  img.src = prevImg;
+}
+
+function handleRedo() {
+  if (redoStack.length === 0) return;
+  historyStack.push(inkCanvas.toDataURL('image/png'));
+  const nextImg = redoStack.pop();
+  const img = new Image();
+  img.onload = () => {
+    inkCtx.clearRect(0, 0, inkCanvas.width, inkCanvas.height);
+    inkCtx.drawImage(img, 0, 0);
+    updateHistoryButtons();
+  };
+  img.src = nextImg;
+}
+
+function clearActiveCanvas() {
+  if (confirm('Clear your handwritten notes? (Paper background will stay)')) {
+    saveHistorySnapshot();
+    inkCtx.clearRect(0, 0, inkCanvas.width, inkCanvas.height);
+  }
+}
+
+// ============================================================
+// ✍️ INK DRAWING ENGINE (LAYER 2)
+// ============================================================
+function getCanvasPos(e) {
+  const rect = inkCanvas.getBoundingClientRect();
+  const scaleX = inkCanvas.width / rect.width;
+  const scaleY = inkCanvas.height / rect.height;
+
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+  return {
+    x: (clientX - rect.left) * scaleX,
+    y: (clientY - rect.top) * scaleY
+  };
+}
+
+function configureContextForTool() {
+  inkCtx.lineCap = 'round';
+  inkCtx.lineJoin = 'round';
+
+  if (activeTool === 'eraser') {
+    inkCtx.globalCompositeOperation = 'destination-out';
+    inkCtx.lineWidth = activeWidth * 5;
+    inkCtx.globalAlpha = 1.0;
+  } else if (activeTool === 'highlighter') {
+    inkCtx.globalCompositeOperation = 'source-over';
+    inkCtx.strokeStyle = activeColor;
+    inkCtx.lineWidth = activeWidth * 4.5;
+    inkCtx.globalAlpha = 0.35;
+    inkCtx.lineCap = 'square';
+  } else if (activeTool === 'pencil') {
+    inkCtx.globalCompositeOperation = 'source-over';
+    inkCtx.strokeStyle = activeColor;
+    inkCtx.lineWidth = Math.max(1, activeWidth * 0.8);
+    inkCtx.globalAlpha = 0.65;
+  } else if (activeTool === 'calligraphy') {
+    inkCtx.globalCompositeOperation = 'source-over';
+    inkCtx.strokeStyle = activeColor;
+    inkCtx.lineWidth = activeWidth * 1.5;
+    inkCtx.globalAlpha = 1.0;
+  } else {
+    // Standard Pen
+    inkCtx.globalCompositeOperation = 'source-over';
+    inkCtx.strokeStyle = activeColor;
+    inkCtx.lineWidth = activeWidth;
+    inkCtx.globalAlpha = 1.0;
+  }
+}
+
+function onPointerDown(e) {
+  if (activeTool === 'hand') {
+    touchMode = 'scroll';
+    panStartX = e.clientX || (e.touches && e.touches[0].clientX);
+    panStartY = e.clientY || (e.touches && e.touches[0].clientY);
+    scrollLeftStart = workspace.scrollLeft;
+    scrollTopStart = workspace.scrollTop;
+    workspace.classList.add('panning-active');
+    return;
+  }
+
+  isDrawing = true;
+  const pos = getCanvasPos(e);
+  if (pos && pos.y) maxDrawnY = Math.max(maxDrawnY, pos.y);
+  startX = pos.x;
+  startY = pos.y;
+  lastX = pos.x;
+  lastY = pos.y;
+  points = [pos];
+
+  if (['line', 'arrow', 'rect', 'circle'].includes(activeTool)) {
+    shapeSnapshot = inkCtx.getImageData(0, 0, inkCanvas.width, inkCanvas.height);
+    return;
+  }
+
+  shapeSnapshot = null;
+  configureContextForTool();
+
+  inkCtx.beginPath();
+  inkCtx.moveTo(pos.x, pos.y);
+  inkCtx.lineTo(pos.x + 0.1, pos.y + 0.1);
+  inkCtx.stroke();
+}
+
+function onPointerMove(e) {
+  if (touchMode === 'scroll') {
+    const cx = e.clientX || (e.touches && e.touches[0].clientX);
+    const cy = e.clientY || (e.touches && e.touches[0].clientY);
+    workspace.scrollLeft = scrollLeftStart - (cx - panStartX);
+    workspace.scrollTop = scrollTopStart - (cy - panStartY);
+    checkInfiniteScroll();
+    return;
+  }
+
+  if (!isDrawing) return;
+  const pos = getCanvasPos(e);
+  if (pos && pos.y) maxDrawnY = Math.max(maxDrawnY, pos.y);
+
+  // Auto-expand if drawing near bottom edge
+  if (pos.y > canvasHeight - 500) {
+    expandCanvasHeight(1500);
+  }
+
+  if (['line', 'arrow', 'rect', 'circle'].includes(activeTool)) {
+    if (shapeSnapshot) inkCtx.putImageData(shapeSnapshot, 0, 0);
+
+    inkCtx.save();
+    inkCtx.globalCompositeOperation = 'source-over';
+    inkCtx.strokeStyle = activeColor;
+    inkCtx.lineWidth = activeWidth;
+    inkCtx.globalAlpha = 1.0;
+    inkCtx.lineCap = 'round';
+    inkCtx.lineJoin = 'round';
+
+    inkCtx.beginPath();
+    if (activeTool === 'line') {
+      inkCtx.moveTo(startX, startY);
+      inkCtx.lineTo(pos.x, pos.y);
+      inkCtx.stroke();
+    } else if (activeTool === 'arrow') {
+      inkCtx.moveTo(startX, startY);
+      inkCtx.lineTo(pos.x, pos.y);
+      inkCtx.stroke();
+      const angle = Math.atan2(pos.y - startY, pos.x - startX);
+      const headLen = Math.max(14, activeWidth * 3);
+      inkCtx.beginPath();
+      inkCtx.moveTo(pos.x, pos.y);
+      inkCtx.lineTo(pos.x - headLen * Math.cos(angle - Math.PI / 6), pos.y - headLen * Math.sin(angle - Math.PI / 6));
+      inkCtx.moveTo(pos.x, pos.y);
+      inkCtx.lineTo(pos.x - headLen * Math.cos(angle + Math.PI / 6), pos.y - headLen * Math.sin(angle + Math.PI / 6));
+      inkCtx.stroke();
+    } else if (activeTool === 'rect') {
+      inkCtx.strokeRect(startX, startY, pos.x - startX, pos.y - startY);
+    } else if (activeTool === 'circle') {
+      const rx = Math.abs(pos.x - startX) / 2;
+      const ry = Math.abs(pos.y - startY) / 2;
+      inkCtx.beginPath();
+      inkCtx.ellipse(Math.min(startX, pos.x) + rx, Math.min(startY, pos.y) + ry, Math.max(1, rx), Math.max(1, ry), 0, 0, Math.PI * 2);
+      inkCtx.stroke();
+    }
+    inkCtx.restore();
+    return;
+  }
+
+  configureContextForTool();
+  points.push(pos);
+
+  if (points.length > 2) {
+    const p1 = points[points.length - 2];
+    const p2 = points[points.length - 1];
+    const midX = (p1.x + p2.x) / 2;
+    const midY = (p1.y + p2.y) / 2;
+
+    inkCtx.beginPath();
+    inkCtx.moveTo(lastX, lastY);
+    inkCtx.quadraticCurveTo(p1.x, p1.y, midX, midY);
+    inkCtx.stroke();
+
+    lastX = midX;
+    lastY = midY;
+  }
+}
+
+function onPointerUp() {
+  if (touchMode === 'scroll') {
+    touchMode = 'draw';
+    workspace.classList.remove('panning-active');
+    return;
+  }
+
+  if (!isDrawing) return;
+  isDrawing = false;
+  points = [];
+  shapeSnapshot = null;
+  saveHistorySnapshot();
+}
+
+// Mouse Events
+inkCanvas.addEventListener('mousedown', onPointerDown);
+window.addEventListener('mousemove', onPointerMove);
+window.addEventListener('mouseup', onPointerUp);
+
+// Multi-touch gestures (iPad & Phone)
+inkCanvas.addEventListener('touchstart', (e) => {
+  if (e.touches.length >= 2) {
+    touchMode = 'scroll';
+    panStartX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+    panStartY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+    scrollLeftStart = workspace.scrollLeft;
+    scrollTopStart = workspace.scrollTop;
+    return;
+  }
+  touchMode = 'draw';
+  e.preventDefault();
+  onPointerDown(e);
+}, { passive: false });
+
+inkCanvas.addEventListener('touchmove', (e) => {
+  if (touchMode === 'scroll' && e.touches.length >= 2) {
+    const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+    const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+    workspace.scrollLeft = scrollLeftStart - (cx - panStartX);
+    workspace.scrollTop = scrollTopStart - (cy - panStartY);
+    checkInfiniteScroll();
+    return;
+  }
+  if (isDrawing) {
+    e.preventDefault();
+    onPointerMove(e);
+  }
+}, { passive: false });
+
+inkCanvas.addEventListener('touchend', (e) => {
+  if (touchMode === 'scroll' && e.touches.length < 2) {
+    touchMode = 'draw';
+    return;
+  }
+  onPointerUp();
+});
+
+// Keyboard Shortcuts
+window.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+    e.preventDefault();
+    if (e.shiftKey) handleRedo();
+    else handleUndo();
+  } else if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
+    e.preventDefault();
+    handleRedo();
+  }
+});
+
+// Track actual drawn height for ultra-fast cropped export
+let maxDrawnY = 800;
+
+// ============================================================
+// 💾 SAVE & MERGE (OPTIMIZED CROPPING FOR FAST SAVING)
+// ============================================================
+function saveAndExport() {
+  const exportHeight = Math.min(canvasHeight, Math.max(800, Math.ceil(maxDrawnY + 200)));
+  const merged = document.createElement('canvas');
+  merged.width = canvasWidth;
+  merged.height = exportHeight;
+  const mergedCtx = merged.getContext('2d');
+
+  // Draw Background + Ink up to content boundary
+  mergedCtx.drawImage(bgCanvas, 0, 0, canvasWidth, exportHeight, 0, 0, canvasWidth, exportHeight);
+  mergedCtx.drawImage(inkCanvas, 0, 0, canvasWidth, exportHeight, 0, 0, canvasWidth, exportHeight);
+
+  const dataUrl = merged.toDataURL('image/png');
+  window.parent.postMessage({ type: 'STUDY_VAULT_CANVAS_SAVE', dataUrl: dataUrl }, '*');
+}
+
+function cancelAndExit() {
+  window.parent.postMessage({ type: 'STUDY_VAULT_CANVAS_CANCEL' }, '*');
+}
+
+// Load Initial Image if editing existing note
+let hasLoadedInitialImage = false;
+window.addEventListener('message', (e) => {
+  if (e.data && e.data.type === 'STUDY_VAULT_LOAD_IMAGE' && e.data.image) {
+    if (hasLoadedInitialImage) return;
+    hasLoadedInitialImage = true;
+
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      canvasWidth = Math.max(1200, img.width);
+      canvasHeight = Math.max(img.height + 1500, 3600);
+
+      bgCanvas.width = canvasWidth;
+      bgCanvas.height = canvasHeight;
+      inkCanvas.width = canvasWidth;
+      inkCanvas.height = canvasHeight;
+
+      drawPaperBackground(bgCtx, canvasWidth, canvasHeight, activePaper);
+      bgCtx.drawImage(img, 0, 0);
+      inkCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+      maxDrawnY = Math.max(maxDrawnY, img.height);
+
+      saveHistorySnapshot();
+
+      setTimeout(() => {
+        if (img.height > 400) {
+          workspace.scrollTo({
+            top: Math.max(0, img.height - 150),
+            behavior: 'smooth'
+          });
+        }
+      }, 150);
+    };
+    img.src = e.data.image;
+  }
+});
+
+// Notify parent that studio is ready to receive messages
+window.parent.postMessage({ type: 'STUDY_VAULT_STUDIO_READY' }, '*');
+
+// INITIALIZE STUDIO
+function initStudio() {
+  bgCanvas.width = canvasWidth;
+  bgCanvas.height = canvasHeight;
+  inkCanvas.width = canvasWidth;
+  inkCanvas.height = canvasHeight;
+
+  drawPaperBackground(bgCtx, canvasWidth, canvasHeight, activePaper);
+  updateStrokeUI();
+}
+
+initStudio();
+</script>
+</body>
+</html>

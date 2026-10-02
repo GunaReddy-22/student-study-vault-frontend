@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { generateQuiz, evaluateQuiz, getQuizHistory } from "../services/ai";
 import "./QuizModal.css";
 import {
@@ -148,7 +149,7 @@ export default function QuizModal({ noteId, noteTitle, noteSubject, onClose }) {
     ? Math.round(((currentIdx + 1) / quiz.questions.length) * 100)
     : 0;
 
-  return (
+  return createPortal(
     <div className="quiz-modal-overlay" onClick={onClose}>
       <div
         className="quiz-modal-container"
@@ -655,6 +656,7 @@ export default function QuizModal({ noteId, noteTitle, noteSubject, onClose }) {
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

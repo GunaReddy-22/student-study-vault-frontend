@@ -1,286 +1,331 @@
-/* ===============================
-   NOTE CARD – PREMIUM GLASS
-================================ */
-.note-card {
+/* ============================================================
+   🌟 MODERN STUDY VAULT NOTE CARD DESIGN SYSTEM
+   ============================================================ */
+
+.modern-note-card {
   position: relative;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.06),
-      rgba(255,255,255,0.02)
-    );
-  border-radius: 16px;
-  padding: 22px;
-  color: #e5e7eb;
-
-  border: 1px solid rgba(255,255,255,0.08);
-  backdrop-filter: blur(14px);
-
-  box-shadow:
-    0 18px 45px rgba(0,0,0,0.65),
-    inset 0 1px 0 rgba(255,255,255,0.08);
-
-  transition:
-    transform 0.35s cubic-bezier(.22,.61,.36,1),
-    box-shadow 0.35s ease,
-    border-color 0.35s ease;
-
-  cursor: default;
+  background: linear-gradient(
+    180deg,
+    rgba(17, 24, 39, 0.75) 0%,
+    rgba(10, 15, 30, 0.88) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 18px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.03);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
 }
 
-/* Hover lift + glow */
-.note-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  border-color: rgba(99,102,241,0.55);
-
-  box-shadow:
-    0 35px 80px rgba(0,0,0,0.85),
-    0 0 0 1px rgba(99,102,241,0.25);
+.modern-note-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(99, 102, 241, 0.45);
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.7), 0 0 24px -4px rgba(99, 102, 241, 0.25);
 }
 
-/* Subtle animated glow */
-.note-card::after {
-  content: "";
+/* 🏷️ TOP ROW: SUBJECT & STATUS BADGES */
+.card-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.card-subject-pill {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #a5b4fc;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  padding: 4px 10px;
+  border-radius: 20px;
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-badge-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.card-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+.card-type-badge.handwritten {
+  background: rgba(16, 185, 129, 0.14);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.card-type-badge.document {
+  background: rgba(56, 189, 248, 0.14);
+  color: #7dd3fc;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.card-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 7px;
+  border-radius: 10px;
+}
+
+.card-status-badge.public {
+  background: rgba(148, 163, 184, 0.15);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.card-status-badge.premium {
+  background: rgba(245, 158, 11, 0.18);
+  color: #fcd34d;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+/* 📌 NOTE TITLE */
+.card-title-text {
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: #f8fafc;
+  line-height: 1.35;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 🖼️ UNIFORM PREVIEW FRAME (135px HEIGHT) */
+.card-preview-viewport {
+  width: 100%;
+  height: 135px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  background: #090d1a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Handwritten Canvas Image Preview */
+.preview-image-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: #ffffff;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.preview-drawn-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  transition: transform 0.4s ease;
+}
+
+.modern-note-card:hover .preview-drawn-image {
+  transform: scale(1.04);
+}
+
+/* Text Document Preview */
+.preview-text-wrapper {
+  width: 100%;
+  height: 100%;
+  padding: 12px 14px;
+  background: linear-gradient(180deg, #0c142b, #070b18);
+  position: relative;
+  overflow: hidden;
+}
+
+.text-line-deco {
   position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background:
-    radial-gradient(
-      circle at top,
-      rgba(99,102,241,0.18),
-      transparent 70%
-    );
-  opacity: 0;
-  transition: opacity 0.35s ease;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, #4f46e5, #06b6d4);
+}
+
+.preview-text-snippet {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: #94a3b8;
+  margin: 0;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.preview-text-fade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  background: linear-gradient(to top, #070b18 20%, transparent 100%);
   pointer-events: none;
 }
 
-.note-card:hover::after {
+/* Glass Hover Overlay */
+.preview-glass-hover {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 15, 30, 0.78);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.card-preview-viewport:hover .preview-glass-hover {
   opacity: 1;
 }
 
-/* ===============================
-   SUBJECT (CATEGORY TAG)
-================================ */
-.note-subject,
-.note-card > span:first-child {
-  display: inline-block;
-  margin-bottom: 8px;
-  padding: 4px 10px;
-
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-
-  color: #93c5fd;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(59,130,246,0.25),
-      rgba(59,130,246,0.08)
-    );
-
-  border-radius: 999px;
-  border: 1px solid rgba(59,130,246,0.35);
-
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.08);
-}
-
-/* ===============================
-   NOTE TITLE (TOPIC)
-================================ */
-.note-title {
-  font-size: 18px;
-  font-weight: 600;
-  margin-top: 6px;
-  margin-bottom: 6px;
-
-  color: #e5e7eb;
-
-  line-height: 1.3;
-}
-
-/* ===============================
-   PREVIEW / CONTENT
-================================ */
-.note-card p {
-  font-size: 14px;
-  color: #9aa4b2;
-  line-height: 1.45;
-}
-
-/* ===============================
-   ACTION BUTTONS
-================================ */
-.note-actions {
+/* ⚡ CARD ACTION BAR (ALIGNED & BALANCED) */
+.card-footer-actions {
   display: flex;
-  gap: 10px;
-  margin-top: 16px;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
 }
 
-/* Base button */
-.note-actions button {
-  flex: 1;
-  padding: 8px 0;
+.action-btn-primary {
+  flex: 1.2;
+  height: 36px;
   border-radius: 10px;
   border: none;
-  cursor: pointer;
-
-  font-size: 14px;
+  background: linear-gradient(135deg, #4f46e5 0%, #2563eb 100%);
+  color: #ffffff;
+  font-size: 12.5px;
   font-weight: 600;
-
-  background: rgba(255,255,255,0.08);
-  color: #e5e7eb;
-
-  transition:
-    background 0.25s ease,
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+  transition: all 0.2s ease;
 }
 
-/* Edit hover */
-.note-actions button:hover {
-  background: rgba(255,255,255,0.16);
-  transform: translateY(-2px);
+.action-btn-primary:hover {
+  background: linear-gradient(135deg, #4338ca 0%, #1d4ed8 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(79, 70, 229, 0.5);
 }
 
-/* ===============================
-   DELETE BUTTON (DANGER)
-================================ */
-.danger {
-  background: linear-gradient(135deg, #ff5c5c, #ff3b3b);
-  color: white;
-
-  box-shadow: 0 8px 22px rgba(255,59,59,0.35);
+.action-btn-secondary {
+  flex: 1;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: #cbd5e1;
+  font-size: 12.5px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.danger:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 32px rgba(255,59,59,0.55);
+.action-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
 }
-/* ===============================
-   MOBILE FIXES – NOTE CARD
-================================ */
 
-@media (max-width: 767px) {
-  /* ❌ Disable hover lift on mobile */
-  .note-card:hover {
-    transform: none;
-    box-shadow:
-      0 18px 45px rgba(0,0,0,0.65),
-      inset 0 1px 0 rgba(255,255,255,0.08);
+.action-btn-quiz {
+  flex: 1;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.12);
+  color: #6ee7b7;
+  font-size: 12.5px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-btn-quiz:hover {
+  background: rgba(16, 185, 129, 0.22);
+  border-color: rgba(16, 185, 129, 0.5);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.action-btn-delete {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.08);
+  color: #f87171;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.action-btn-delete:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.6);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* 📱 RESPONSIVE ADJUSTMENTS */
+@media (max-width: 768px) {
+  .modern-note-card {
+    padding: 14px;
+    gap: 10px;
   }
 
-  /* Prevent scale overflow */
-  .note-card {
-    transform: none;
+  .card-footer-actions {
+    gap: 6px;
   }
 
-  /* Subject as pill (h3 fix) */
-  .note-card h3 {
-    display: inline-block;
-    align-self: flex-start;
-
-    margin-bottom: 8px;
-    padding: 4px 10px;
-
-    font-size: 12px;
-    font-weight: 600;
-
-    color: #93c5fd;
-
-    background: linear-gradient(
-      180deg,
-      rgba(59,130,246,0.25),
-      rgba(59,130,246,0.08)
-    );
-
-    border-radius: 999px;
-    border: 1px solid rgba(59,130,246,0.35);
-  }
-
-  /* Improve touch buttons */
-  .note-actions {
-    gap: 12px;
-  }
-
-  .note-actions button {
-    padding: 12px 0;
-    font-size: 15px;
+  .action-btn-primary span,
+  .action-btn-secondary span,
+  .action-btn-quiz span {
+    font-size: 11.5px;
   }
 }
-.note-card {
-  /* existing styles stay */
-
-  transform: translateZ(0);          /* GPU lock */
-  will-change: transform;            /* smooth animation */
-}
-/* ===============================
-   CARD ENTER ANIMATION
-================================ */
-.note-card,
-.public-note-card {
-  opacity: 0;
-  transform: translateY(18px) scale(0.97);
-  animation: cardEnter 0.45s cubic-bezier(.22,.61,.36,1) forwards;
-}
-
-/* stagger effect */
-.note-card:nth-child(1),
-.public-note-card:nth-child(1) { animation-delay: 0.05s; }
-.note-card:nth-child(2),
-.public-note-card:nth-child(2) { animation-delay: 0.1s; }
-.note-card:nth-child(3),
-.public-note-card:nth-child(3) { animation-delay: 0.15s; }
-.note-card:nth-child(4),
-.public-note-card:nth-child(4) { animation-delay: 0.2s; }
-.note-card:nth-child(5),
-.public-note-card:nth-child(5) { animation-delay: 0.25s; }
-
-@keyframes cardEnter {
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-/* =====================================
-   GLOBAL CARD ENTRY ANIMATION
-   (USED ACROSS ALL PAGES)
-===================================== */
-
-.card-animate {
-  opacity: 0;
-  transform: translateY(14px) scale(0.97);
-  animation: cardFadeIn 0.45s cubic-bezier(.22,.61,.36,1) forwards;
-}
-
-/* Prevent jump on route switch */
-.notes-grid .card-animate {
-  will-change: transform, opacity;
-}
-
-/* Smooth entry */
-@keyframes cardFadeIn {
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-/* Reduce motion if user prefers */
-@media (prefers-reduced-motion: reduce) {
-  .card-animate {
-    animation: none;
-    opacity: 1;
-    transform: none;
-  }
-}
-
-
-
-
-
-

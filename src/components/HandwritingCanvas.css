@@ -1,23 +1,33 @@
 /* ==================================================
-   HANDWRITING IFRAME WRAPPER
-   Embeds the isolated standalone studio
+   🍎 FULLSCREEN IPAD CANVAS OVERLAY
+   Renders over the entire window, covering all sidebars
 ================================================== */
 
 .handwriting-iframe-wrapper {
-  width: 100%;
-  height: 600px;
-  max-height: 80vh;
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
-  background: #080e1e;
-  display: flex;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  z-index: 99999999 !important;
+  background: #090e1a !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .handwriting-iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
+  display: block !important;
+  flex: 1 !important;
 }
