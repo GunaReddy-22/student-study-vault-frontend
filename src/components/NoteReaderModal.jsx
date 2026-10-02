@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
+import api from "../services/api";
 import "./NoteReaderModal.css";
 import {
   FaTimes,
@@ -58,19 +59,18 @@ export default function NoteReaderModal({ note, onClose, onEdit, onQuiz }) {
   };
 
   const handleSummarize = async () => {
-    if (isImage) return;
+    if (isImage || !note.content) return;
     try {
       setLoadingAI(true);
-      const res = await fetch("http://localhost:4000/api/ai/summarize", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: note.content }),
-      });
-      const data = await res.json();
-      setSummary(data.summary);
+      const res = await api.post("/ai/summarize", { content: note.content });
+      if (res.data?.summary) {
+        setSummary(res.data.summary);
+      } else {
+        alert("No summary was returned by AI");
+      }
     } catch (err) {
-      console.error(err);
-      alert("AI Summary failed");
+      console.error("AI Summarize error:", err);
+      alert("AI Summary failed: " + (err.response?.data?.message || err.message));
     } finally {
       setLoadingAI(false);
     }
@@ -150,7 +150,7 @@ export default function NoteReaderModal({ note, onClose, onEdit, onQuiz }) {
               </button>
             )}
 
-            {onQuiz && (
+            {onQuiz && !isImage && (
               <button
                 type="button"
                 className="reader-btn btn-quiz"

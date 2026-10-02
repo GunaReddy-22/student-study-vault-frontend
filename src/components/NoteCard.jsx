@@ -122,7 +122,7 @@ export default function NoteCard({ note, onRead, onEdit, onDelete, onQuiz }) {
           <FaEdit /> <span>Edit</span>
         </button>
 
-        {onQuiz && (
+        {onQuiz && !isImage && (
           <button
             type="button"
             className="action-btn-quiz"

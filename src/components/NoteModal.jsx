@@ -22,29 +22,27 @@ export default function NoteModal({ note, close, refresh }) {
   const [summary, setSummary] = useState("");
   const [loadingAI, setLoadingAI] = useState(false);
 
-  // ✅ FIXED FUNCTION
+  // ✅ AI Summarize Function
   const summarizeNote = async () => {
-    
+    if (!form.content || typeof form.content !== "string" || !form.content.trim()) {
+      alert("Please enter note content before summarizing");
+      return;
+    }
 
     try {
       setLoadingAI(true);
+      const res = await api.post("/ai/summarize", {
+        content: form.content,
+      });
 
-      const res = await fetch("http://localhost:4000/api/ai/summarize", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    content: form.content,
-  }),
-});
-
-      const data = await res.json();
-
-      setSummary(data.summary);
+      if (res.data?.summary) {
+        setSummary(res.data.summary);
+      } else {
+        alert("No summary was returned by AI");
+      }
     } catch (err) {
-      console.error(err);
-      alert("AI failed");
+      console.error("AI Summarize error:", err);
+      alert("AI Summary failed: " + (err.response?.data?.message || err.message));
     } finally {
       setLoadingAI(false);
     }
