@@ -1,5 +1,5 @@
 /* =========================================================
-   PRACTICE QUIZZES HUB STYLING
+   PRACTICE QUIZZES HUB STYLING – RESPONSIVE & SLEEK
    ========================================================= */
 
 .practice-quiz-page {
@@ -8,6 +8,8 @@
   margin: 0 auto;
   color: #f1f5f9;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 /* =========================================
@@ -132,6 +134,16 @@
   padding-bottom: 8px;
   margin-bottom: 28px;
   scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.quiz-tabs-bar::-webkit-scrollbar {
+  height: 4px;
+}
+
+.quiz-tabs-bar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
 }
 
 .tab-btn {
@@ -144,6 +156,7 @@
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
+  flex-shrink: 0;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -164,8 +177,9 @@
 ========================================= */
 .exam-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 24px;
+  width: 100%;
 }
 
 .exam-card {
@@ -177,6 +191,9 @@
   flex-direction: column;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  min-width: 0; /* Prevents flex children from overflowing */
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .exam-card:hover {
@@ -202,12 +219,14 @@
   align-items: center;
   justify-content: center;
   border-radius: 16px;
+  flex-shrink: 0;
 }
 
 .exam-info {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
 }
 
 .exam-badge {
@@ -223,6 +242,7 @@
   font-weight: 700;
   margin: 0;
   color: #f8fafc;
+  word-break: break-word;
 }
 
 .exam-desc {
@@ -230,34 +250,44 @@
   color: #94a3b8;
   line-height: 1.5;
   margin: 0 0 18px;
+  word-break: break-word;
 }
 
 /* Subjects Summary Pills */
 .subjects-summary-wrap {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 8px;
   margin-bottom: 16px;
+  width: 100%;
 }
 
 .subject-badge-pill {
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: space-between;
   background: rgba(30, 41, 59, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 6px 12px;
+  padding: 8px 12px;
   border-radius: 10px;
   font-size: 12.5px;
+  min-width: 0;
+  gap: 8px;
 }
 
 .sub-dot {
-  font-size: 11px;
+  font-size: 12px;
+  flex-shrink: 0;
 }
 
 .sub-name {
   font-weight: 700;
   color: #f1f5f9;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .sub-count {
@@ -265,8 +295,9 @@
   color: #38bdf8;
   font-weight: 600;
   background: rgba(56, 189, 248, 0.12);
-  padding: 2px 6px;
+  padding: 2px 8px;
   border-radius: 6px;
+  flex-shrink: 0;
 }
 
 /* Sample Chapters Preview */
@@ -277,33 +308,43 @@
   gap: 6px;
   margin-bottom: 20px;
   font-size: 12px;
+  width: 100%;
 }
 
 .sample-lbl {
   color: #64748b;
   font-weight: 600;
+  font-size: 11.5px;
+  flex-shrink: 0;
 }
 
 .sample-top-chip {
   background: rgba(99, 102, 241, 0.1);
   border: 1px solid rgba(99, 102, 241, 0.25);
   color: #c7d2fe;
-  padding: 3px 8px;
-  border-radius: 6px;
+  padding: 4px 10px;
+  border-radius: 8px;
   font-size: 11.5px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.15s ease;
+  white-space: normal;
+  word-break: break-word;
+  text-align: left;
+  line-height: 1.4;
+  max-width: 100%;
 }
 
 .sample-top-chip:hover {
   background: rgba(99, 102, 241, 0.25);
   color: #ffffff;
+  border-color: rgba(99, 102, 241, 0.5);
 }
 
 .exam-card-footer {
   padding-top: 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin-top: auto;
 }
 
 .quick-start-btn {
@@ -334,11 +375,12 @@
   inset: 0;
   background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(8px);
-  z-index: 999;
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 16px;
+  box-sizing: border-box;
 }
 
 .config-modal-card,
@@ -350,7 +392,11 @@
   max-width: 520px;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 40px);
   animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
 }
 
 @keyframes modalPop {
@@ -368,9 +414,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 24px;
+  padding: 18px 24px;
   background: rgba(30, 41, 59, 0.5);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
 }
 
 .modal-title-row {
@@ -417,6 +464,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  overflow-y: auto;
 }
 
 .config-field {
@@ -439,6 +487,8 @@
   border-radius: 12px;
   font-size: 14px;
   outline: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .config-field select:focus {
@@ -468,6 +518,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  text-align: center;
 }
 
 .diff-opt.active.easy {
@@ -513,6 +564,7 @@
   padding: 18px 24px;
   background: rgba(30, 41, 59, 0.5);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
 }
 
 .cancel-btn {
@@ -644,3 +696,121 @@
   color: #94a3b8;
   gap: 16px;
 }
+
+/* =========================================================
+   RESPONSIVE MEDIA QUERIES (LAPTOPS, TABLETS & MOBILES)
+========================================================= */
+
+/* Tablets & Small Laptops (<= 1024px) */
+@media (max-width: 1024px) {
+  .practice-quiz-page {
+    padding: 28px 20px 70px;
+  }
+
+  .quiz-hero-banner {
+    padding: 28px 24px;
+  }
+
+  .quiz-hero-banner h1 {
+    font-size: 28px;
+  }
+
+  .exam-cards-grid {
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 18px;
+  }
+}
+
+/* Mobile Devices (<= 768px) */
+@media (max-width: 768px) {
+  .practice-quiz-page {
+    padding: 72px 14px 80px; /* Safe distance below mobile header bar */
+  }
+
+  .quiz-hero-banner {
+    padding: 22px 18px;
+    border-radius: 18px;
+    margin-bottom: 20px;
+  }
+
+  .quiz-hero-banner h1 {
+    font-size: 23px;
+  }
+
+  .quiz-hero-banner p {
+    font-size: 13.5px;
+    margin-bottom: 18px;
+  }
+
+  .user-stats-strip {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .stat-pill {
+    justify-content: space-between;
+  }
+
+  .view-history-btn {
+    margin-left: 0;
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .quiz-tabs-bar {
+    margin-bottom: 20px;
+  }
+
+  .exam-cards-grid {
+    grid-template-columns: 1fr; /* Single column on phones */
+    gap: 16px;
+  }
+
+  .exam-card {
+    padding: 18px 16px;
+    border-radius: 16px;
+  }
+
+  .config-modal-card,
+  .history-modal-card {
+    border-radius: 18px;
+  }
+
+  .modal-header {
+    padding: 14px 18px;
+  }
+
+  .config-body {
+    padding: 18px;
+    gap: 16px;
+  }
+
+  .modal-footer {
+    padding: 14px 18px;
+    flex-direction: column-reverse;
+  }
+
+  .cancel-btn,
+  .launch-quiz-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Very Small Mobiles (<= 400px) */
+@media (max-width: 400px) {
+  .practice-quiz-page {
+    padding: 68px 10px 80px;
+  }
+
+  .count-segmented {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .difficulty-segmented {
+    grid-template-columns: 1fr;
+  }
+}
+

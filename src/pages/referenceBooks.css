@@ -75,7 +75,7 @@
 ========================= */
 @media (max-width: 768px) {
   .reference-page {
-    padding: 20px;
+    padding: 16px 12px;
   }
 
   .reference-page h2 {
@@ -83,17 +83,23 @@
   }
 
   .ref-grid {
-    gap: 18px;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+    gap: 16px;
   }
 }
 
 @media (max-width: 480px) {
   .reference-page {
-    padding: 16px;
+    padding: 12px 8px;
   }
 
   .reference-page h2 {
     font-size: 20px;
+  }
+
+  .ref-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
   }
 }
 /* ===============================
