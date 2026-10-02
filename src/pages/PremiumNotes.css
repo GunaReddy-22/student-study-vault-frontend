@@ -1,101 +1,363 @@
-/* ===============================
-   PAGE
-================================ */
-/* ===============================
-   PAGE (MATCH PUBLIC NOTES)
-================================ */
-.premium-page {
-  padding: 32px;
-  min-height: 100vh;
-  color: #ffffff;
+/* ============================================================
+   ⭐ MODERN PREMIUM NOTES STYLING
+   ============================================================ */
 
-  background:
-    radial-gradient(circle at 20% 10%, rgba(80,140,255,0.18), transparent 40%),
-    radial-gradient(circle at 80% 70%, rgba(120,160,255,0.12), transparent 45%),
-    linear-gradient(135deg, #050b1e, #020617);
+.premium-page {
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  color: #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: premiumFadeIn 0.35s ease-out;
+  box-sizing: border-box;
 }
 
-/* ===============================
-   GRID
-================================ */
+@keyframes premiumFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================
+   HERO BANNER
+   ============================================================ */
+.prem-hero-banner {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 24px;
+  padding: 32px 32px 28px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
+}
+
+.prem-hero-banner::after {
+  content: "";
+  position: absolute;
+  top: -40%;
+  right: -15%;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.prem-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #fbbf24;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  letter-spacing: 0.3px;
+}
+
+.prem-hero-banner h1 {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.25;
+  margin: 0 0 8px;
+  background: linear-gradient(135deg, #ffffff 40%, #fcd34d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.prem-hero-banner p {
+  color: #94a3b8;
+  font-size: 14.5px;
+  max-width: 720px;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ============================================================
+   SEARCH & CONTROLS TOOLBAR
+   ============================================================ */
+.premium-controls-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 12px 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.prem-search-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(2, 6, 23, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 0 12px;
+  height: 42px;
+  flex: 1;
+  min-width: 240px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.prem-search-wrapper:focus-within {
+  border-color: rgba(245, 158, 11, 0.6);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+}
+
+.prem-search-icon {
+  font-size: 16px;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.prem-search-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #f1f5f9;
+  font-size: 14px;
+  width: 100%;
+}
+
+.prem-search-input::placeholder {
+  color: #64748b;
+}
+
+.prem-filter-dropdowns {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.prem-select {
+  height: 42px;
+  padding: 0 16px;
+  background: rgba(2, 6, 23, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: #e2e8f0;
+  font-size: 13.5px;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.prem-select:focus {
+  border-color: rgba(245, 158, 11, 0.6);
+}
+
+/* ============================================================
+   GRID & CARDS
+   ============================================================ */
 .premium-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 26px;
-  margin-top: 26px;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 22px;
+  align-items: stretch;
 }
 
-/* ===============================
-   CARD
-================================ */
 .premium-card {
-  position: relative;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
   padding: 22px;
-  border-radius: 18px;
-
-  background: linear-gradient(
-    180deg,
-    rgba(18, 30, 60, 0.95),
-    rgba(10, 20, 40, 0.95)
-  );
-
-  border: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(14px);
-
-  box-shadow:
-    0 18px 45px rgba(0,0,0,0.6),
-    inset 0 0 0 1px rgba(255,255,255,0.04);
-
+  -webkit-backdrop-filter: blur(14px);
   cursor: pointer;
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
 }
 
 .premium-card:hover {
-  transform: translateY(-6px);
-  box-shadow:
-    0 30px 70px rgba(0,0,0,0.8),
-    0 0 0 1px rgba(99,102,241,0.25);
+  transform: translateY(-5px);
+  border-color: rgba(245, 158, 11, 0.5);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 25px rgba(245, 158, 11, 0.12);
 }
 
-/* ===============================
-   LOCK ICON
-================================ */
-.lock {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  font-size: 18px;
-  color: #facc15;
+.prem-card-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
 }
 
-.premium-card h3 {
-  font-size: 17px;
-  font-weight: 600;
-  color: #eaf1ff;
-  margin-bottom: 6px;
-  padding-right: 105px !important;
+.prem-subject-tag {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #fcd34d;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  padding: 3px 10px;
+  border-radius: 6px;
+  letter-spacing: 0.3px;
+}
+
+.prem-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.prem-status-pill.unlocked {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.prem-status-pill.locked {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.prem-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f8fafc;
+  line-height: 1.4;
+  margin: 0 0 12px;
   word-break: break-word;
 }
 
-.subject {
-  font-size: 13px;
-  color: #b6c3ff;
+.prem-author-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
 }
 
-.author {
-  margin-top: 10px;
-  font-size: 12px;
-  color: #9aa4b2;
+.prem-author-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.price {
-  margin-top: 14px;
+.prem-author-name {
+  font-size: 12.5px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.prem-card-footer {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.prem-price-tag {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  color: #38bdf8;
+}
+
+.prem-currency {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.prem-amount {
   font-size: 20px;
   font-weight: 800;
-  color: #8fd3ff;
 }
+
+.prem-action-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #818cf8;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.premium-card:hover .prem-action-hint {
+  transform: translateX(3px);
+  color: #a5b4fc;
+}
+
+.prem-arrow-icon {
+  font-size: 14px;
+}
+
+/* Loading & Empty States */
+.prem-loading-state,
+.prem-empty-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  color: #94a3b8;
+  gap: 12px;
+}
+
+.prem-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(245, 158, 11, 0.2);
+  border-top-color: #f59e0b;
+  border-radius: 50%;
+  animation: premSpin 0.8s linear infinite;
+}
+
+@keyframes premSpin {
+  to { transform: rotate(360deg); }
+}
+
+.prem-empty-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  color: #fbbf24;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
 
 /* ===============================
    LOCKED PREVIEW (MODAL)

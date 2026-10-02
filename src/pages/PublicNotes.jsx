@@ -1,7 +1,19 @@
 import { useEffect, useState, useRef } from "react";
+import {
+  FiGlobe,
+  FiSearch,
+  FiHeart,
+  FiMessageSquare,
+  FiShare2,
+  FiBookOpen,
+  FiUser,
+  FiClock,
+  FiArrowRight,
+  FiCheck
+} from "react-icons/fi";
+import { FaHeart, FaCommentDots, FaShare } from "react-icons/fa";
 import api from "../services/api";
 import "./PublicNotes.css";
-import { FaHeart, FaCommentDots, FaShare } from "react-icons/fa";
 import { getUserIdFromToken } from "../utils/getUserId";
 import { summarizeContent, askAI } from "../services/ai";
 import FormattedAIResponse from "../components/FormattedAIResponse";
@@ -213,32 +225,62 @@ const handleAsk = async () => {
 
   return (
     <div className="public-notes-page">
-      <h2>🌍 Public Notes</h2>
-      <p className="subtitle">Explore notes shared by other students</p>
-
-      {/* CONTROLS */}
-      <div className="public-controls">
-        <input
-          placeholder="Search by title..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-
-        <select value={subject} onChange={(e) => setSubject(e.target.value)}>
-          {subjects.map((sub) => (
-            <option key={sub} value={sub}>
-              {sub}
-            </option>
-          ))}
-        </select>
+      {/* 🌟 HERO BANNER */}
+      <div className="pub-hero-banner">
+        <div className="pub-hero-content">
+          <span className="pub-hero-badge">
+            <FiGlobe /> Student Open Library
+          </span>
+          <h1>Public Knowledge Repository</h1>
+          <p>
+            Explore, review, and learn from top study notes shared collaboratively by students across all disciplines.
+          </p>
+        </div>
       </div>
 
-      {/* GRID */}
+      {/* 🔍 SEARCH & CONTROLS TOOLBAR */}
+      <div className="public-controls-toolbar">
+        <div className="pub-search-wrapper">
+          <FiSearch className="pub-search-icon" />
+          <input
+            type="text"
+            className="pub-search-input"
+            placeholder="Search notes by title..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+
+        <div className="pub-filter-dropdowns">
+          <select
+            className="pub-select"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+          >
+            {subjects.map((sub) => (
+              <option key={sub} value={sub}>
+                {sub === "All" ? "📚 All Subjects" : sub}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* 🗂️ GRID */}
       <div className="public-notes-grid">
         {loading ? (
-          <div className="no-results">Loading public notes…</div>
+          <div className="pub-loading-state">
+            <div className="pub-spinner" />
+            <p>Loading public notes from vault...</p>
+          </div>
         ) : filteredNotes.length === 0 ? (
-          <div className="no-results">No public notes found</div>
+          <div className="pub-empty-state">
+            <div className="pub-empty-icon">
+              <FiBookOpen />
+            </div>
+            <h3>No public notes found</h3>
+            <p>Try searching for a different keyword or select another subject category.</p>
+          </div>
         ) : (
           filteredNotes.map((note) => (
             <div
@@ -246,17 +288,29 @@ const handleAsk = async () => {
               className="public-note-card"
               onClick={() => openNote(note)}
             >
+              <div className="pub-card-top-row">
+                <span className="pub-subject-tag">{note.subject || "General"}</span>
+                <span className="pub-badge-pill">
+                  <FiGlobe /> Public
+                </span>
+              </div>
+
               <div className="card-body">
-                <h3>{note.title}</h3>
-                <div className="subject">{note.subject}</div>
-                <div className="author">
-                  ✍️ {note.userId?.username || "Unknown"}
+                <h3 className="pub-card-title">{note.title}</h3>
+                <div className="pub-card-author-row">
+                  <div className="pub-author-avatar">
+                    {(note.userId?.username || "U").charAt(0).toUpperCase()}
+                  </div>
+                  <span className="pub-author-name">
+                    {note.userId?.username || "Student"}
+                  </span>
                 </div>
               </div>
 
-              <div className="card-footer">
-                <span className="public-badge">🌍 Public</span>
-                <span className="view-hint">Click to view →</span>
+              <div className="pub-card-footer">
+                <span className="pub-view-hint">
+                  Read Note <FiArrowRight className="pub-arrow-icon" />
+                </span>
               </div>
             </div>
           ))

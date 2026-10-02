@@ -1,8 +1,21 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  FiCreditCard,
+  FiFileText,
+  FiGlobe,
+  FiLock,
+  FiClock,
+  FiArrowUpRight,
+  FiPlusCircle,
+  FiCheckSquare,
+  FiHeadphones,
+  FiStar,
+  FiBookOpen,
+  FiTrendingUp
+} from "react-icons/fi";
 import api from "../services/api";
 import "./Dashboard.css";
- 
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -11,32 +24,36 @@ export default function Dashboard() {
   const [totalNotes, setTotalNotes] = useState(0);
   const [publicNotes, setPublicNotes] = useState(0);
   const [privateNotes, setPrivateNotes] = useState(0);
-  const [walletBalance,setWalletBalance] = useState(0);
-
-  // ✅ NEW: loading state to prevent jump
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [username, setUsername] = useState("Scholar");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Get user from token
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        if (payload.username) setUsername(payload.username);
+      } catch (_) {}
+    }
+
     const fetchDashboardData = async () => {
       try {
-       const [notesRes, walletRes] = await Promise.all([
-  api.get("/notes"),
-  api.get("/wallet"),
-]);
+        const [notesRes, walletRes] = await Promise.all([
+          api.get("/notes"),
+          api.get("/wallet"),
+        ]);
 
-const myNotes = notesRes.data;
-
-setNotes(myNotes);
-setTotalNotes(myNotes.length);
-setPublicNotes(myNotes.filter(n => n.isPublic).length);
-setPrivateNotes(myNotes.filter(n => !n.isPublic).length);
-
-// ✅ wallet
-setWalletBalance(walletRes.data.balance);
+        const myNotes = notesRes.data || [];
+        setNotes(myNotes);
+        setTotalNotes(myNotes.length);
+        setPublicNotes(myNotes.filter((n) => n.isPublic).length);
+        setPrivateNotes(myNotes.filter((n) => !n.isPublic).length);
+        setWalletBalance(walletRes.data?.balance || 0);
       } catch (err) {
         console.error("Failed to load dashboard data", err);
       } finally {
-        // ✅ IMPORTANT
         setLoading(false);
       }
     };
@@ -45,7 +62,6 @@ setWalletBalance(walletRes.data.balance);
   }, []);
 
   /* ================= RECENT ACTIVITY ================= */
-
   const recentNotes = [...notes]
     .sort(
       (a, b) =>
@@ -57,105 +73,208 @@ setWalletBalance(walletRes.data.balance);
   const formatDate = (date) => {
     const d = new Date(date);
     const today = new Date();
-
-    const diff = Math.floor(
-      (today - d) / (1000 * 60 * 60 * 24)
-    );
+    const diff = Math.floor((today - d) / (1000 * 60 * 60 * 24));
 
     if (diff === 0) return "Today";
     if (diff === 1) return "Yesterday";
-    return d.toLocaleDateString();
+    return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
   };
 
   return (
-    <div className="dashboard">
-      <h1>Dashboard</h1>
-      <p>Welcome back to Student Study Vault</p>
+    <div className="dashboard-page-container">
+      {/* 🌟 HERO BANNER */}
+      <div className="dash-hero-banner">
+        <div className="dash-hero-content">
+          <span className="dash-hero-badge">
+            <FiTrendingUp /> Student Knowledge Hub
+          </span>
+          <h1>Welcome back, <span className="dash-user-name">{username}</span> 👋</h1>
+          <p>
+            Track your vault notes, manage digital study assets, practice CBT mocks, and stay on top of your learning goals.
+          </p>
 
-      {/* ================= STATS ================= */}
-      <div className="stats">
+          {/* Quick Action Pills */}
+          <div className="dash-quick-actions">
+            <button className="quick-act-btn primary" onClick={() => navigate("/notes")}>
+              <FiPlusCircle /> Create Note
+            </button>
+            <button className="quick-act-btn secondary" onClick={() => navigate("/quizzes")}>
+              <FiCheckSquare /> Practice Quizzes
+            </button>
+            <button className="quick-act-btn secondary" onClick={() => navigate("/premium")}>
+              <FiStar /> Premium Notes
+            </button>
+            <button className="quick-act-btn secondary" onClick={() => navigate("/support")}>
+              <FiHeadphones /> Customer Support
+            </button>
+          </div>
+        </div>
+      </div>
 
-          <div
-  className="card clickable tooltip"
-  data-tooltip="View wallet"
-  onClick={() => navigate("/wallet")}
->
-  <div className="card-icon">💰</div>
-  <div className="card-title">Wallet Balance</div>
-  <div className="card-count">
-  {loading ? "₹--" : `₹ ${walletBalance}`}
-</div>
-</div>
+      {/* ================= STATS GRID ================= */}
+      <div className="dash-stats-grid">
+        {/* WALLET CARD */}
         <div
-          className="card clickable tooltip"
-          data-tooltip="View all notes"
+          className="dash-stat-card stat-cyan clickable"
+          onClick={() => navigate("/wallet")}
+        >
+          <div className="stat-card-top">
+            <div className="stat-icon-wrapper cyan">
+              <FiCreditCard />
+            </div>
+            <span className="stat-pill-tag cyan">Earnings & Top-up</span>
+          </div>
+          <div className="stat-card-title">Wallet Balance</div>
+          <div className="stat-card-value cyan">
+            {loading ? "₹..." : `₹ ${walletBalance}`}
+          </div>
+          <div className="stat-card-footer">
+            <span>Manage funds & payouts</span>
+            <FiArrowUpRight className="stat-arrow-icon" />
+          </div>
+        </div>
+
+        {/* TOTAL NOTES CARD */}
+        <div
+          className="dash-stat-card stat-indigo clickable"
           onClick={() => navigate("/notes")}
         >
-          <div className="card-icon">📘</div>
-          <div className="card-title">Total Notes</div>
-          <div className="card-count">{totalNotes}</div>
+          <div className="stat-card-top">
+            <div className="stat-icon-wrapper indigo">
+              <FiFileText />
+            </div>
+            <span className="stat-pill-tag indigo">Personal Vault</span>
+          </div>
+          <div className="stat-card-title">Total Notes</div>
+          <div className="stat-card-value indigo">
+            {loading ? "..." : totalNotes}
+          </div>
+          <div className="stat-card-footer">
+            <span>View & edit your vault</span>
+            <FiArrowUpRight className="stat-arrow-icon" />
+          </div>
         </div>
 
+        {/* PUBLIC NOTES CARD */}
         <div
-          className="card clickable tooltip"
-          data-tooltip="Explore public notes"
-          onClick={() => navigate("/public")}
+          className="dash-stat-card stat-blue clickable"
+          onClick={() => navigate("/public-notes")}
         >
-          <div className="card-icon">🌍</div>
-          <div className="card-title">Public Notes</div>
-          <div className="card-count">{publicNotes}</div>
+          <div className="stat-card-top">
+            <div className="stat-icon-wrapper blue">
+              <FiGlobe />
+            </div>
+            <span className="stat-pill-tag blue">Community</span>
+          </div>
+          <div className="stat-card-title">Public Notes</div>
+          <div className="stat-card-value blue">
+            {loading ? "..." : publicNotes}
+          </div>
+          <div className="stat-card-footer">
+            <span>Explore public knowledge</span>
+            <FiArrowUpRight className="stat-arrow-icon" />
+          </div>
         </div>
 
-        <div className="card tooltip" data-tooltip="Only visible to you">
-          <div className="card-icon">🔒</div>
-          <div className="card-title">Private Notes</div>
-          <div className="card-count">{privateNotes}</div>
+        {/* PRIVATE NOTES CARD */}
+        <div
+          className="dash-stat-card stat-amber clickable"
+          onClick={() => navigate("/notes")}
+        >
+          <div className="stat-card-top">
+            <div className="stat-icon-wrapper amber">
+              <FiLock />
+            </div>
+            <span className="stat-pill-tag amber">Encrypted</span>
+          </div>
+          <div className="stat-card-title">Private Notes</div>
+          <div className="stat-card-value amber">
+            {loading ? "..." : privateNotes}
+          </div>
+          <div className="stat-card-footer">
+            <span>Only accessible by you</span>
+            <FiArrowUpRight className="stat-arrow-icon" />
+          </div>
         </div>
-      
       </div>
 
       {/* ================= RECENT ACTIVITY ================= */}
-      <div className="recent-section">
-        <h3>🕒 Recent Activity</h3>
+      <div className="dash-recent-section">
+        <div className="dash-section-header">
+          <div className="dash-section-title-wrap">
+            <div className="dash-sec-icon-circle">
+              <FiClock />
+            </div>
+            <div>
+              <h3>Recent Vault Activity</h3>
+              <p>Your latest note updates and creations</p>
+            </div>
+          </div>
+          <button className="dash-view-all-btn" onClick={() => navigate("/notes")}>
+            View All Notes <FiArrowUpRight />
+          </button>
+        </div>
 
-        {/* ✅ FIXED: loading-safe rendering */}
         {loading ? (
-          <div className="activity-skeleton">
-            <div className="skeleton-line" />
-            <div className="skeleton-line" />
-            <div className="skeleton-line" />
+          <div className="dash-activity-skeleton">
+            <div className="dash-skel-item" />
+            <div className="dash-skel-item" />
+            <div className="dash-skel-item" />
           </div>
         ) : recentNotes.length === 0 ? (
-          <p className="empty-activity">No recent activity</p>
+          <div className="dash-empty-activity">
+            <div className="dash-empty-icon-wrap">
+              <FiBookOpen />
+            </div>
+            <h4>No notes found in your vault</h4>
+            <p>Start your journey by creating your first handwritten or digital study note.</p>
+            <button className="quick-act-btn primary" onClick={() => navigate("/notes")}>
+              <FiPlusCircle /> Create Your First Note
+            </button>
+          </div>
         ) : (
-          <ul className="activity-list fade-in">
+          <div className="dash-activity-list">
             {recentNotes.map((note) => (
-              <li
+              <div
                 key={note._id}
-                className="activity-item clickable"
+                className="dash-activity-row clickable"
                 onClick={() => navigate("/notes")}
               >
-                <div className="activity-icon">
-                  {note.isPublic ? "🌍" : "🔒"}
+                <div className="dash-act-type-icon">
+                  {note.isPublic ? (
+                    <div className="act-badge-icon public" title="Public Note">
+                      <FiGlobe />
+                    </div>
+                  ) : (
+                    <div className="act-badge-icon private" title="Private Note">
+                      <FiLock />
+                    </div>
+                  )}
                 </div>
 
-                <div className="activity-text">
-                  <strong>{note.title}</strong>
+                <div className="dash-act-content">
+                  <div className="dash-act-title-row">
+                    <strong className="dash-act-title">{note.title}</strong>
+                    <span className={`dash-note-tag ${note.isPublic ? "pub" : "priv"}`}>
+                      {note.isPublic ? "Public" : "Private"}
+                    </span>
+                    {note.subject && (
+                      <span className="dash-subject-chip">{note.subject}</span>
+                    )}
+                  </div>
 
-                  <span className="activity-meta">
-                    {note.isPublic ? "Public" : "Private"} · {note.subject}
-                  </span>
-
-                  <span className="activity-date">
-                    {note.updatedAt ? "Updated" : "Created"} ·{" "}
-                    {formatDate(note.updatedAt || note.createdAt)}
+                  <span className="dash-act-timestamp">
+                    {note.updatedAt ? "Updated" : "Created"} · {formatDate(note.updatedAt || note.createdAt)}
                   </span>
                 </div>
 
-                <div className="activity-action">View →</div>
-              </li>
+                <div className="dash-act-action">
+                  <span>Open</span>
+                  <FiArrowUpRight />
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
       </div>
     </div>

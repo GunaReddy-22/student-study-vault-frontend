@@ -1,7 +1,22 @@
 import { useEffect, useState, useRef } from "react";
+import {
+  FiStar,
+  FiAward,
+  FiSearch,
+  FiLock,
+  FiCheck,
+  FiHeart,
+  FiMessageSquare,
+  FiShare2,
+  FiBookOpen,
+  FiUser,
+  FiClock,
+  FiArrowRight,
+  FiCreditCard
+} from "react-icons/fi";
+import { FaHeart, FaCommentDots, FaShare } from "react-icons/fa";
 import api from "../services/api";
 import "./PremiumNotes.css";
-import { FaHeart, FaCommentDots, FaShare } from "react-icons/fa";
 import { getUserIdFromToken } from "../utils/getUserId";
 import { summarizeContent, askAI } from "../services/ai";
 import FormattedAIResponse from "../components/FormattedAIResponse";
@@ -10,6 +25,10 @@ import QuizModal from "../components/QuizModal";
 
 export default function PremiumNotes() {
   const [notes, setNotes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [subject, setSubject] = useState("All");
+
   const [activeNote, setActiveNote] = useState(null);
   const [hasAccess, setHasAccess] = useState(false);
   const [accessMap, setAccessMap] = useState({});
@@ -33,6 +52,7 @@ export default function PremiumNotes() {
   const [loadingChat, setLoadingChat] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
   const chatEndRef = useRef(null);
+
   /* ===================== FETCH ===================== */
   useEffect(() => {
     fetchPremiumNotes();
@@ -40,12 +60,27 @@ export default function PremiumNotes() {
 
   const fetchPremiumNotes = async () => {
     try {
+      setLoading(true);
       const res = await api.get("/notes/premium");
-      setNotes(res.data);
+      setNotes(res.data || []);
     } catch {
       console.error("Failed to load premium notes");
+      setNotes([]);
+    } finally {
+      setLoading(false);
     }
   };
+
+  /* ===================== FILTERS ===================== */
+  const subjects = ["All", ...new Set(notes.map((n) => n.subject).filter(Boolean))];
+
+  const filteredNotes = notes.filter((note) => {
+    const titleMatch = note.title
+      ?.toLowerCase()
+      .includes(search.toLowerCase());
+    const subjectMatch = subject === "All" || note.subject === subject;
+    return titleMatch && subjectMatch;
+  });
 
   /* ===================== CARD EFFECT ===================== */
   useEffect(() => {
@@ -221,29 +256,111 @@ export default function PremiumNotes() {
 
   return (
     <div className="premium-page">
-      <h2>⭐ Premium Notes</h2>
-      <p>High-quality notes created by top students</p>
+      {/* 🌟 HERO BANNER */}
+      <div className="prem-hero-banner">
+        <div className="prem-hero-content">
+          <span className="prem-hero-badge">
+            <FiStar /> Verified Scholar Assets
+          </span>
+          <h1>Premium Curated Notes</h1>
+          <p>
+            Unlock comprehensive, high-yield study materials crafted by top rankers and expert student educators.
+          </p>
+        </div>
+      </div>
 
-      <div className="premium-grid">
-        {notes.map((note) => (
-          <div
-            key={note._id}
-            className="premium-card"
-            onClick={() => openNote(note)}
+      {/* 🔍 SEARCH & CONTROLS TOOLBAR */}
+      <div className="premium-controls-toolbar">
+        <div className="prem-search-wrapper">
+          <FiSearch className="prem-search-icon" />
+          <input
+            type="text"
+            className="prem-search-input"
+            placeholder="Search premium notes by title..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+
+        <div className="prem-filter-dropdowns">
+          <select
+            className="prem-select"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
           >
-            <h3>{note.title}</h3>
-            <p className="subject">{note.subject}</p>
+            {subjects.map((sub) => (
+              <option key={sub} value={sub}>
+                {sub === "All" ? "⭐ All Subjects" : sub}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
 
-            <div className="author">
-              ✍️ {note.userId?.username || "Author"}
-            </div>
-
-            <div className="price">₹{note.price}</div>
-            <div className={`lock ${accessMap[note._id] ? "purchased" : ""}`}>
-              {accessMap[note._id] ? "✅ Purchased" : "🔒 Premium"}
-            </div>
+      {/* 🗂️ GRID */}
+      <div className="premium-grid">
+        {loading ? (
+          <div className="prem-loading-state">
+            <div className="prem-spinner" />
+            <p>Loading premium vault notes...</p>
           </div>
-        ))}
+        ) : filteredNotes.length === 0 ? (
+          <div className="prem-empty-state">
+            <div className="prem-empty-icon">
+              <FiAward />
+            </div>
+            <h3>No premium notes found</h3>
+            <p>Check back soon or explore our public notes collection.</p>
+          </div>
+        ) : (
+          filteredNotes.map((note) => {
+            const isUnlocked = accessMap[note._id];
+            return (
+              <div
+                key={note._id}
+                className="premium-card"
+                onClick={() => openNote(note)}
+              >
+                <div className="prem-card-top-row">
+                  <span className="prem-subject-tag">{note.subject || "Academic"}</span>
+                  <span className={`prem-status-pill ${isUnlocked ? "unlocked" : "locked"}`}>
+                    {isUnlocked ? (
+                      <>
+                        <FiCheck /> Unlocked
+                      </>
+                    ) : (
+                      <>
+                        <FiLock /> Premium
+                      </>
+                    )}
+                  </span>
+                </div>
+
+                <div className="prem-card-body">
+                  <h3 className="prem-card-title">{note.title}</h3>
+                  <div className="prem-author-row">
+                    <div className="prem-author-avatar">
+                      {(note.userId?.username || "A").charAt(0).toUpperCase()}
+                    </div>
+                    <span className="prem-author-name">
+                      {note.userId?.username || "Author"}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="prem-card-footer">
+                  <div className="prem-price-tag">
+                    <span className="prem-currency">₹</span>
+                    <span className="prem-amount">{note.price || 0}</span>
+                  </div>
+                  <span className="prem-action-hint">
+                    {isUnlocked ? "Read Note" : "Preview"} <FiArrowRight className="prem-arrow-icon" />
+                  </span>
+                </div>
+              </div>
+            );
+          })
+        )}
       </div>
 
       {/* ================= MODAL ================= */}
