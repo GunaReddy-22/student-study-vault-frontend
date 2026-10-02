@@ -57,6 +57,10 @@ body {
   scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
 }
 
+.content.auth-mode-content {
+  padding: 0;
+}
+
 .content::-webkit-scrollbar {
   width: 6px;
 }

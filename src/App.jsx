@@ -91,7 +91,7 @@ function App() {
         />
       )}
 
-      <main className="content">
+      <main className={`content ${hideSidebar ? "auth-mode-content" : ""}`}>
         <Routes>
           <Route
             path="/login"
