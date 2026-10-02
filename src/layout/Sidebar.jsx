@@ -1,4 +1,17 @@
 import { NavLink, useNavigate } from "react-router-dom";
+import {
+  FiGrid,
+  FiFileText,
+  FiGlobe,
+  FiStar,
+  FiBookOpen,
+  FiCheckSquare,
+  FiCreditCard,
+  FiHeadphones,
+  FiSliders,
+  FiLogOut,
+  FiX
+} from "react-icons/fi";
 import "./Sidebar.css";
 
 function Sidebar({ setIsAuth, isOpen = true, onClose }) {
@@ -24,7 +37,7 @@ function Sidebar({ setIsAuth, isOpen = true, onClose }) {
       {/* ❌ Close button – ONLY for mobile */}
       {onClose && (
         <button className="sidebar-close" onClick={onClose} aria-label="Close sidebar">
-          ✕
+          <FiX />
         </button>
       )}
 
@@ -32,58 +45,64 @@ function Sidebar({ setIsAuth, isOpen = true, onClose }) {
 
       <nav className="nav-links">
         <NavLink to="/dashboard" onClick={onClose}>
-          Dashboard
+          <FiGrid className="nav-icon" />
+          <span>Dashboard</span>
         </NavLink>
 
         <NavLink to="/notes" onClick={onClose}>
-          My Notes
+          <FiFileText className="nav-icon" />
+          <span>My Notes</span>
         </NavLink>
 
         <NavLink to="/public-notes" onClick={onClose}>
-          Public Notes
+          <FiGlobe className="nav-icon" />
+          <span>Public Notes</span>
         </NavLink>
 
         <NavLink to="/premium" onClick={onClose}>
-          Premium Notes
+          <FiStar className="nav-icon" />
+          <span>Premium Notes</span>
         </NavLink>
 
         <NavLink to="/reference-books" onClick={onClose}>
-          Reference Books
+          <FiBookOpen className="nav-icon" />
+          <span>Reference Books</span>
         </NavLink>
 
         <NavLink to="/quizzes" onClick={onClose}>
-          Practice Quizzes
+          <FiCheckSquare className="nav-icon" />
+          <span>Practice Quizzes</span>
         </NavLink>
 
         <NavLink to="/wallet" onClick={onClose}>
-          Wallet
+          <FiCreditCard className="nav-icon" />
+          <span>Wallet</span>
         </NavLink>
 
         <NavLink to="/support" onClick={onClose}>
-          🎧 Customer Support
+          <FiHeadphones className="nav-icon" />
+          <span>Customer Support</span>
         </NavLink>
 
         {isDeveloper && (
           <NavLink
             to="/cms"
             onClick={onClose}
-            style={{
-              background: "linear-gradient(135deg, rgba(79, 70, 229, 0.25), rgba(6, 182, 212, 0.2))",
-              border: "1px solid rgba(99, 102, 241, 0.4)",
-              color: "#38bdf8",
-              fontWeight: "700",
-            }}
+            className="cms-nav-link"
           >
-            ⚙️ CMS Control
+            <FiSliders className="nav-icon" />
+            <span>CMS Control</span>
           </NavLink>
         )}
       </nav>
 
       <button className="logout-btn" onClick={logout}>
-        🚪 Logout
+        <FiLogOut className="logout-icon" />
+        <span>Logout</span>
       </button>
     </aside>
   );
 }
 
 export default Sidebar;
+
