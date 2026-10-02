@@ -293,6 +293,18 @@ export default function QuizRunner() {
                       <FormattedMathText text={q.question} />
                     </div>
 
+                    {/* Uploaded / Attached Diagram or Figure */}
+                    {q.imageUrl && (
+                      <div className="custom-question-img-box">
+                        <img
+                          src={q.imageUrl}
+                          alt="Question figure"
+                          className="quiz-diagram-img"
+                          onClick={() => window.open(q.imageUrl, "_blank")}
+                        />
+                      </div>
+                    )}
+
                     {/* Diagram in Solution */}
                     <QuestionDiagram
                       diagramSvg={q.diagramSvg}
@@ -404,6 +416,20 @@ export default function QuizRunner() {
             <div className="question-text">
               <FormattedMathText text={currentQ.question} />
             </div>
+
+            {/* ATTACHED QUESTION FIGURE / DIAGRAM */}
+            {currentQ.imageUrl && (
+              <div className="question-custom-image-box">
+                <img
+                  src={currentQ.imageUrl}
+                  alt={`Question ${currentIdx + 1} Diagram`}
+                  className="question-card-diagram-img"
+                  onClick={() => window.open(currentQ.imageUrl, "_blank")}
+                  title="Click to view full image in new tab"
+                />
+                <span className="diagram-zoom-hint">🔍 Click image to enlarge full size</span>
+              </div>
+            )}
 
             {/* DIAGRAM / SCHEMATIC FIGURE */}
             <QuestionDiagram

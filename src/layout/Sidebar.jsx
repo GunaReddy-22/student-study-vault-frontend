@@ -10,6 +10,15 @@ function Sidebar({ setIsAuth, isOpen = true, onClose }) {
     navigate("/login");
   };
 
+  let isDeveloper = false;
+  const token = localStorage.getItem("token");
+  if (token) {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      isDeveloper = payload.isDeveloper === true;
+    } catch (_) {}
+  }
+
   return (
     <aside className={`sidebar ${isOpen ? "open" : ""}`}>
       {/* ❌ Close button – ONLY for mobile */}
@@ -50,6 +59,20 @@ function Sidebar({ setIsAuth, isOpen = true, onClose }) {
           Wallet
         </NavLink>
 
+        {isDeveloper && (
+          <NavLink
+            to="/cms"
+            onClick={onClose}
+            style={{
+              background: "linear-gradient(135deg, rgba(79, 70, 229, 0.25), rgba(6, 182, 212, 0.2))",
+              border: "1px solid rgba(99, 102, 241, 0.4)",
+              color: "#38bdf8",
+              fontWeight: "700",
+            }}
+          >
+            ⚙️ CMS Control
+          </NavLink>
+        )}
       </nav>
 
       <button className="logout-btn" onClick={logout}>

@@ -7,6 +7,7 @@ export default function PracticeQuizzes() {
   const navigate = useNavigate();
 
   const [categories, setCategories] = useState([]);
+  const [customQuizzes, setCustomQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("all");
   const [selectedExam, setSelectedExam] = useState(null);
@@ -30,6 +31,7 @@ export default function PracticeQuizzes() {
         const catRes = await getQuizCategories();
         if (catRes.success) {
           setCategories(catRes.categories || []);
+          setCustomQuizzes(catRes.customQuizzes || []);
         }
 
         try {
@@ -56,6 +58,23 @@ export default function PracticeQuizzes() {
     setSelectedSubject(sub);
     setSelectedTopic(topic || (sub && sub.topics ? sub.topics[0] : "General"));
     setShowConfigModal(true);
+  };
+
+  const handleStartCustomQuiz = async (cq) => {
+    try {
+      setGenerating(true);
+      setGenStatusText("Loading official CMS mock test...");
+      const res = await generateQuizQuestions({ customQuizId: cq.id });
+      if (res.success && res.quiz) {
+        sessionStorage.setItem("active_quiz", JSON.stringify(res.quiz));
+        navigate("/quizzes/test");
+      }
+    } catch (err) {
+      alert("Could not load mock test");
+    } finally {
+      setGenerating(false);
+      setGenStatusText("");
+    }
   };
 
   const handleStartQuiz = async () => {
@@ -178,6 +197,73 @@ export default function PracticeQuizzes() {
           🌐 Open Trivia API
         </button>
       </div>
+
+      {/* =========================================
+          CUSTOM CMS QUIZZES SECTION (IF ANY)
+      ========================================= */}
+      {customQuizzes.length > 0 && (
+        <div style={{ marginBottom: "28px" }}>
+          <h3 style={{ fontSize: "18px", fontWeight: "700", color: "#38bdf8", marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px" }}>
+            🏛️ Verified Faculty & CMS Custom Mocks
+          </h3>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "14px" }}>
+            {customQuizzes.map((cq) => (
+              <div
+                key={cq.id}
+                style={{
+                  background: "linear-gradient(145deg, rgba(22, 33, 62, 0.85), rgba(11, 19, 43, 0.95))",
+                  border: "1px solid rgba(99, 102, 241, 0.35)",
+                  borderRadius: "14px",
+                  padding: "18px",
+                  boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  gap: "12px",
+                }}
+              >
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
+                    <span style={{ fontSize: "11px", fontWeight: "800", color: "#38bdf8", background: "rgba(56, 189, 248, 0.15)", padding: "2px 8px", borderRadius: "6px" }}>
+                      {cq.category}
+                    </span>
+                    <span style={{ fontSize: "11px", color: "#94a3b8" }}>
+                      ⏱️ {cq.timeMinutes}m
+                    </span>
+                  </div>
+                  <h4 style={{ fontSize: "16px", fontWeight: "700", color: "#ffffff", marginBottom: "4px" }}>
+                    {cq.title}
+                  </h4>
+                  <p style={{ fontSize: "12px", color: "#94a3b8" }}>
+                    {cq.subject} • {cq.topic}
+                  </p>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "10px" }}>
+                  <span style={{ fontSize: "12px", color: "#4ade80", fontWeight: "600" }}>
+                    📝 {cq.questionCount} Questions
+                  </span>
+                  <button
+                    onClick={() => handleStartCustomQuiz(cq)}
+                    disabled={generating}
+                    style={{
+                      background: "linear-gradient(135deg, #4f46e5, #06b6d4)",
+                      border: "none",
+                      color: "white",
+                      padding: "8px 14px",
+                      borderRadius: "8px",
+                      fontSize: "12px",
+                      fontWeight: "700",
+                      cursor: "pointer",
+                    }}
+                  >
+                    ⚡ Start Mock
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* =========================================
           EXAM & TOPICS GRID

@@ -13,6 +13,7 @@ import ReferenceBooks from "./pages/ReferenceBooks";
 import ReferenceBookDetails from "./pages/ReferenceBookDetails";
 import PracticeQuizzes from "./pages/PracticeQuizzes";
 import QuizRunner from "./pages/QuizRunner";
+import CmsDashboard from "./pages/CmsDashboard";
 import GlobalAIAssistant from "./components/GlobalAIAssistant";
 
 import "./App.css";
@@ -165,6 +166,12 @@ function App() {
           <Route
             path="/quizzes/test/:quizId"
             element={isAuth ? <QuizRunner /> : <Navigate to="/login" />}
+          />
+
+          {/* ⚙️ Master Developer CMS Control */}
+          <Route
+            path="/cms"
+            element={isAuth ? <CmsDashboard /> : <Navigate to="/login" />}
           />
 
           <Route path="/" element={<Navigate to={isAuth ? "/dashboard" : "/login"} replace />} />

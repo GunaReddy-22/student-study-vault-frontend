@@ -34,6 +34,11 @@ inset 0 0 0 1px rgba(255,255,255,0.08);
 animation: modalPop 0.35s cubic-bezier(.22,.61,.36,1);
 }
 
+.modal-card.studio-modal-active {
+  width: 780px;
+  max-width: 96vw;
+}
+
 /* ================= TITLE ================= */
 .modal-card h3 {
 text-align: center;
@@ -257,33 +262,23 @@ MOBILE MODAL FIXES
 
 @media (max-width: 767px) {
 
-/* Overlay centers modal properly */
+/* Overlay aligns modal to bottom */
 .modal-overlay {
-align-items: center !important;
-justify-content: center !important;
-padding: 10px 8px !important;
+align-items: flex-end;
+padding: 12px;
 }
 
-/* Modal is centered card */
-.modal-card:not(.fullscreen) {
-width: 96% !important;
-max-width: 96% !important;
-max-height: calc(100dvh - 20px) !important;
-margin: auto !important;
-border-radius: 16px !important;  
-padding: 20px 16px !important;  
-animation: modalPopMobile 0.22s ease-out !important;
-}
+/* Modal becomes full-width bottom sheet */
+.modal-card {
+width: 100%;
+max-width: 100%;
+max-height: 92vh;
 
-@keyframes modalPopMobile {
-from {
-opacity: 0;
-transform: scale(0.96);
-}
-to {
-opacity: 1;
-transform: scale(1);
-}
+border-radius: 18px 18px 0 0;  
+padding: 20px 16px 24px;  
+
+animation: modalSlideUp 0.3s ease;
+
 }
 
 /* Inputs bigger for touch */

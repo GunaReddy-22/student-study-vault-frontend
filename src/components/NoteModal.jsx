@@ -1,10 +1,7 @@
 import { useState, useEffect } from "react";
 import api from "../services/api";
-import { summarizeContent } from "../services/ai";
-import FormattedAIResponse from "./FormattedAIResponse";
 import "./NoteModal.css";
 import HandwritingCanvas from "./HandwritingCanvas";
-
 
 export default function NoteModal({ note, close, refresh }) {
   const [form, setForm] = useState({
@@ -25,20 +22,31 @@ export default function NoteModal({ note, close, refresh }) {
 
   // ✅ FIXED FUNCTION
   const summarizeNote = async () => {
-    if (!form.content) return;
+    
 
     try {
       setLoadingAI(true);
-      const data = await summarizeContent(form.content);
-      setSummary(data);
+
+      const res = await fetch("http://localhost:4000/api/ai/summarize", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    content: form.content,
+  }),
+});
+
+      const data = await res.json();
+
+      setSummary(data.summary);
     } catch (err) {
       console.error(err);
-      alert("AI summarization failed");
+      alert("AI failed");
     } finally {
       setLoadingAI(false);
     }
   };
-
 
   const saveNote = async () => {
     if (!form.content) {
@@ -60,7 +68,7 @@ export default function NoteModal({ note, close, refresh }) {
 
       refresh();
       close();
-    } catch (err) {
+    } catch (_) {
       alert("Failed to save note");
     }
   };
@@ -80,8 +88,18 @@ export default function NoteModal({ note, close, refresh }) {
 
   return (
     <div className="modal-overlay">
-      <div className={`modal-card ${isFullscreen ? "fullscreen" : ""}`}>
-        <h3>{note ? "Edit Note" : "Add New Note"}</h3>
+      <div
+        className={`modal-card ${isFullscreen ? "fullscreen" : ""} ${
+          handwritingMode ? "studio-modal-active" : ""
+        }`}
+      >
+        <h3>
+          {handwritingMode
+            ? "🎨 Handwriting Studio"
+            : note
+            ? "Edit Note"
+            : "Add New Note"}
+        </h3>
 
         <button
           className="expand-btn"
@@ -90,72 +108,77 @@ export default function NoteModal({ note, close, refresh }) {
           {isFullscreen ? "✖ Close" : "<> Editor"}
         </button>
 
-        <input
-          placeholder="Subject"
-          value={form.subject}
-          onChange={(e) =>
-            setForm({ ...form, subject: e.target.value })
-          }
-        />
-
-        <input
-          placeholder="Title"
-          value={form.title}
-          onChange={(e) =>
-            setForm({ ...form, title: e.target.value })
-          }
-        />
-
-        {/* PUBLIC */}
-        <div className="toggle-row">
-          <label className="switch">
+        {/* METADATA FIELDS (HIDDEN DURING DRAWING STUDIO FOR FULL VIEWPORT) */}
+        {!handwritingMode && (
+          <>
             <input
-              type="checkbox"
-              checked={form.isPublic}
+              placeholder="Subject (e.g., Computer Science, Mathematics)"
+              value={form.subject}
               onChange={(e) =>
-                setForm({ ...form, isPublic: e.target.checked })
+                setForm({ ...form, subject: e.target.value })
               }
             />
-            <span className="slider" />
-          </label>
-          <div>
-            <span>Make this note public 🌍</span>
-            <small>Visible to all logged-in users</small>
-          </div>
-        </div>
 
-        {/* PREMIUM */}
-        <div className="toggle-row">
-          <label className="switch">
             <input
-              type="checkbox"
-              checked={form.isPremium}
+              placeholder="Note Title (e.g., Dijkstra Algorithm, Maxwell Equations)"
+              value={form.title}
               onChange={(e) =>
-                setForm({
-                  ...form,
-                  isPremium: e.target.checked,
-                  price: e.target.checked ? form.price : "",
-                })
+                setForm({ ...form, title: e.target.value })
               }
             />
-            <span className="slider" />
-          </label>
-          <div>
-            <span>Make this note premium 💰</span>
-            <small>Users must pay to unlock</small>
-          </div>
-        </div>
 
-        {form.isPremium && (
-          <input
-            type="number"
-            min="1"
-            placeholder="Price (₹)"
-            value={form.price}
-            onChange={(e) =>
-              setForm({ ...form, price: e.target.value })
-            }
-          />
+            {/* PUBLIC */}
+            <div className="toggle-row">
+              <label className="switch">
+                <input
+                  type="checkbox"
+                  checked={form.isPublic}
+                  onChange={(e) =>
+                    setForm({ ...form, isPublic: e.target.checked })
+                  }
+                />
+                <span className="slider" />
+              </label>
+              <div>
+                <span>Make this note public 🌍</span>
+                <small>Visible to all logged-in students</small>
+              </div>
+            </div>
+
+            {/* PREMIUM */}
+            <div className="toggle-row">
+              <label className="switch">
+                <input
+                  type="checkbox"
+                  checked={form.isPremium}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      isPremium: e.target.checked,
+                      price: e.target.checked ? form.price : "",
+                    })
+                  }
+                />
+                <span className="slider" />
+              </label>
+              <div>
+                <span>Make this note premium 💰</span>
+                <small>Users must pay to unlock</small>
+              </div>
+            </div>
+
+            {form.isPremium && (
+              <input
+                type="number"
+                min="1"
+                placeholder="Price (₹)"
+                value={form.price}
+                onChange={(e) =>
+                  setForm({ ...form, price: e.target.value })
+                }
+              />
+            )}
+          </>
         )}
 
         {/* CONTENT */}
@@ -179,7 +202,7 @@ export default function NoteModal({ note, close, refresh }) {
         ) : (
           <>
             <textarea
-              placeholder="Content"
+              placeholder="Content (Markdown or text)..."
               className={isFullscreen ? "fullscreen-textarea" : ""}
               value={form.content}
               onChange={(e) =>
@@ -187,7 +210,7 @@ export default function NoteModal({ note, close, refresh }) {
               }
             />
 
-            {/* ✅ AI BUTTON MOVED HERE */}
+            {/* AI BUTTON */}
             <button
               onClick={summarizeNote}
               disabled={!form.content}
@@ -199,71 +222,74 @@ export default function NoteModal({ note, close, refresh }) {
                 border: "none",
                 cursor: "pointer",
                 marginTop: "10px",
+                fontWeight: "600",
               }}
             >
-              {loadingAI ? "Summarizing..." : "✨ Summarize"}
+              {loadingAI ? "Summarizing..." : "✨ Summarize with AI"}
             </button>
 
-            {/* ✅ AI OUTPUT */}
+            {/* AI OUTPUT */}
             {summary && (
               <div
                 style={{
                   marginTop: "15px",
-                  padding: "16px",
+                  padding: "15px",
                   borderRadius: "12px",
                   background: "#0f172a",
                   color: "#e2e8f0",
                   border: "1px solid #334155",
+                  whiteSpace: "pre-wrap",
                 }}
               >
-                <h4 style={{ marginBottom: "10px", color: "#c7d2fe" }}>🧠 AI Summary</h4>
-                <FormattedAIResponse content={summary} />
+                <h4 style={{ color: "#c7d2fe", marginBottom: "8px" }}>🧠 AI Summary</h4>
+                {summary}
               </div>
             )}
-
           </>
         )}
 
         {/* ACTIONS */}
-        <div className="modal-actions">
-          <button className="btn-primary" onClick={saveNote}>
-            Save
-          </button>
-
-          <button className="btn-secondary" onClick={close}>
-            Cancel
-          </button>
-
-          {!form.content && (
-            <button
-              className="handwrite-btn"
-              onClick={() => setHandwritingMode(true)}
-            >
-              ✍️ Handwrite
+        {!handwritingMode && (
+          <div className="modal-actions">
+            <button className="btn-primary" onClick={saveNote}>
+              Save Note
             </button>
-          )}
 
-          {form.content?.startsWith("data:image") && (
-            <>
+            <button className="btn-secondary" onClick={close}>
+              Cancel
+            </button>
+
+            {!form.content && (
               <button
                 className="handwrite-btn"
                 onClick={() => setHandwritingMode(true)}
               >
-                ✍️ Continue
+                ✍️ Handwrite Canvas
               </button>
+            )}
 
-              <button
-                className="handwrite-btn danger"
-                onClick={() => {
-                  setForm((p) => ({ ...p, content: "" }));
-                  setHandwritingMode(true);
-                }}
-              >
-                🧹 New Page
-              </button>
-            </>
-          )}
-        </div>
+            {form.content?.startsWith("data:image") && (
+              <>
+                <button
+                  className="handwrite-btn"
+                  onClick={() => setHandwritingMode(true)}
+                >
+                  ✏️ Edit Drawing
+                </button>
+
+                <button
+                  className="handwrite-btn danger"
+                  onClick={() => {
+                    setForm((p) => ({ ...p, content: "" }));
+                    setHandwritingMode(true);
+                  }}
+                >
+                  🧹 New Page
+                </button>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
