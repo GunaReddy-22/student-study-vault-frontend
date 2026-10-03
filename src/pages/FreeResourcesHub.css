@@ -2112,6 +2112,8 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 .tray-label {
@@ -2127,13 +2129,15 @@
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .free-book-chip {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 14px;
+  padding: 8px 12px;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -2142,6 +2146,9 @@
   font-size: 12.5px;
   font-weight: 600;
   transition: all 0.2s ease;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .free-book-chip:hover {
@@ -2152,18 +2159,33 @@
 }
 
 .book-type-tag {
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
   background: rgba(16, 185, 129, 0.2);
   color: #34d399;
-  padding: 2px 6px;
+  padding: 3px 6px;
   border-radius: 6px;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.25;
+  flex-shrink: 0;
+  max-width: 120px;
+}
+
+.book-chip-name {
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  line-height: 1.35;
 }
 
 .chip-ext {
   font-size: 13px;
   color: #94a3b8;
+  flex-shrink: 0;
+  margin-left: auto;
 }
 
 /* Chapter Cards Grid */
@@ -2183,6 +2205,8 @@
   gap: 12px;
   transition: all 0.22s ease;
   position: relative;
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 .chapter-card:hover {
@@ -2232,6 +2256,7 @@
   font-weight: 700;
   color: #ffffff;
   line-height: 1.4;
+  word-break: break-word;
 }
 
 /* Guidance Box */
@@ -2243,6 +2268,8 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .guidance-label {
@@ -2258,6 +2285,8 @@
   color: #e2e8f0;
   line-height: 1.45;
   margin: 0;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 /* Concepts Block */
@@ -2296,6 +2325,7 @@
   font-size: 11.5px;
   color: #fde68a;
   line-height: 1.4;
+  word-break: break-word;
 }
 
 .pyq-badge {
@@ -2377,38 +2407,221 @@
   color: #6ee7b7;
 }
 
-/* ================= RESPONSIVENESS (MOBILE / TABLET / LAPTOP) ================= */
+/* ================= RESPONSIVENESS (DESKTOP / TABLET / MOBILE) ================= */
 
+/* --- 📱 TABLETS & MEDIUM SCREENS (769px - 1024px) --- */
 @media (max-width: 1024px) {
+  .resources-hub-container {
+    padding: 24px 20px 110px 20px;
+  }
+
+  .resources-hero {
+    padding: 28px 24px 22px 24px;
+  }
+
+  .hub-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .exam-selector-cards-row {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
   .chapters-grid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+
+  .phases-timeline {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .exam-booklist-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+
+  .topics-checkbox-grid {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 10px;
+  }
+
+  .books-layout.grid-mode {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+
+  .cheatsheets-grid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+
+  .bookmarks-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .lookup-grid-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
 }
 
+/* --- 📱 PORTRAIT TABLETS & LARGE PHABLETS (641px - 768px) --- */
 @media (max-width: 768px) {
+  .resources-hub-container {
+    padding: 20px 16px 120px 16px;
+  }
+
+  .resources-title {
+    font-size: 26px;
+  }
+
   .books-layout.list-mode .book-resource-card {
-    flex-direction: column;
-    min-height: auto;
+    flex-direction: row;
+    min-height: 160px;
   }
 
   .books-layout.list-mode .book-cover-wrap {
-    width: 100%;
-    height: 180px;
-    min-height: 180px;
+    width: 120px;
+    min-width: 120px;
+    height: auto;
+    min-height: 160px;
   }
 
   .chapter-guides-container {
-    gap: 16px;
+    gap: 18px;
   }
   
   .subject-module-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .chapters-grid {
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  }
+
+  .exam-selector-cards-row {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+
+  .phases-timeline {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  }
+
+  .exam-booklist-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+
+  .topics-checkbox-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cheatsheets-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- 📱 MOBILE DEVICES (<= 640px) --- */
+@media (max-width: 640px) {
+  .resources-hub-container {
+    padding: 14px 10px 130px 10px;
+  }
+
+  .resources-hero {
+    padding: 20px 14px;
+    border-radius: 16px;
+  }
+
+  .resources-title {
+    font-size: 22px;
+  }
+
+  .hub-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .exam-selector-cards-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .active-exam-hero-card {
+    padding: 16px 12px;
+    border-radius: 16px;
+  }
+
+  .exam-hero-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .exam-full-name {
+    font-size: 19px;
+  }
+
+  .exam-meta-pills {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .exam-meta-pills span {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .btn-export-blueprint {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .syllabus-progress-container {
+    padding: 12px 14px;
+  }
+
+  .progress-top-row {
     flex-direction: column;
     align-items: flex-start;
+    gap: 6px;
+  }
+
+  .subject-module-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
 
   .btn-yt-marathon {
     width: 100%;
     justify-content: center;
+  }
+
+  .free-books-pills {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .free-book-chip {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .book-type-tag {
+    max-width: 110px;
+    font-size: 9.5px;
+    padding: 3px 6px;
   }
 
   .chapters-grid {
@@ -2422,15 +2635,45 @@
   .btn-ch-action {
     width: 100%;
   }
+
+  .phases-timeline {
+    grid-template-columns: 1fr;
+  }
+
+  .exam-booklist-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .books-layout.list-mode .book-resource-card {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .books-layout.list-mode .book-cover-wrap {
+    width: 100%;
+    height: 180px;
+    min-height: 180px;
+  }
+
+  .options-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
+/* --- 📱 SMALL MOBILE DEVICES (<= 480px) --- */
 @media (max-width: 480px) {
   .chapter-filter-toolbar {
-    padding: 12px;
+    padding: 12px 10px;
   }
 
   .subject-module-card {
-    padding: 16px;
+    padding: 14px 10px;
+    border-radius: 16px;
+  }
+
+  .module-free-books-tray {
+    padding: 12px 10px;
+    border-radius: 12px;
   }
 
   .module-name {
@@ -2439,6 +2682,17 @@
 
   .book-actions-row {
     flex-direction: column;
+  }
+
+  .free-book-chip {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .free-book-chip .chip-ext {
+    align-self: flex-end;
+    margin-top: -16px;
   }
 }
 

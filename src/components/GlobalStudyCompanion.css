@@ -418,18 +418,19 @@
 
 @media (max-width: 640px) {
   .study-companion-dock-btn {
-    right: 86px;
-    bottom: 24px;
-    padding: 8px 12px;
+    right: 80px;
+    bottom: 20px;
+    padding: 7px 11px;
     font-size: 11.5px;
+    gap: 5px;
   }
 
   .study-companion-panel {
-    right: 12px;
-    left: 12px;
-    bottom: 96px;
+    right: 10px;
+    left: 10px;
+    bottom: 84px;
     width: auto;
-    max-width: none;
+    max-width: calc(100vw - 20px);
   }
 }
 
