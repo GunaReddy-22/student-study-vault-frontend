@@ -422,6 +422,47 @@
     border-color: rgba(99, 102, 241, 0.5);
   }
 
+  /* Floating Quick Mode Switcher (Draw ✍️ vs Pan ✋) */
+  .floating-nav-pill {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    border-radius: 30px;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .floating-nav-pill:hover {
+    background: rgba(30, 41, 59, 0.95);
+    border-color: rgba(99, 102, 241, 0.8);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.75);
+  }
+
+  .floating-nav-pill.panning-active {
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    border-color: rgba(165, 180, 252, 0.6);
+    box-shadow: 0 10px 30px rgba(79, 70, 229, 0.5);
+  }
+
+  .floating-pill-icon {
+    font-size: 16px;
+  }
+
   /* ============================================================
      📱 MOBILE & TABLET RESPONSIVE ADAPTATIONS
      ============================================================ */
@@ -592,6 +633,12 @@
   </div>
 </main>
 
+<!-- Floating Quick Mode Switcher (Draw ✍️ vs Pan ✋) -->
+<div class="floating-nav-pill" id="floating-mode-pill" onclick="toggleHandPanMode()" title="Toggle Scroll (✋) or Draw (✍️) mode">
+  <span class="floating-pill-icon" id="floating-pill-icon">✋</span>
+  <span class="floating-pill-label" id="floating-pill-label">Hand Scroll</span>
+</div>
+
 <script>
 // ============================================================
 // 📱 TWO-LAYER INFINITE IPAD CANVAS ARCHITECTURE
@@ -626,8 +673,12 @@ let lastX = 0, lastY = 0;
 let points = [];
 let shapeSnapshot = null;
 
-// Touch & gesture state
+// Touch & gesture state (iPad & Mobile Multi-touch architecture)
 let touchMode = 'draw'; // 'draw' | 'scroll'
+let isTwoFingerPanning = false;
+let touchCooldown = false;
+let touchPreStrokeSnapshot = null;
+let lastDrawingTool = 'pen';
 let panStartX = 0, panStartY = 0;
 let scrollLeftStart = 0, scrollTopStart = 0;
 
@@ -678,7 +729,7 @@ function selectColor(hex) {
   });
   updateStrokeUI();
   if (activeTool === 'eraser' || activeTool === 'hand') {
-    setDrawingTool('pen');
+    setDrawingTool(lastDrawingTool || 'pen');
   }
 }
 
@@ -686,12 +737,42 @@ function setCustomColor(hex) {
   selectColor(hex);
 }
 
+function toggleHandPanMode() {
+  if (activeTool === 'hand') {
+    setDrawingTool(lastDrawingTool || 'pen');
+  } else {
+    lastDrawingTool = activeTool;
+    setDrawingTool('hand');
+  }
+}
+
+function updateFloatingPillUI() {
+  const pill = document.getElementById('floating-mode-pill');
+  const icon = document.getElementById('floating-pill-icon');
+  const label = document.getElementById('floating-pill-label');
+  if (!pill || !icon || !label) return;
+
+  if (activeTool === 'hand') {
+    pill.classList.add('panning-active');
+    icon.textContent = '✍️';
+    label.textContent = 'Draw Mode';
+  } else {
+    pill.classList.remove('panning-active');
+    icon.textContent = '✋';
+    label.textContent = 'Hand Scroll';
+  }
+}
+
 function setDrawingTool(tool) {
+  if (tool !== 'hand') {
+    lastDrawingTool = tool;
+  }
   activeTool = tool;
   document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
   const btn = document.getElementById('tool-' + tool);
   if (btn) btn.classList.add('active');
   workspace.classList.toggle('panning-mode', tool === 'hand');
+  updateFloatingPillUI();
 }
 
 // ============================================================
@@ -955,6 +1036,18 @@ function configureContextForTool() {
   }
 }
 
+function cancelCurrentStrokeAndRestore() {
+  if (isDrawing && touchPreStrokeSnapshot) {
+    try {
+      inkCtx.putImageData(touchPreStrokeSnapshot, 0, 0);
+    } catch (_) {}
+  }
+  isDrawing = false;
+  points = [];
+  shapeSnapshot = null;
+  touchPreStrokeSnapshot = null;
+}
+
 function onPointerDown(e) {
   if (activeTool === 'hand') {
     touchMode = 'scroll';
@@ -993,9 +1086,11 @@ function onPointerMove(e) {
   if (touchMode === 'scroll') {
     const cx = e.clientX || (e.touches && e.touches[0].clientX);
     const cy = e.clientY || (e.touches && e.touches[0].clientY);
-    workspace.scrollLeft = scrollLeftStart - (cx - panStartX);
-    workspace.scrollTop = scrollTopStart - (cy - panStartY);
-    checkInfiniteScroll();
+    if (cx !== undefined && cy !== undefined) {
+      workspace.scrollLeft = scrollLeftStart - (cx - panStartX);
+      workspace.scrollTop = scrollTopStart - (cy - panStartY);
+      checkInfiniteScroll();
+    }
     return;
   }
 
@@ -1070,7 +1165,9 @@ function onPointerMove(e) {
 
 function onPointerUp() {
   if (touchMode === 'scroll') {
-    touchMode = 'draw';
+    if (activeTool !== 'hand') {
+      touchMode = 'draw';
+    }
     workspace.classList.remove('panning-active');
     return;
   }
@@ -1083,46 +1180,153 @@ function onPointerUp() {
 }
 
 // Mouse Events
-inkCanvas.addEventListener('mousedown', onPointerDown);
-window.addEventListener('mousemove', onPointerMove);
-window.addEventListener('mouseup', onPointerUp);
+inkCanvas.addEventListener('mousedown', (e) => {
+  if (activeTool === 'hand') {
+    touchMode = 'scroll';
+    panStartX = e.clientX;
+    panStartY = e.clientY;
+    scrollLeftStart = workspace.scrollLeft;
+    scrollTopStart = workspace.scrollTop;
+    workspace.classList.add('panning-active');
+    return;
+  }
+  touchMode = 'draw';
+  onPointerDown(e);
+});
 
-// Multi-touch gestures (iPad & Phone)
+window.addEventListener('mousemove', (e) => {
+  if (touchMode === 'scroll') {
+    workspace.scrollLeft = scrollLeftStart - (e.clientX - panStartX);
+    workspace.scrollTop = scrollTopStart - (e.clientY - panStartY);
+    checkInfiniteScroll();
+    return;
+  }
+  if (isDrawing) {
+    onPointerMove(e);
+  }
+});
+
+window.addEventListener('mouseup', () => {
+  if (touchMode === 'scroll') {
+    if (activeTool !== 'hand') touchMode = 'draw';
+    workspace.classList.remove('panning-active');
+    return;
+  }
+  onPointerUp();
+});
+
+// ============================================================
+// 📱 IPAD & MOBILE ADVANCED MULTI-TOUCH GESTURE ENGINE
+// ============================================================
 inkCanvas.addEventListener('touchstart', (e) => {
+  if (touchCooldown) {
+    e.preventDefault();
+    return;
+  }
+
+  // ✌️ MULTI-TOUCH DETECTED (2+ Fingers -> ALWAYS SCROLL, NEVER DRAW)
   if (e.touches.length >= 2) {
+    cancelCurrentStrokeAndRestore();
+    isTwoFingerPanning = true;
     touchMode = 'scroll';
     panStartX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
     panStartY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
     scrollLeftStart = workspace.scrollLeft;
     scrollTopStart = workspace.scrollTop;
+    workspace.classList.add('panning-active');
+    e.preventDefault();
     return;
   }
+
+  // ✋ HAND PAN TOOL ACTIVE
+  if (activeTool === 'hand') {
+    isTwoFingerPanning = true;
+    touchMode = 'scroll';
+    panStartX = e.touches[0].clientX;
+    panStartY = e.touches[0].clientY;
+    scrollLeftStart = workspace.scrollLeft;
+    scrollTopStart = workspace.scrollTop;
+    workspace.classList.add('panning-active');
+    e.preventDefault();
+    return;
+  }
+
+  // ✍️ SINGLE TOUCH DRAWING
+  isTwoFingerPanning = false;
   touchMode = 'draw';
+  try {
+    touchPreStrokeSnapshot = inkCtx.getImageData(0, 0, inkCanvas.width, inkCanvas.height);
+  } catch (_) {
+    touchPreStrokeSnapshot = null;
+  }
+
   e.preventDefault();
   onPointerDown(e);
 }, { passive: false });
 
 inkCanvas.addEventListener('touchmove', (e) => {
-  if (touchMode === 'scroll' && e.touches.length >= 2) {
-    const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-    const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+  // ✌️ MULTI-TOUCH PANNING (Smooth 2-finger scroll)
+  if (e.touches.length >= 2 || isTwoFingerPanning || touchMode === 'scroll') {
+    e.preventDefault();
+    if (isDrawing) {
+      cancelCurrentStrokeAndRestore();
+    }
+    isTwoFingerPanning = true;
+    touchMode = 'scroll';
+
+    let cx, cy;
+    if (e.touches.length >= 2) {
+      cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+    } else {
+      cx = e.touches[0].clientX;
+      cy = e.touches[0].clientY;
+    }
+
     workspace.scrollLeft = scrollLeftStart - (cx - panStartX);
     workspace.scrollTop = scrollTopStart - (cy - panStartY);
     checkInfiniteScroll();
     return;
   }
-  if (isDrawing) {
+
+  // ✍️ DRAWING
+  if (isDrawing && !isTwoFingerPanning && !touchCooldown) {
     e.preventDefault();
     onPointerMove(e);
   }
 }, { passive: false });
 
 inkCanvas.addEventListener('touchend', (e) => {
-  if (touchMode === 'scroll' && e.touches.length < 2) {
-    touchMode = 'draw';
+  if (isTwoFingerPanning) {
+    e.preventDefault();
+    if (e.touches.length === 0) {
+      isTwoFingerPanning = false;
+      touchMode = activeTool === 'hand' ? 'scroll' : 'draw';
+      workspace.classList.remove('panning-active');
+      touchPreStrokeSnapshot = null;
+      isDrawing = false;
+      points = [];
+
+      touchCooldown = true;
+      setTimeout(() => {
+        touchCooldown = false;
+      }, 150);
+    }
     return;
   }
-  onPointerUp();
+
+  if (isDrawing) {
+    onPointerUp();
+  }
+  touchPreStrokeSnapshot = null;
+});
+
+inkCanvas.addEventListener('touchcancel', () => {
+  cancelCurrentStrokeAndRestore();
+  isTwoFingerPanning = false;
+  touchMode = activeTool === 'hand' ? 'scroll' : 'draw';
+  workspace.classList.remove('panning-active');
+  touchCooldown = false;
 });
 
 // Keyboard Shortcuts
