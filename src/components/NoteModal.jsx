@@ -195,36 +195,32 @@ export default function NoteModal({ note, close, refresh }) {
 
           if (isImage) {
             return (
-              <div className="image-preview" style={{ position: "relative", marginBottom: "16px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                  <span style={{ fontSize: "12px", color: "#6ee7b7", fontWeight: "600" }}>
+              <div className="image-preview-container">
+                <div className="image-preview-header">
+                  <span className="image-preview-badge">
                     ✍️ Handwritten Drawing Attached
                   </span>
                   <a
                     href={form.content}
                     target="_blank"
                     rel="noreferrer"
-                    style={{ fontSize: "12px", color: "#818cf8", textDecoration: "none", fontWeight: "600" }}
+                    className="image-preview-link"
+                    title="Open handwriting in full resolution"
                   >
                     🔍 Open Fullscreen
                   </a>
                 </div>
-                <img
-                  src={form.content}
-                  alt="Handwritten note"
-                  style={{
-                    width: "100%",
-                    maxHeight: "340px",
-                    objectFit: "contain",
-                    borderRadius: "12px",
-                    background: "#ffffff",
-                    border: "1px solid rgba(255, 255, 255, 0.15)",
-                    boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
-                    cursor: "pointer",
-                  }}
+                <div
+                  className="image-canvas-wrapper"
                   onClick={() => window.open(form.content, "_blank")}
                   title="Click to view full size"
-                />
+                >
+                  <img
+                    src={form.content}
+                    alt="Handwritten note"
+                    className="handwritten-preview-img"
+                  />
+                </div>
               </div>
             );
           }
@@ -278,6 +274,17 @@ export default function NoteModal({ note, close, refresh }) {
           );
         })()}
 
+        {/* DEVICE RECOMMENDATION HINT BANNER */}
+        <div
+          className="handwrite-device-notice"
+          title="Handwriting canvas is recommended for laptops, tablets, or stylus-enabled devices for best precision."
+        >
+          <span className="notice-icon">💻</span>
+          <span className="notice-text">
+            Handwritten text is recommended for laptops & tablets
+          </span>
+        </div>
+
         {/* ACTIONS */}
         <div className="modal-actions">
           <button className="btn-primary" onClick={saveNote} disabled={isSaving}>
@@ -292,31 +299,34 @@ export default function NoteModal({ note, close, refresh }) {
             <button
               className="handwrite-btn"
               onClick={() => setHandwritingMode(true)}
+              title="Handwriting canvas is recommended for laptops, tablets, or stylus devices"
             >
               ✍️ Handwrite Canvas
             </button>
           )}
 
           {isImageContent(form.content) && (
-              <>
-                <button
-                  className="handwrite-btn"
-                  onClick={() => setHandwritingMode(true)}
-                >
-                  ✏️ Edit Drawing
-                </button>
+            <>
+              <button
+                className="handwrite-btn"
+                onClick={() => setHandwritingMode(true)}
+                title="Handwriting canvas is recommended for laptops, tablets, or stylus devices"
+              >
+                ✏️ Edit Drawing
+              </button>
 
-                <button
-                  className="handwrite-btn danger"
-                  onClick={() => {
-                    setForm((p) => ({ ...p, content: "" }));
-                    setHandwritingMode(true);
-                  }}
-                >
-                  🧹 New Page
-                </button>
-              </>
-            )}
+              <button
+                className="handwrite-btn danger"
+                onClick={() => {
+                  setForm((p) => ({ ...p, content: "" }));
+                  setHandwritingMode(true);
+                }}
+                title="Clear current drawing and start a blank page"
+              >
+                🧹 New Page
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>,

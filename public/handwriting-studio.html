@@ -506,13 +506,180 @@
     box-shadow: 0 10px 30px rgba(79, 70, 229, 0.6);
   }
 
-  /* Mobile Tweaks */
-  @media (max-width: 768px) {
-    .btn-label-text { display: none; }
-    .cat-tab-btn span:last-child { display: none; }
-    .paper-container { width: 100vw; border-radius: 0; }
-    .canvas-workspace { padding: 8px 0 100px 0; }
-    .app-branding span:last-child { display: none; }
+  /* Device recommendation badge */
+  .device-recommendation-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.18), rgba(56, 189, 248, 0.12));
+    border: 1px solid rgba(99, 102, 241, 0.35);
+    color: #c7d2fe;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .device-recommendation-badge:hover,
+  .device-recommendation-badge:focus {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(56, 189, 248, 0.25));
+    border-color: rgba(99, 102, 241, 0.7);
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
+  }
+  .device-recommendation-badge .device-badge-icon {
+    font-size: 13px;
+  }
+  .device-tooltip-popup {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 250px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(15, 23, 42, 0.96);
+    border: 1px solid rgba(99, 102, 241, 0.5);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    color: #e2e8f0;
+    font-size: 11.5px;
+    line-height: 1.45;
+    font-weight: 400;
+    z-index: 1000;
+    transform: translateY(-4px);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+    white-space: normal;
+  }
+  .device-tooltip-popup .tooltip-header {
+    font-weight: 700;
+    color: #818cf8;
+    margin-bottom: 4px;
+    font-size: 12px;
+  }
+  .device-recommendation-badge:hover .device-tooltip-popup,
+  .device-recommendation-badge:focus .device-tooltip-popup {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .header-mobile-category-bar {
+    display: none;
+    padding: 6px 12px;
+    background: rgba(6, 11, 24, 0.95);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .header-mobile-category-bar::-webkit-scrollbar { display: none; }
+
+  /* Mobile Responsive Media Query */
+  @media (max-width: 860px) {
+    .header-main-row {
+      height: 48px;
+      padding: 0 8px;
+      gap: 6px;
+    }
+    .header-center {
+      display: none !important;
+    }
+    .header-mobile-category-bar {
+      display: flex !important;
+    }
+    .header-left {
+      gap: 6px;
+      flex-shrink: 1;
+      min-width: 0;
+    }
+    .brand-title {
+      display: none;
+    }
+    .device-badge-text {
+      display: none;
+    }
+    .device-recommendation-badge {
+      padding: 4px 6px;
+    }
+    .paper-dropdown {
+      height: 32px;
+      padding: 0 6px;
+      font-size: 11.5px;
+      max-width: 110px;
+    }
+    .header-right {
+      gap: 5px;
+      flex-shrink: 0;
+      margin-left: auto;
+    }
+    .header-right .zoom-pill-group {
+      display: none;
+    }
+    .btn-label-text {
+      display: none;
+    }
+    .action-btn {
+      height: 32px;
+      padding: 0 8px;
+      font-size: 12px;
+    }
+    .btn-done-primary {
+      padding: 0 12px !important;
+      font-weight: 700 !important;
+      background: linear-gradient(135deg, #10b981, #059669) !important;
+      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.4) !important;
+    }
+    .btn-save-text {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      margin-left: 2px;
+    }
+    .paper-container {
+      width: 100vw;
+      border-radius: 0;
+    }
+    .canvas-workspace {
+      padding: 6px 0 100px 0;
+    }
+    .floating-nav-pill {
+      bottom: 16px;
+      right: 16px;
+      padding: 8px 14px;
+      font-size: 12px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .header-main-row {
+      padding: 0 6px;
+      gap: 4px;
+    }
+    .paper-dropdown {
+      max-width: 90px;
+      font-size: 11px;
+    }
+    .action-btn {
+      padding: 0 6px;
+    }
+    .btn-done-primary {
+      padding: 0 10px !important;
+    }
+    .cat-tab-btn {
+      padding: 5px 8px;
+      font-size: 11.5px;
+    }
   }
 </style>
 </head>
@@ -520,15 +687,15 @@
 
 <!-- 🍎 RESPONSIVE HEADER & CONSOLIDATED APPLE TOOLBAR -->
 <header class="studio-header">
-  <!-- Top Bar: Branding, Category Tabs, Zoom & Actions -->
+  <!-- Top Bar: Branding, Paper, Recommendation Hint, Undo/Redo, Cancel & Save -->
   <div class="header-main-row">
     <div class="header-left">
       <div class="app-branding">
         <span class="logo-badge">🎨</span>
-        <span>Studio</span>
+        <span class="brand-title">Studio</span>
       </div>
 
-      <select id="paper-select" class="paper-dropdown" onchange="changePaperStyle(this.value)">
+      <select id="paper-select" class="paper-dropdown" onchange="changePaperStyle(this.value)" title="Select Paper Style">
         <option value="ruled">📝 Ruled Paper</option>
         <option value="grid">📐 Math Grid</option>
         <option value="dots">▫️ Dot Matrix</option>
@@ -537,9 +704,19 @@
         <option value="dark">🌑 Dark Mode</option>
         <option value="cream">📜 Vintage Cream</option>
       </select>
+
+      <!-- Hoverable Device Recommendation Tooltip Badge -->
+      <div class="device-recommendation-badge" tabindex="0" title="Handwritten notes are recommended on laptops & tablets with a stylus for maximum writing precision.">
+        <span class="device-badge-icon">💻</span>
+        <span class="device-badge-text">Recommended for Laptops & Tabs</span>
+        <div class="device-tooltip-popup">
+          <div class="tooltip-header">💡 Device Advice</div>
+          <div>Handwriting canvas is best experienced on laptops, tablets, and styluses for precise note-taking.</div>
+        </div>
+      </div>
     </div>
 
-    <!-- Center Segmented Categories -->
+    <!-- Center Segmented Categories (Desktop view) -->
     <div class="header-center">
       <div class="category-tool-tabs">
         <button class="cat-tab-btn active" id="tab-pen" onclick="switchCategory('pen')">
@@ -565,7 +742,7 @@
       </div>
     </div>
 
-    <!-- Right Actions -->
+    <!-- Right Actions: Undo, Redo, Cancel & Always-Visible Save Button -->
     <div class="header-right">
       <div class="zoom-pill-group">
         <button onclick="adjustZoom(-0.15)" title="Zoom Out">−</button>
@@ -575,8 +752,39 @@
 
       <button class="action-btn btn-ghost" id="btn-undo" onclick="handleUndo()" title="Undo (Ctrl+Z)" disabled>↩️<span class="btn-label-text"> Undo</span></button>
       <button class="action-btn btn-ghost" id="btn-redo" onclick="handleRedo()" title="Redo (Ctrl+Y)" disabled>↪️<span class="btn-label-text"> Redo</span></button>
-      <button class="action-btn btn-danger-ghost" onclick="cancelAndExit()">✕<span class="btn-label-text"> Cancel</span></button>
-      <button class="action-btn btn-done-primary" onclick="saveAndExport()">✨<span class="btn-label-text"> Done</span></button>
+      <button class="action-btn btn-danger-ghost" onclick="cancelAndExit()" title="Cancel & Discard">✕<span class="btn-label-text"> Cancel</span></button>
+      <button class="action-btn btn-done-primary" id="btn-save-note" onclick="saveAndExport()" title="Save Note drawing to vault">💾<span class="btn-save-text"> Save Note</span></button>
+    </div>
+  </div>
+
+  <!-- Mobile Category & Zoom Bar (Shown on Mobile / Tablets) -->
+  <div class="header-mobile-category-bar">
+    <div class="category-tool-tabs mobile-tabs">
+      <button class="cat-tab-btn active" id="tab-pen-m" onclick="switchCategory('pen')">
+        <span class="tab-icon">✏️</span>
+        <span>Pens</span>
+      </button>
+      <button class="cat-tab-btn" id="tab-eraser-m" onclick="switchCategory('eraser')">
+        <span class="tab-icon">🧽</span>
+        <span>Eraser</span>
+      </button>
+      <button class="cat-tab-btn" id="tab-shape-m" onclick="switchCategory('shape')">
+        <span class="tab-icon">🔷</span>
+        <span>Shapes</span>
+      </button>
+      <button class="cat-tab-btn" id="tab-text-m" onclick="switchCategory('text')">
+        <span class="tab-icon">🔤</span>
+        <span>Text</span>
+      </button>
+      <button class="cat-tab-btn" id="tab-hand-m" onclick="switchCategory('hand')">
+        <span class="tab-icon">✋</span>
+        <span>Pan</span>
+      </button>
+    </div>
+    <div class="zoom-pill-group mobile-zoom">
+      <button onclick="adjustZoom(-0.15)" title="Zoom Out">−</button>
+      <span class="zoom-pill-label" id="zoom-label-m">100%</span>
+      <button onclick="adjustZoom(0.15)" title="Zoom In">+</button>
     </div>
   </div>
 
@@ -687,6 +895,8 @@ function switchCategory(cat) {
   document.querySelectorAll('.cat-tab-btn').forEach(b => b.classList.remove('active'));
   const activeBtn = document.getElementById('tab-' + cat);
   if (activeBtn) activeBtn.classList.add('active');
+  const activeBtnM = document.getElementById('tab-' + cat + '-m');
+  if (activeBtnM) activeBtnM.classList.add('active');
 
   workspace.classList.toggle('panning-mode', cat === 'hand');
   renderContextualTray();
@@ -1096,7 +1306,10 @@ function adjustZoom(delta) {
 }
 function applyZoom() {
   paperContainer.style.transform = `scale(${currentZoom})`;
-  if (zoomLabel) zoomLabel.textContent = Math.round(currentZoom * 100) + '%';
+  const txt = Math.round(currentZoom * 100) + '%';
+  if (zoomLabel) zoomLabel.textContent = txt;
+  const zoomLabelM = document.getElementById('zoom-label-m');
+  if (zoomLabelM) zoomLabelM.textContent = txt;
 }
 
 // ============================================================

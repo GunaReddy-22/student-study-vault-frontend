@@ -129,6 +129,7 @@ export default function Notes() {
           <button
             className={`filter-pill ${activeFilter === "handwritten" ? "active" : ""}`}
             onClick={() => setActiveFilter("handwritten")}
+            title="Handwritten notes (Recommended for laptops, tablets & styluses)"
           >
             <FaPenNib /> Handwritten
           </button>
