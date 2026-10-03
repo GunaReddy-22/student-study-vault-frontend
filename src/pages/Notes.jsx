@@ -5,6 +5,7 @@ import NoteModal from "../components/NoteModal";
 import NoteReaderModal from "../components/NoteReaderModal";
 import QuizModal from "../components/QuizModal";
 import "./Notes.css";
+import { isImageContent } from "../utils/noteUtils";
 import { FaPlus, FaSearch, FaPenNib, FaFileAlt, FaGlobe, FaCrown, FaBookOpen } from "react-icons/fa";
 
 export default function Notes() {
@@ -59,30 +60,18 @@ export default function Notes() {
   };
 
   /* ---------------- FILTERING & SEARCH ---------------- */
-  const isHandwritten = (content) => {
-    if (!content || typeof content !== "string") return false;
-    const trimmed = content.trim();
-    return (
-      trimmed.startsWith("data:image/") ||
-      trimmed.startsWith("http://") ||
-      trimmed.startsWith("https://") ||
-      trimmed.includes("cloudinary.com") ||
-      trimmed.includes("/uploads/") ||
-      /\.(png|jpg|jpeg|webp|gif|svg)($|\?)/i.test(trimmed)
-    );
-  };
-
   const filteredNotes = useMemo(() => {
     return notes.filter((n) => {
+      const isImg = isImageContent(n.content);
       const matchesSearch =
         (n.title && n.title.toLowerCase().includes(searchQuery.toLowerCase())) ||
         (n.subject && n.subject.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (!isHandwritten(n.content) && n.content?.toLowerCase().includes(searchQuery.toLowerCase()));
+        (!isImg && n.content?.toLowerCase().includes(searchQuery.toLowerCase()));
 
       if (!matchesSearch) return false;
 
-      if (activeFilter === "handwritten") return isHandwritten(n.content);
-      if (activeFilter === "document") return !isHandwritten(n.content);
+      if (activeFilter === "handwritten") return isImg;
+      if (activeFilter === "document") return !isImg;
       if (activeFilter === "public") return Boolean(n.isPublic);
       if (activeFilter === "premium") return Boolean(n.isPremium);
 

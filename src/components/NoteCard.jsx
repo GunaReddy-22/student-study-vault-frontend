@@ -10,22 +10,10 @@ import {
   FaGlobe,
   FaCrown
 } from "react-icons/fa";
+import { isImageContent } from "../utils/noteUtils";
 
 export default function NoteCard({ note, onRead, onEdit, onDelete, onQuiz }) {
-  const isHandwritten = (content) => {
-    if (!content || typeof content !== "string") return false;
-    const trimmed = content.trim();
-    return (
-      trimmed.startsWith("data:image/") ||
-      trimmed.startsWith("http://") ||
-      trimmed.startsWith("https://") ||
-      trimmed.includes("cloudinary.com") ||
-      trimmed.includes("/uploads/") ||
-      /\.(png|jpg|jpeg|webp|gif|svg)($|\?)/i.test(trimmed)
-    );
-  };
-
-  const isImage = isHandwritten(note.content);
+  const isImage = isImageContent(note.content);
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "";

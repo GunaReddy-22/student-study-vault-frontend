@@ -12,12 +12,12 @@ import {
   FiUser,
   FiClock,
   FiArrowRight,
-  FiCreditCard
 } from "react-icons/fi";
-import { FaHeart, FaCommentDots, FaShare } from "react-icons/fa";
+import { FaHeart, FaCommentDots, FaShare, FaPenNib, FaFileAlt } from "react-icons/fa";
 import api from "../services/api";
 import "./PremiumNotes.css";
 import { getUserIdFromToken } from "../utils/getUserId";
+import { isImageContent } from "../utils/noteUtils";
 import { summarizeContent, askAI } from "../services/ai";
 import FormattedAIResponse from "../components/FormattedAIResponse";
 import QuizModal from "../components/QuizModal";
@@ -195,6 +195,11 @@ export default function PremiumNotes() {
 
   /* ===================== AI ===================== */
   const handleSummarize = async (noteId, content) => {
+    if (isImageContent(content)) {
+      alert("✨ AI Summary is for text notes. This is a visual handwritten canvas note.");
+      return;
+    }
+
     try {
       setLoadingAI(noteId);
 
@@ -315,6 +320,7 @@ export default function PremiumNotes() {
         ) : (
           filteredNotes.map((note) => {
             const isUnlocked = accessMap[note._id];
+            const isImage = isImageContent(note.content);
             return (
               <div
                 key={note._id}
@@ -323,21 +329,37 @@ export default function PremiumNotes() {
               >
                 <div className="prem-card-top-row">
                   <span className="prem-subject-tag">{note.subject || "Academic"}</span>
-                  <span className={`prem-status-pill ${isUnlocked ? "unlocked" : "locked"}`}>
-                    {isUnlocked ? (
-                      <>
-                        <FiCheck /> Unlocked
-                      </>
+                  <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+                    {isImage ? (
+                      <span className="prem-status-pill" style={{ background: "rgba(16, 185, 129, 0.15)", color: "#34d399", borderColor: "rgba(16, 185, 129, 0.3)" }}>
+                        <FaPenNib /> Handwritten
+                      </span>
                     ) : (
-                      <>
-                        <FiLock /> Premium
-                      </>
+                      <span className="prem-status-pill" style={{ background: "rgba(99, 102, 241, 0.15)", color: "#a5b4fc", borderColor: "rgba(99, 102, 241, 0.3)" }}>
+                        <FaFileAlt /> Doc
+                      </span>
                     )}
-                  </span>
+                    <span className={`prem-status-pill ${isUnlocked ? "unlocked" : "locked"}`}>
+                      {isUnlocked ? (
+                        <>
+                          <FiCheck /> Unlocked
+                        </>
+                      ) : (
+                        <>
+                          <FiLock /> Premium
+                        </>
+                      )}
+                    </span>
+                  </div>
                 </div>
 
                 <div className="prem-card-body">
                   <h3 className="prem-card-title">{note.title}</h3>
+                  {isUnlocked && isImage && (
+                    <div style={{ margin: "10px 0", height: "100px", background: "#ffffff", borderRadius: "8px", overflow: "hidden", border: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <img src={note.content} alt={note.title} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                    </div>
+                  )}
                   <div className="prem-author-row">
                     <div className="prem-author-avatar">
                       {(note.userId?.username || "A").charAt(0).toUpperCase()}
@@ -399,12 +421,39 @@ export default function PremiumNotes() {
 
             {/* CONTENT */}
             {hasAccess ? (
-              activeNote.content?.startsWith("data:image") ? (
-                <img
-                  src={activeNote.content}
-                  alt="Premium Note"
-                  className="premium-image"
-                />
+              isImageContent(activeNote.content) ? (
+                <div style={{ margin: "16px 0", textAlign: "center" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                    <span style={{ fontSize: "12px", color: "#6ee7b7", fontWeight: "600" }}>
+                      ✍️ Handwritten Note Drawing
+                    </span>
+                    <a
+                      href={activeNote.content}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{ fontSize: "12px", color: "#818cf8", textDecoration: "none", fontWeight: "600" }}
+                    >
+                      🔍 Open Fullscreen
+                    </a>
+                  </div>
+                  <img
+                    src={activeNote.content}
+                    alt="Premium Note"
+                    className="premium-image"
+                    style={{
+                      width: "100%",
+                      maxHeight: "420px",
+                      objectFit: "contain",
+                      borderRadius: "12px",
+                      background: "#ffffff",
+                      border: "1px solid rgba(255, 255, 255, 0.15)",
+                      boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => window.open(activeNote.content, "_blank")}
+                    title="Click to view full size in new tab"
+                  />
+                </div>
               ) : (
                 <>
                 <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "10px", marginBottom: "10px" }}>
@@ -430,7 +479,13 @@ export default function PremiumNotes() {
                   </button>
 
                   <button
-                    onClick={() => setShowQuiz(true)}
+                    onClick={() => {
+                      if (isImageContent(activeNote.content)) {
+                        alert("⚡ AI Quiz generation is for text notes. This is a visual handwritten canvas note.");
+                        return;
+                      }
+                      setShowQuiz(true);
+                    }}
                     style={{
                       padding: "10px 14px",
                       borderRadius: "10px",
@@ -450,9 +505,6 @@ export default function PremiumNotes() {
                   </button>
                 </div>
                 <div className="premium-content">
-                  {/* 🔥 SUMMARIZE BUTTON */}
-                  
-
                   {activeNote.content}
                 </div>
                 </>

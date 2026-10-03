@@ -96,10 +96,12 @@ function Sidebar({ setIsAuth, isOpen = true, onClose }) {
         )}
       </nav>
 
-      <button className="logout-btn" onClick={logout}>
-        <FiLogOut className="logout-icon" />
-        <span>Logout</span>
-      </button>
+      <div className="sidebar-footer">
+        <button className="logout-btn" onClick={logout}>
+          <FiLogOut className="logout-icon" />
+          <span>Logout</span>
+        </button>
+      </div>
     </aside>
   );
 }

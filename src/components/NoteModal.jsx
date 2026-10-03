@@ -4,6 +4,7 @@ import api from "../services/api";
 import "./NoteModal.css";
 import HandwritingCanvas from "./HandwritingCanvas";
 import FormattedAIResponse from "./FormattedAIResponse";
+import { isImageContent } from "../utils/noteUtils";
 
 export default function NoteModal({ note, close, refresh }) {
   const [form, setForm] = useState({
@@ -89,19 +90,6 @@ export default function NoteModal({ note, close, refresh }) {
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
   }, []);
-
-  const isImageContent = (content) => {
-    if (!content || typeof content !== "string") return false;
-    const trimmed = content.trim();
-    return (
-      trimmed.startsWith("data:image") ||
-      trimmed.startsWith("http://") ||
-      trimmed.startsWith("https://") ||
-      trimmed.includes("cloudinary.com") ||
-      trimmed.includes("/uploads/") ||
-      /\.(png|jpg|jpeg|webp|gif|svg)($|\?)/i.test(trimmed)
-    );
-  };
 
   if (handwritingMode) {
     return (
@@ -203,14 +191,7 @@ export default function NoteModal({ note, close, refresh }) {
 
         {/* CONTENT */}
         {(() => {
-          const isImage =
-            form.content &&
-            (form.content.startsWith("data:image") ||
-              form.content.startsWith("http://") ||
-              form.content.startsWith("https://") ||
-              form.content.includes("cloudinary.com") ||
-              form.content.includes("/uploads/") ||
-              /\.(png|jpg|jpeg|webp|gif|svg)($|\?)/i.test(form.content.trim()));
+          const isImage = isImageContent(form.content);
 
           if (isImage) {
             return (
@@ -316,13 +297,7 @@ export default function NoteModal({ note, close, refresh }) {
             </button>
           )}
 
-          {form.content &&
-            (form.content.startsWith("data:image") ||
-              form.content.startsWith("http://") ||
-              form.content.startsWith("https://") ||
-              form.content.includes("cloudinary.com") ||
-              form.content.includes("/uploads/") ||
-              /\.(png|jpg|jpeg|webp|gif|svg)($|\?)/i.test(form.content.trim())) && (
+          {isImageContent(form.content) && (
               <>
                 <button
                   className="handwrite-btn"

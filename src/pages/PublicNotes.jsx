@@ -11,10 +11,11 @@ import {
   FiArrowRight,
   FiCheck
 } from "react-icons/fi";
-import { FaHeart, FaCommentDots, FaShare } from "react-icons/fa";
+import { FaHeart, FaCommentDots, FaShare, FaPenNib, FaFileAlt } from "react-icons/fa";
 import api from "../services/api";
 import "./PublicNotes.css";
 import { getUserIdFromToken } from "../utils/getUserId";
+import { isImageContent } from "../utils/noteUtils";
 import { summarizeContent, askAI } from "../services/ai";
 import FormattedAIResponse from "../components/FormattedAIResponse";
 import QuizModal from "../components/QuizModal";
@@ -166,31 +167,36 @@ export default function PublicNotes() {
      AI SUMMARIZE
   ====================== */
   const handleSummarize = async (noteId, content) => {
-  try {
-    setLoadingAI(noteId);
+    if (isImageContent(content)) {
+      alert("✨ AI Summary is for text notes. This is a visual handwritten canvas note.");
+      return;
+    }
 
-    const res = await summarizeContent(content);
+    try {
+      setLoadingAI(noteId);
 
-    setSummaries((prev) => ({
-      ...prev,
-      [noteId]: res,
-    }));
+      const res = await summarizeContent(content);
 
-    // 👇 SCROLL AFTER SMALL DELAY
-    setTimeout(() => {
-      summaryRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }, 200);
+      setSummaries((prev) => ({
+        ...prev,
+        [noteId]: res,
+      }));
 
-  } catch (err) {
-    console.error(err);
-    alert("AI failed");
-  } finally {
-    setLoadingAI(null);
-  }
-};
+      // 👇 SCROLL AFTER SMALL DELAY
+      setTimeout(() => {
+        summaryRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 200);
+
+    } catch (err) {
+      console.error(err);
+      alert("AI failed");
+    } finally {
+      setLoadingAI(null);
+    }
+  };
 
 const handleAsk = async () => {
   if (!question.trim()) return;
@@ -282,38 +288,57 @@ const handleAsk = async () => {
             <p>Try searching for a different keyword or select another subject category.</p>
           </div>
         ) : (
-          filteredNotes.map((note) => (
-            <div
-              key={note._id}
-              className="public-note-card"
-              onClick={() => openNote(note)}
-            >
-              <div className="pub-card-top-row">
-                <span className="pub-subject-tag">{note.subject || "General"}</span>
-                <span className="pub-badge-pill">
-                  <FiGlobe /> Public
-                </span>
-              </div>
-
-              <div className="card-body">
-                <h3 className="pub-card-title">{note.title}</h3>
-                <div className="pub-card-author-row">
-                  <div className="pub-author-avatar">
-                    {(note.userId?.username || "U").charAt(0).toUpperCase()}
+          filteredNotes.map((note) => {
+            const isImage = isImageContent(note.content);
+            return (
+              <div
+                key={note._id}
+                className="public-note-card"
+                onClick={() => openNote(note)}
+              >
+                <div className="pub-card-top-row">
+                  <span className="pub-subject-tag">{note.subject || "General"}</span>
+                  <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+                    {isImage ? (
+                      <span className="pub-badge-pill" style={{ background: "rgba(16, 185, 129, 0.15)", color: "#34d399", borderColor: "rgba(16, 185, 129, 0.3)" }}>
+                        <FaPenNib /> Handwritten
+                      </span>
+                    ) : (
+                      <span className="pub-badge-pill" style={{ background: "rgba(99, 102, 241, 0.15)", color: "#a5b4fc", borderColor: "rgba(99, 102, 241, 0.3)" }}>
+                        <FaFileAlt /> Doc
+                      </span>
+                    )}
+                    <span className="pub-badge-pill">
+                      <FiGlobe /> Public
+                    </span>
                   </div>
-                  <span className="pub-author-name">
-                    {note.userId?.username || "Student"}
+                </div>
+
+                <div className="card-body">
+                  <h3 className="pub-card-title">{note.title}</h3>
+                  {isImage && (
+                    <div style={{ margin: "10px 0", height: "100px", background: "#ffffff", borderRadius: "8px", overflow: "hidden", border: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <img src={note.content} alt={note.title} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                    </div>
+                  )}
+                  <div className="pub-card-author-row">
+                    <div className="pub-author-avatar">
+                      {(note.userId?.username || "U").charAt(0).toUpperCase()}
+                    </div>
+                    <span className="pub-author-name">
+                      {note.userId?.username || "Student"}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="pub-card-footer">
+                  <span className="pub-view-hint">
+                    Read Note <FiArrowRight className="pub-arrow-icon" />
                   </span>
                 </div>
               </div>
-
-              <div className="pub-card-footer">
-                <span className="pub-view-hint">
-                  Read Note <FiArrowRight className="pub-arrow-icon" />
-                </span>
-              </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
 
@@ -366,7 +391,7 @@ const handleAsk = async () => {
                 style={{
                   padding: "10px 14px",
                   borderRadius: "10px",
-                  background: "linear-gradient(135deg, #4f46e5, #6366f1)",
+                  background: isImageContent(activeNote.content) ? "rgba(99, 102, 241, 0.4)" : "linear-gradient(135deg, #4f46e5, #6366f1)",
                   color: "#fff",
                   border: "none",
                   cursor: "pointer",
@@ -381,11 +406,17 @@ const handleAsk = async () => {
               </button>
 
               <button
-                onClick={() => setShowQuiz(true)}
+                onClick={() => {
+                  if (isImageContent(activeNote.content)) {
+                    alert("⚡ AI Quiz generation is for text notes. This is a visual handwritten canvas note.");
+                    return;
+                  }
+                  setShowQuiz(true);
+                }}
                 style={{
                   padding: "10px 14px",
                   borderRadius: "10px",
-                  background: "linear-gradient(135deg, #10b981, #059669)",
+                  background: isImageContent(activeNote.content) ? "rgba(16, 185, 129, 0.4)" : "linear-gradient(135deg, #10b981, #059669)",
                   color: "#fff",
                   border: "none",
                   cursor: "pointer",
@@ -404,12 +435,39 @@ const handleAsk = async () => {
             {copied && <div className="share-toast">🔗 Link copied</div>}
 
             {/* CONTENT */}
-            {activeNote.content?.startsWith("data:image") ? (
-              <img
-                src={activeNote.content}
-                alt="Public Note"
-                className="public-note-image"
-              />
+            {isImageContent(activeNote.content) ? (
+              <div style={{ margin: "16px 0", textAlign: "center" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                  <span style={{ fontSize: "12px", color: "#6ee7b7", fontWeight: "600" }}>
+                    ✍️ Handwritten Note Drawing
+                  </span>
+                  <a
+                    href={activeNote.content}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{ fontSize: "12px", color: "#818cf8", textDecoration: "none", fontWeight: "600" }}
+                  >
+                    🔍 Open Fullscreen
+                  </a>
+                </div>
+                <img
+                  src={activeNote.content}
+                  alt={activeNote.title || "Public Note"}
+                  className="public-note-image"
+                  style={{
+                    width: "100%",
+                    maxHeight: "420px",
+                    objectFit: "contain",
+                    borderRadius: "12px",
+                    background: "#ffffff",
+                    border: "1px solid rgba(255, 255, 255, 0.15)",
+                    boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => window.open(activeNote.content, "_blank")}
+                  title="Click to view full size in new tab"
+                />
+              </div>
             ) : (
               <div className="public-note-content">
                 {activeNote.content}
