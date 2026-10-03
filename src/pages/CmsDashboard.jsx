@@ -27,6 +27,12 @@ import {
   updateCmsSupportTicket,
   replyCmsSupportTicket,
   deleteCmsSupportTicket,
+  getCmsFreeResources,
+  createCmsFreeResource,
+  updateCmsFreeResource,
+  deleteCmsFreeResource,
+  togglePublishCmsFreeResource,
+  seedCmsCurriculumResources,
 } from "../services/cmsApi";
 import {
   getSocket,
@@ -111,6 +117,37 @@ export default function CmsDashboard() {
   // Notes Moderation State
   const [notes, setNotes] = useState([]);
   const [noteFilter, setNoteFilter] = useState("all");
+
+  // Free Study Hub CMS State
+  const [cmsFreeResources, setCmsFreeResources] = useState([]);
+  const [freeResourceFilter, setFreeResourceFilter] = useState("ALL");
+  const [searchFreeResource, setSearchFreeResource] = useState("");
+  const [showFreeResourceModal, setShowFreeResourceModal] = useState(false);
+  const [editingResourceId, setEditingResourceId] = useState(null);
+  const [resourceActionLoading, setResourceActionLoading] = useState(false);
+
+  const defaultFreeResourceState = {
+    title: "",
+    examId: "upsc-cse",
+    subject: "",
+    subjectIcon: "🏛️",
+    subjectWeightage: "High Weightage",
+    chapterNo: 1,
+    chapterTitle: "",
+    importance: "High Yield",
+    whatToStudy: "",
+    keyConcepts: "",
+    pyqFocus: "",
+    freeVideoUrl: "",
+    freeVideoChannel: "YouTube Open Course",
+    freeBookName: "",
+    freeBookUrl: "",
+    freeBookType: "Official NCERT Free PDF",
+    officialPortalUrl: "",
+    isPublished: true,
+  };
+
+  const [resourceFormData, setResourceFormData] = useState(defaultFreeResourceState);
   const [noteSearch, setNoteSearch] = useState("");
 
   // Transactions State
@@ -204,6 +241,18 @@ export default function CmsDashboard() {
       console.error("Failed to load transactions:", err);
     }
   }, []);
+
+  const fetchFreeResources = useCallback(async () => {
+    try {
+      const params = {};
+      if (freeResourceFilter !== "ALL") params.examId = freeResourceFilter;
+      if (searchFreeResource.trim()) params.search = searchFreeResource.trim();
+      const res = await getCmsFreeResources(params);
+      setCmsFreeResources(res || []);
+    } catch (err) {
+      console.error("Failed to load CMS free resources:", err);
+    }
+  }, [freeResourceFilter, searchFreeResource]);
 
   const fetchSupportTickets = useCallback(async (filters = {}) => {
     try {
@@ -313,6 +362,7 @@ export default function CmsDashboard() {
     if (activeTab === "quizzes") fetchQuizzes();
     if (activeTab === "notes") fetchNotes(noteFilter);
     if (activeTab === "ledger") fetchTransactions();
+    if (activeTab === "free-resources") fetchFreeResources();
     if (activeTab === "support") {
       fetchSupportTickets({
         status: supportStatusFilter,
@@ -330,6 +380,7 @@ export default function CmsDashboard() {
     fetchNotes,
     fetchTransactions,
     fetchSupportTickets,
+    fetchFreeResources,
     searchUser,
     noteFilter,
     withdrawalFilter,
@@ -752,6 +803,118 @@ export default function CmsDashboard() {
   });
 
   /* ========================================================
+     FREE STUDY HUB & CHAPTER RESOURCE CMS ACTIONS
+     ======================================================== */
+  const handleOpenEditResource = (res) => {
+    setEditingResourceId(res._id);
+    setResourceFormData({
+      title: res.title || "",
+      examId: res.examId || "upsc-cse",
+      subject: res.subject || "",
+      subjectIcon: res.subjectIcon || "🏛️",
+      subjectWeightage: res.subjectWeightage || "High Weightage",
+      chapterNo: res.chapterNo || 1,
+      chapterTitle: res.chapterTitle || "",
+      importance: res.importance || "High Yield",
+      whatToStudy: res.whatToStudy || "",
+      keyConcepts: Array.isArray(res.keyConcepts) ? res.keyConcepts.join(", ") : res.keyConcepts || "",
+      pyqFocus: res.pyqFocus || "",
+      freeVideoUrl: res.freeVideoUrl || "",
+      freeVideoChannel: res.freeVideoChannel || "YouTube Open Course",
+      freeBookName: res.freeBookName || "",
+      freeBookUrl: res.freeBookUrl || "",
+      freeBookType: res.freeBookType || "Official NCERT Free PDF",
+      officialPortalUrl: res.officialPortalUrl || "",
+      isPublished: res.isPublished !== false,
+    });
+    setShowFreeResourceModal(true);
+  };
+
+  const handleSaveFreeResource = async (e) => {
+    e.preventDefault();
+    if (!resourceFormData.title.trim() || !resourceFormData.subject.trim()) {
+      showToast("Title and Subject are required.", "error");
+      return;
+    }
+
+    try {
+      setResourceActionLoading(true);
+      const payload = {
+        ...resourceFormData,
+        keyConcepts: typeof resourceFormData.keyConcepts === "string"
+          ? resourceFormData.keyConcepts.split(",").map((s) => s.trim()).filter(Boolean)
+          : resourceFormData.keyConcepts,
+      };
+
+      if (editingResourceId) {
+        await updateCmsFreeResource(editingResourceId, payload);
+        showToast("Free Study Resource updated successfully!");
+      } else {
+        await createCmsFreeResource(payload);
+        showToast("Free Study Resource published to Study Hub!");
+      }
+      setShowFreeResourceModal(false);
+      setEditingResourceId(null);
+      setResourceFormData(defaultFreeResourceState);
+      fetchFreeResources();
+      fetchStats();
+    } catch (err) {
+      showToast(err.response?.data?.message || "Failed to save resource", "error");
+    } finally {
+      setResourceActionLoading(false);
+    }
+  };
+
+  const handleDeleteFreeResource = async (id, title) => {
+    if (!window.confirm(`Delete "${title}" from Study Hub?`)) return;
+    try {
+      await deleteCmsFreeResource(id);
+      showToast("Resource removed from Study Hub");
+      fetchFreeResources();
+      fetchStats();
+    } catch (err) {
+      showToast("Failed to delete resource", "error");
+    }
+  };
+
+  const handleTogglePublishResource = async (id) => {
+    try {
+      const res = await togglePublishCmsFreeResource(id);
+      showToast(res.message || "Visibility updated");
+      fetchFreeResources();
+    } catch (err) {
+      showToast("Failed to update status", "error");
+    }
+  };
+
+  const handleSeedCurriculumResources = async () => {
+    try {
+      setResourceActionLoading(true);
+      const res = await seedCmsCurriculumResources();
+      showToast(res.message || "Curriculum resources seeded successfully!");
+      fetchFreeResources();
+      fetchStats();
+    } catch (err) {
+      showToast(err.response?.data?.message || "Failed to seed curriculum resources", "error");
+    } finally {
+      setResourceActionLoading(false);
+    }
+  };
+
+  const filteredCmsFreeResources = cmsFreeResources.filter((r) => {
+    if (freeResourceFilter !== "ALL" && r.examId !== freeResourceFilter) return false;
+    if (searchFreeResource.trim()) {
+      const s = searchFreeResource.toLowerCase();
+      const matchTitle = r.title && r.title.toLowerCase().includes(s);
+      const matchSubject = r.subject && r.subject.toLowerCase().includes(s);
+      const matchWhat = r.whatToStudy && r.whatToStudy.toLowerCase().includes(s);
+      const matchConcepts = r.keyConcepts && r.keyConcepts.some((k) => k.toLowerCase().includes(s));
+      if (!matchTitle && !matchSubject && !matchWhat && !matchConcepts) return false;
+    }
+    return true;
+  });
+
+  /* ========================================================
      SUPPORT TICKET CMS ACTIONS
      ======================================================== */
   const openTicketsCount = supportTickets.filter(
@@ -943,6 +1106,9 @@ export default function CmsDashboard() {
           </option>
           <option value="users">👥 Users & Wallets ({users.length || statsData?.stats?.totalUsers || 0})</option>
           <option value="quizzes">🎯 Custom Quizzes & Diagrams ({quizzes.length || statsData?.stats?.totalQuizzes || 0})</option>
+          <option value="free-resources">
+            🏛️ Free Study Hub & Chapters ({cmsFreeResources.length || statsData?.stats?.totalFreeResources || 0})
+          </option>
           <option value="cloudinary">☁️ Cloudinary Media Vault</option>
           <option value="notes">📚 Notes Moderation ({notes.length || statsData?.stats?.totalNotes || 0})</option>
           <option value="ledger">🧾 Audit Ledger ({transactions.length})</option>
@@ -961,6 +1127,15 @@ export default function CmsDashboard() {
           >
             <span className="nav-icon">📊</span>
             <span>Overview</span>
+          </button>
+
+          <button
+            className={`cms-nav-item ${activeTab === "free-resources" ? "active" : ""}`}
+            onClick={() => setActiveTab("free-resources")}
+          >
+            <span className="nav-icon">🏛️</span>
+            <span>Free Study Hub</span>
+            <span className="nav-count-sub">({cmsFreeResources.length || statsData?.stats?.totalFreeResources || 0})</span>
           </button>
 
           <button
@@ -3421,6 +3596,481 @@ export default function CmsDashboard() {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* ================= TAB 9: FREE STUDY HUB & CHAPTER MANAGER ================= */}
+      {activeTab === "free-resources" && (
+        <div className="cms-tab-content">
+          <div className="cms-section-header">
+            <div className="section-title-wrap">
+              <h2>🏛️ Free Study Hub & Chapter Resource Manager</h2>
+              <p>
+                Add, edit, publish, and curate 100% Free Study Materials, verified YouTube masterclasses, and official NCERT/eGyanKosh books.
+              </p>
+            </div>
+
+            <div className="section-header-actions">
+              <button
+                className="cms-secondary-cta seed-btn"
+                onClick={handleSeedCurriculumResources}
+                disabled={resourceActionLoading}
+                title="Populate standard UPSC, SSC, Banking & Engineering curriculum modules"
+              >
+                <span>⚡</span> Auto-Seed Official Guides
+              </button>
+              <button
+                className="cms-primary-cta"
+                onClick={() => {
+                  setEditingResourceId(null);
+                  setResourceFormData(defaultFreeResourceState);
+                  setShowFreeResourceModal(true);
+                }}
+              >
+                <span>+</span> Add Free Study Resource
+              </button>
+            </div>
+          </div>
+
+          {/* Quick Metrics Bar */}
+          <div className="cms-kpi-grid mini-kpis">
+            <div className="cms-kpi-card accent-indigo">
+              <div className="kpi-top">
+                <span className="kpi-tag">Total Resources</span>
+                <span className="kpi-icon-pill">📚</span>
+              </div>
+              <div className="kpi-val">{cmsFreeResources.length}</div>
+              <div className="kpi-desc">Curated study modules & chapters</div>
+            </div>
+
+            <div className="cms-kpi-card accent-emerald">
+              <div className="kpi-top">
+                <span className="kpi-tag">Live / Published</span>
+                <span className="kpi-icon-pill">🟢</span>
+              </div>
+              <div className="kpi-val">
+                {cmsFreeResources.filter((r) => r.isPublished !== false).length}
+              </div>
+              <div className="kpi-desc">Accessible by all students instantly</div>
+            </div>
+
+            <div className="cms-kpi-card accent-rose">
+              <div className="kpi-top">
+                <span className="kpi-tag">Video Courses</span>
+                <span className="kpi-icon-pill">▶️</span>
+              </div>
+              <div className="kpi-val">
+                {cmsFreeResources.filter((r) => r.freeVideoUrl).length}
+              </div>
+              <div className="kpi-desc">Attached YouTube masterclasses</div>
+            </div>
+
+            <div className="cms-kpi-card accent-cyan">
+              <div className="kpi-top">
+                <span className="kpi-tag">Official Books</span>
+                <span className="kpi-icon-pill">📖</span>
+              </div>
+              <div className="kpi-val">
+                {cmsFreeResources.filter((r) => r.freeBookUrl).length}
+              </div>
+              <div className="kpi-desc">Free NCERT & open reference PDFs</div>
+            </div>
+          </div>
+
+          {/* Toolbar: Search and Filter Pills */}
+          <div className="cms-table-toolbar">
+            <div className="search-bar-wrap">
+              <span className="search-icon">🔍</span>
+              <input
+                type="text"
+                placeholder="Search resources by title, subject, chapter, or concepts..."
+                value={searchFreeResource}
+                onChange={(e) => setSearchFreeResource(e.target.value)}
+              />
+              {searchFreeResource && (
+                <button className="clear-search-btn" onClick={() => setSearchFreeResource("")}>
+                  ✕
+                </button>
+              )}
+            </div>
+
+            <div className="filter-pills-row">
+              <button
+                className={`filter-pill ${freeResourceFilter === "ALL" ? "active" : ""}`}
+                onClick={() => setFreeResourceFilter("ALL")}
+              >
+                All Domains ({cmsFreeResources.length})
+              </button>
+              <button
+                className={`filter-pill ${freeResourceFilter === "upsc-cse" ? "active" : ""}`}
+                onClick={() => setFreeResourceFilter("upsc-cse")}
+              >
+                🏛️ UPSC CSE ({cmsFreeResources.filter((r) => r.examId === "upsc-cse").length})
+              </button>
+              <button
+                className={`filter-pill ${freeResourceFilter === "ssc-cgl" ? "active" : ""}`}
+                onClick={() => setFreeResourceFilter("ssc-cgl")}
+              >
+                ⚡ SSC CGL ({cmsFreeResources.filter((r) => r.examId === "ssc-cgl").length})
+              </button>
+              <button
+                className={`filter-pill ${freeResourceFilter === "banking-exams" ? "active" : ""}`}
+                onClick={() => setFreeResourceFilter("banking-exams")}
+              >
+                🏦 Banking ({cmsFreeResources.filter((r) => r.examId === "banking-exams").length})
+              </button>
+              <button
+                className={`filter-pill ${freeResourceFilter === "state-psc" ? "active" : ""}`}
+                onClick={() => setFreeResourceFilter("state-psc")}
+              >
+                🗺️ State PSC ({cmsFreeResources.filter((r) => r.examId === "state-psc").length})
+              </button>
+              <button
+                className={`filter-pill ${freeResourceFilter === "engineering-cs" ? "active" : ""}`}
+                onClick={() => setFreeResourceFilter("engineering-cs")}
+              >
+                💻 Engineering / CS ({cmsFreeResources.filter((r) => r.examId === "engineering-cs").length})
+              </button>
+            </div>
+          </div>
+
+          {/* Resources Table & List */}
+          {cmsFreeResources.length === 0 ? (
+            <div className="cms-empty-state">
+              <div className="empty-icon">🏛️</div>
+              <h3>No Free Study Resources in Database Yet</h3>
+              <p>You can create custom chapters one-by-one or auto-populate standard NCERT & exam guides with one click.</p>
+              <div className="empty-state-actions">
+                <button
+                  className="cms-primary-cta"
+                  onClick={() => {
+                    setEditingResourceId(null);
+                    setResourceFormData(defaultFreeResourceState);
+                    setShowFreeResourceModal(true);
+                  }}
+                >
+                  + Add Custom Free Resource
+                </button>
+                <button
+                  className="cms-secondary-cta seed-btn-large"
+                  onClick={handleSeedCurriculumResources}
+                  disabled={resourceActionLoading}
+                >
+                  ⚡ One-Click Seed Official Exam Guides
+                </button>
+              </div>
+            </div>
+          ) : filteredCmsFreeResources.length === 0 ? (
+            <div className="cms-empty-state small">
+              <div className="empty-icon">🔍</div>
+              <h3>No Resources Match Your Filter</h3>
+              <p>No study modules found for "{searchFreeResource || freeResourceFilter}".</p>
+              <button
+                className="cms-secondary-cta"
+                onClick={() => {
+                  setSearchFreeResource("");
+                  setFreeResourceFilter("ALL");
+                }}
+              >
+                Reset Search & Filters
+              </button>
+            </div>
+          ) : (
+            <div className="cms-resources-grid">
+              {filteredCmsFreeResources.map((res) => (
+                <div key={res._id} className="cms-resource-card">
+                  <div className="resource-card-header">
+                    <div className="resource-badge-group">
+                      <span className="exam-chip">{res.examId?.toUpperCase()}</span>
+                      <span className="subject-chip">{res.subjectIcon} {res.subject}</span>
+                    </div>
+                    <span className={`importance-chip ${res.importance?.toLowerCase().replace(/\s+/g, "-")}`}>
+                      {res.importance}
+                    </span>
+                  </div>
+
+                  <h3 className="resource-card-title">
+                    {res.chapterNo ? `Ch ${res.chapterNo}: ` : ""}{res.title}
+                  </h3>
+
+                  {res.whatToStudy && (
+                    <div className="resource-guidance-snippet">
+                      <strong>🧭 Roadmap:</strong> {res.whatToStudy}
+                    </div>
+                  )}
+
+                  {res.keyConcepts && res.keyConcepts.length > 0 && (
+                    <div className="resource-concepts-tags">
+                      {res.keyConcepts.slice(0, 4).map((c, cIdx) => (
+                        <span key={cIdx} className="concept-pill">{c}</span>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="resource-links-row">
+                    {res.freeVideoUrl ? (
+                      <a href={res.freeVideoUrl} target="_blank" rel="noreferrer" className="link-pill video">
+                        ▶️ {res.freeVideoChannel || "Free Video"}
+                      </a>
+                    ) : (
+                      <span className="link-pill disabled">No Video</span>
+                    )}
+                    {res.freeBookUrl ? (
+                      <a href={res.freeBookUrl} target="_blank" rel="noreferrer" className="link-pill book">
+                        📖 {res.freeBookName ? res.freeBookName.slice(0, 20) + "..." : "Free Book"}
+                      </a>
+                    ) : (
+                      <span className="link-pill disabled">No Book</span>
+                    )}
+                  </div>
+
+                  <div className="resource-card-footer">
+                    <button
+                      className={`toggle-publish-btn ${res.isPublished ? "live" : "draft"}`}
+                      onClick={() => handleTogglePublishResource(res._id)}
+                      title="Toggle visibility in student study hub"
+                    >
+                      {res.isPublished ? "🟢 Live" : "⚪ Draft"}
+                    </button>
+
+                    <div className="card-action-buttons">
+                      <button
+                        className="btn-card-edit"
+                        onClick={() => handleOpenEditResource(res)}
+                        title="Edit Resource"
+                      >
+                        ✏️ Edit
+                      </button>
+                      <button
+                        className="btn-card-delete"
+                        onClick={() => handleDeleteFreeResource(res._id, res.title)}
+                        title="Delete Resource"
+                      >
+                        🗑️ Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* ================= MODAL: ADD / EDIT FREE STUDY RESOURCE ================= */}
+          {showFreeResourceModal && (
+            <div className="modal-overlay">
+              <div className="cms-modal-box large-modal">
+                <div className="modal-header">
+                  <h3>
+                    {editingResourceId ? "✏️ Edit Free Study Resource" : "➕ Add Free Study Resource to Study Hub"}
+                  </h3>
+                  <button className="close-btn" onClick={() => setShowFreeResourceModal(false)}>
+                    ✕
+                  </button>
+                </div>
+
+                <form onSubmit={handleSaveFreeResource} className="cms-resource-form">
+                  <div className="form-grid-2">
+                    <div className="form-group">
+                      <label>🎯 Target Exam / Domain *</label>
+                      <select
+                        value={resourceFormData.examId}
+                        onChange={(e) => setResourceFormData({ ...resourceFormData, examId: e.target.value })}
+                        required
+                        className="modern-select"
+                      >
+                        <option value="upsc-cse">🏛️ UPSC Civil Services (IAS / IPS / IFS)</option>
+                        <option value="ssc-cgl">⚡ SSC CGL / CHSL / CPO</option>
+                        <option value="banking-exams">🏦 Banking (IBPS / SBI PO & Clerk)</option>
+                        <option value="state-psc">🗺️ State PSC / Group 1, 2, 4</option>
+                        <option value="engineering-cs">💻 Computer Science & Engineering (GATE)</option>
+                        <option value="general">📚 General Academic & Reference</option>
+                      </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label>📖 Subject Name *</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Indian Polity, Quantitative Aptitude, Operating Systems"
+                        value={resourceFormData.subject}
+                        onChange={(e) => setResourceFormData({ ...resourceFormData, subject: e.target.value })}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-grid-3">
+                    <div className="form-group">
+                      <label>Icon</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. ⚖️, 📐, 🌍, 📈"
+                        value={resourceFormData.subjectIcon}
+                        onChange={(e) => setResourceFormData({ ...resourceFormData, subjectIcon: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Chapter Number</label>
+                      <input
+                        type="number"
+                        min="1"
+                        placeholder="1"
+                        value={resourceFormData.chapterNo}
+                        onChange={(e) => setResourceFormData({ ...resourceFormData, chapterNo: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Importance Level</label>
+                      <select
+                        value={resourceFormData.importance}
+                        onChange={(e) => setResourceFormData({ ...resourceFormData, importance: e.target.value })}
+                        className="modern-select"
+                      >
+                        <option value="High Yield">🔥 High Yield</option>
+                        <option value="Essential">⭐ Essential</option>
+                        <option value="Foundation">💡 Foundation</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label>📌 Chapter / Resource Title *</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Fundamental Rights (Articles 12 to 35) & Landmark Judgments"
+                      value={resourceFormData.title}
+                      onChange={(e) => setResourceFormData({ ...resourceFormData, title: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>🧭 Where & What to Study (Step-by-Step Student Guidance)</label>
+                    <textarea
+                      rows="2"
+                      placeholder="e.g. 1. Read NCERT Class 11 Ch 2 -> 2. Read Laxmikanth Ch 7 -> 3. Memorize 6 Writs -> 4. Solve 20 PYQs"
+                      value={resourceFormData.whatToStudy}
+                      onChange={(e) => setResourceFormData({ ...resourceFormData, whatToStudy: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="form-grid-2">
+                    <div className="form-group">
+                      <label>💡 Must-Master Key Concepts (Comma Separated)</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Article 12 State, Habeas Corpus, Mandamus, Article 21 Privacy"
+                        value={resourceFormData.keyConcepts}
+                        onChange={(e) => setResourceFormData({ ...resourceFormData, keyConcepts: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>🎯 PYQ & Exam Trend Tips</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Direct questions on differences between Habeas Corpus vs Mandamus"
+                        value={resourceFormData.pyqFocus}
+                        onChange={(e) => setResourceFormData({ ...resourceFormData, pyqFocus: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-section-divider">
+                    <span>🎬 100% Free Video Course & Lecture Details</span>
+                  </div>
+
+                  <div className="form-grid-2">
+                    <div className="form-group">
+                      <label>▶️ Free YouTube Video / Marathon URL</label>
+                      <input
+                        type="url"
+                        placeholder="https://www.youtube.com/watch?v=... or search playlist"
+                        value={resourceFormData.freeVideoUrl}
+                        onChange={(e) => setResourceFormData({ ...resourceFormData, freeVideoUrl: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Channel / Platform Name</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. NPTEL IIT / StudyIQ / Adda247 / FreeCodeCamp"
+                        value={resourceFormData.freeVideoChannel}
+                        onChange={(e) => setResourceFormData({ ...resourceFormData, freeVideoChannel: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-section-divider">
+                    <span>📖 100% Free Official Book & Government Portal Links</span>
+                  </div>
+
+                  <div className="form-grid-3">
+                    <div className="form-group">
+                      <label>Book / Document Name</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. NCERT Class 11 Indian Constitution at Work"
+                        value={resourceFormData.freeBookName}
+                        onChange={(e) => setResourceFormData({ ...resourceFormData, freeBookName: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Official Free PDF / Open Library URL</label>
+                      <input
+                        type="url"
+                        placeholder="https://ncert.nic.in/textbook.php?..."
+                        value={resourceFormData.freeBookUrl}
+                        onChange={(e) => setResourceFormData({ ...resourceFormData, freeBookUrl: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Resource Source Type</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Official NCERT PDF / IGNOU eGyanKosh / OpenLibrary"
+                        value={resourceFormData.freeBookType}
+                        onChange={(e) => setResourceFormData({ ...resourceFormData, freeBookType: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-checkbox-row">
+                    <label className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        checked={resourceFormData.isPublished}
+                        onChange={(e) => setResourceFormData({ ...resourceFormData, isPublished: e.target.checked })}
+                      />
+                      <span>Make this resource Live & Published in the Student Free Study Hub</span>
+                    </label>
+                  </div>
+
+                  <div className="modal-actions-row">
+                    <button
+                      type="button"
+                      className="modal-secondary-btn"
+                      onClick={() => setShowFreeResourceModal(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="modal-primary-btn green"
+                      disabled={resourceActionLoading}
+                    >
+                      {resourceActionLoading ? "Saving..." : editingResourceId ? "💾 Update Resource" : "✨ Publish to Free Study Hub"}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

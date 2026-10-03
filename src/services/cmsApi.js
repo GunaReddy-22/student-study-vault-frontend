@@ -157,3 +157,40 @@ export async function deleteCmsSupportTicket(ticketId) {
   const res = await api.delete(`/support/admin/tickets/${ticketId}`);
   return res.data;
 }
+
+// 10. Free Study Hub & Chapter Resource Manager
+export async function getCmsFreeResources(params = {}) {
+  const res = await api.get("/cms/free-resources", { params });
+  return res.data.resources || [];
+}
+
+export async function createCmsFreeResource(payload) {
+  const res = await api.post("/cms/free-resources", payload);
+  return res.data;
+}
+
+export async function updateCmsFreeResource(id, payload) {
+  const res = await api.put(`/cms/free-resources/${id}`, payload);
+  return res.data;
+}
+
+export async function deleteCmsFreeResource(id) {
+  const res = await api.delete(`/cms/free-resources/${id}`);
+  return res.data;
+}
+
+export async function togglePublishCmsFreeResource(id) {
+  const res = await api.patch(`/cms/free-resources/${id}/toggle-publish`);
+  return res.data;
+}
+
+export async function seedCmsCurriculumResources() {
+  const res = await api.post("/cms/free-resources/seed-curriculum");
+  return res.data;
+}
+
+// 11. Public Student Study Resources API
+export async function getPublicStudyResources(params = {}) {
+  const res = await api.get("/study-resources", { params });
+  return res.data.resources || [];
+}

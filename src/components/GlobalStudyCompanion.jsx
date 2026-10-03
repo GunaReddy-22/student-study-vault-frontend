@@ -26,6 +26,15 @@ export default function GlobalStudyCompanion() {
   const [isRunning, setIsRunning] = useState(false);
   const [ambientSound, setAmbientSound] = useState("none"); // 'none' | 'lofi' | 'rain' | 'whitenoise' | 'library'
 
+  // Stats
+  const [completedSessions, setCompletedSessions] = useState(() => {
+    try {
+      return parseInt(localStorage.getItem("sv_focus_sessions") || "0", 10);
+    } catch (_) {
+      return 0;
+    }
+  });
+
   // Web Audio Synth references
   const audioCtxRef = useRef(null);
   const synthNodesRef = useRef([]);
@@ -48,10 +57,15 @@ export default function GlobalStudyCompanion() {
       }, 1000);
     } else if (timeLeft === 0 && isRunning) {
       setIsRunning(false);
+      const newSessions = completedSessions + 1;
+      setCompletedSessions(newSessions);
+      try {
+        localStorage.setItem("sv_focus_sessions", String(newSessions));
+      } catch (_) {}
       playAlarmChime();
     }
     return () => clearInterval(interval);
-  }, [isRunning, timeLeft]);
+  }, [isRunning, timeLeft, completedSessions]);
 
   const switchTimerMode = (mode) => {
     setTimerMode(mode);
@@ -290,6 +304,9 @@ export default function GlobalStudyCompanion() {
               <div className="timer-display-clock">
                 <span className="clock-digits">{formatTime(timeLeft)}</span>
                 <span className="clock-status">{isRunning ? "🧠 In the zone..." : "Ready to focus"}</span>
+                {completedSessions > 0 && (
+                  <span className="sessions-badge">🎯 {completedSessions} Sessions Completed</span>
+                )}
               </div>
 
               <div className="timer-actions-row">
