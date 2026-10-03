@@ -1,0 +1,404 @@
+/* ============================================================
+   🎒 GLOBAL FLOATING STUDY COMPANION & POMODORO STYLING
+   ============================================================ */
+
+/* Floating Dock Trigger Button */
+.study-companion-dock-btn {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+  border: 1px solid rgba(99, 102, 241, 0.45);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.study-companion-dock-btn:hover {
+  transform: translateY(-2px);
+  border-color: rgba(99, 102, 241, 0.8);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.65), 0 0 15px rgba(99, 102, 241, 0.3);
+}
+
+.study-companion-dock-btn.active {
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  border-color: rgba(165, 180, 252, 0.6);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.5);
+}
+
+.dock-icon {
+  font-size: 16px;
+}
+
+/* Floating Study Panel */
+.study-companion-panel {
+  position: fixed;
+  bottom: 78px;
+  left: 24px;
+  width: 360px;
+  max-width: calc(100vw - 48px);
+  background: rgba(15, 23, 42, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  z-index: 9999;
+  overflow: hidden;
+  animation: companionPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #f8fafc;
+}
+
+@keyframes companionPop {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.panel-badge {
+  font-size: 13px;
+  font-weight: 700;
+  color: #c7d2fe;
+}
+
+.panel-close-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+}
+.panel-close-btn:hover { color: #ffffff; }
+
+/* Panel Sub-Navigation */
+.panel-nav {
+  display: flex;
+  padding: 8px 12px;
+  gap: 6px;
+  background: rgba(2, 6, 23, 0.5);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.panel-nav-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.panel-nav-btn:hover {
+  color: #f8fafc;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.panel-nav-btn.active {
+  background: rgba(99, 102, 241, 0.25);
+  border: 1px solid rgba(99, 102, 241, 0.6);
+  color: #ffffff;
+}
+
+.companion-body {
+  padding: 18px;
+}
+
+/* ================= POMODORO TIMER ================= */
+.timer-mode-pills {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.timer-mode-pill {
+  flex: 1;
+  padding: 6px 0;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: #cbd5e1;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.timer-mode-pill.active {
+  background: #6366f1;
+  color: #ffffff;
+  border-color: #6366f1;
+}
+
+.timer-display-clock {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.clock-digits {
+  font-size: 44px;
+  font-weight: 800;
+  font-family: "JetBrains Mono", monospace;
+  letter-spacing: 2px;
+  color: #ffffff;
+  display: block;
+}
+
+.clock-status {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.timer-actions-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.btn-timer-toggle {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+  transition: all 0.2s;
+}
+
+.btn-timer-toggle.running {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+}
+
+.btn-timer-reset {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.btn-timer-reset:hover { background: rgba(255, 255, 255, 0.15); color: #fff; }
+
+/* Ambient Audio Synthesizer */
+.ambient-sound-section {
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ambient-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
+.ambient-pills-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.ambient-pill {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ambient-pill.active {
+  background: rgba(99, 102, 241, 0.3);
+  border-color: rgba(99, 102, 241, 0.8);
+  color: #c7d2fe;
+  font-weight: 600;
+}
+
+/* ================= MINI DICTIONARY ================= */
+.mini-search-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.mini-search-form input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-size: 13px;
+  outline: none;
+}
+
+.mini-search-form button {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #6366f1;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+}
+
+.mini-dict-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.mini-dict-header h4 {
+  font-size: 15px;
+  color: #fff;
+}
+
+.mini-dict-header .phonetic {
+  font-size: 12px;
+  color: #34d399;
+  font-family: monospace;
+}
+
+.mini-def-scroll {
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.mini-def-item {
+  margin-bottom: 8px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #cbd5e1;
+}
+
+.mini-pos {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #a5b4fc;
+  display: inline-block;
+  margin-right: 4px;
+}
+
+.mini-placeholder, .mini-loading {
+  font-size: 12.5px;
+  color: #94a3b8;
+  text-align: center;
+  padding: 16px 0;
+}
+
+/* ================= CALCULATOR ================= */
+.mini-calc-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.mini-calc-form input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-size: 13px;
+  font-family: "JetBrains Mono", monospace;
+  outline: none;
+}
+
+.mini-calc-form button {
+  padding: 8px;
+  border-radius: 8px;
+  background: #6366f1;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.calc-result-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  margin-bottom: 12px;
+}
+
+.calc-label { font-size: 12px; color: #a5b4fc; font-weight: 600; }
+.calc-val { font-size: 16px; font-weight: 800; color: #34d399; font-family: monospace; }
+
+.calc-quick-constants {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.const-tag {
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 11px;
+  color: #cbd5e1;
+  cursor: pointer;
+  font-family: monospace;
+}
+.const-tag:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}

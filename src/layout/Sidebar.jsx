@@ -5,6 +5,7 @@ import {
   FiGlobe,
   FiStar,
   FiBookOpen,
+  FiCompass,
   FiCheckSquare,
   FiCreditCard,
   FiHeadphones,
@@ -62,6 +63,11 @@ function Sidebar({ setIsAuth, isOpen = true, onClose }) {
         <NavLink to="/premium" onClick={onClose}>
           <FiStar className="nav-icon" />
           <span>Premium Notes</span>
+        </NavLink>
+
+        <NavLink to="/resources" onClick={onClose}>
+          <FiCompass className="nav-icon" />
+          <span>Free Study Hub</span>
         </NavLink>
 
         <NavLink to="/reference-books" onClick={onClose}>

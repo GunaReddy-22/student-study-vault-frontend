@@ -15,7 +15,9 @@ import PracticeQuizzes from "./pages/PracticeQuizzes";
 import QuizRunner from "./pages/QuizRunner";
 import CmsDashboard from "./pages/CmsDashboard";
 import CustomerSupport from "./pages/CustomerSupport";
+import FreeResourcesHub from "./pages/FreeResourcesHub";
 import GlobalAIAssistant from "./components/GlobalAIAssistant";
+import GlobalStudyCompanion from "./components/GlobalStudyCompanion";
 
 import "./App.css";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -177,6 +179,16 @@ function App() {
             element={isAuth ? <QuizRunner /> : <Navigate to="/login" />}
           />
 
+          {/* 🌐 Academic Discovery & Free Resources Hub */}
+          <Route
+            path="/resources"
+            element={isAuth ? <FreeResourcesHub /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/free-resources"
+            element={isAuth ? <Navigate to="/resources" replace /> : <Navigate to="/login" />}
+          />
+
           {/* 🎧 Customer Support */}
           <Route
             path="/support"
@@ -196,6 +208,9 @@ function App() {
 
       {/* Global AI Assistant – visible on authenticated study pages, hidden during Quizzes/Exams */}
       {isAuth && !hideSidebar && !isQuizSection && <GlobalAIAssistant />}
+
+      {/* Global Study Companion (Pomodoro & Ambient Audio Synth & Quick Lexicon) */}
+      {isAuth && !hideSidebar && !isQuizTestRunner && <GlobalStudyCompanion />}
     </div>
   );
 }
